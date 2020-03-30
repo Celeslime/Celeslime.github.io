@@ -4,7 +4,49 @@
 		<meta charset="utf-8">
 		<title>中国结</title>
 		<style type="text/css">
-			
+:root{
+	--p_color:#0000;
+}
+body{
+	background:#d06060;
+}
+ul{
+	position: absolute;
+	margin: 10% 60% 10% 10%;
+	padding: 0;
+	background: #ff91914d;
+	width:160px;
+	
+	border-radius:20px;
+}
+li{
+	list-style-type: none;
+	margin: 20px 20px;
+	padding: 10px;
+	width: 500px;
+	font-size: 120%;
+	font-family: "幼圆";
+	height:24px;
+/* 	border-radius:10px; */
+	
+	background:#ffffff36;
+	color:#fff;
+	transition:.3s;
+	--p_color:#0000;
+}
+li:hover{
+	animation:show .6s;
+	height:120px;
+	--p_color:#ffffffd4;
+}
+span{
+	float: right;
+	color: #f1f1f1;
+	font-size: 50%;
+}
+p{
+	color:var(--p_color);
+}
 		</style>
 	</head>
 	<body>
