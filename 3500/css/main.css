@@ -1,0 +1,92 @@
+/*说实话，css是世界上最恶心的东西*/
+
+html {
+	background: #eee;
+}
+nav {
+	position: fixed;
+	/* 	background: #000; */
+	/* 	color: #fff; */
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: 5px;
+	box-sizing: border-box;
+}
+button {
+	border: solid 3px #aeaeae;
+	background: #9b9b9b;
+	color: #fff;
+	margin: 2px;
+	padding: 5px;
+	width: calc(25% - 4px);
+	box-sizing: border-box;
+	font-size: 105%;
+	text-align: left;
+	overflow: hidden;
+	/* 	font-family:"consolas"; */
+}
+input {
+	box-sizing: border-box;
+	border: none;
+	/* 	border-radius: 5px; */
+	box-shadow: 0 0 15px #4444;
+	padding: 15px;
+	width: 100%;
+	height: 50px;
+	font-family: "consolas";
+	font-weight: bold;
+	font-size: large;
+}
+:focus {
+	outline: none;
+}
+#searchDiv {
+	/* 	background: #0000; */
+}
+#searchBox {
+	/* 	height:100px; */
+}
+#searchBox > input {
+	/* 	display: block; */
+}
+#result {
+	margin-top: 70px;
+}
+#searchBox > button {
+	float: right;
+	/* 	border-radius:5px; */
+	margin-top: 12px;
+	position: relative;
+}
+#blocker {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background: #6f6f6f;
+	top: 0;
+	left: 0;
+	opacity: 0;
+	display: none;
+	transition: .3s;
+}
+#translation {
+	background-image: linear-gradient(120deg, #8da1ff, #516eee);
+	color: #fff;
+	padding: 20px;
+	box-shadow: 0 0 15px #4444;
+	font-family: "consolas";
+	font-weight: bold;
+	font-size: 110%;
+}
+#wdName {
+	font-size: 200%;
+	/* 	padding: 10px; */
+	margin: 10px;
+}
+#wdExplain {
+	margin: 5px;
+}
+#resultUl {
+	margin-top: 20px;
+}
