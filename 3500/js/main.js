@@ -1,4 +1,6 @@
 var timer,wd="",guess="~";
+const speaker = new window.SpeechSynthesisUtterance();
+speaker.rate="0.5";
 function save(){
 	var key=document.querySelector('#saveDiv input[name="key"]').value;
 	var val=document.querySelector('#saveDiv input[name="value"]').value;
@@ -6,12 +8,9 @@ function save(){
 	saveTip.innerHTML="DONE";
 }
 function search(){
-	resultUl.innerHTML="";
 	var elem=document.querySelector('#searchDiv input[name="word"]');
 	wd=elem.value;
-	elem.value="输入搜索单词";
-	elem.style.color="#aaa";
-
+	elem.value="";
 	if(wd==""){
 		alert("empty");
 	}
@@ -21,38 +20,46 @@ function search(){
 		research();
 	}
 	else{
-		wdName.innerHTML="\""+wd+"\""+"<br>NOT FIND";
-		wdExplain.innerHTML="";
+		wdName.innerHTML=wd;
+		if(wd=="lyn"||wd=="sth"){
+			wdExplain.innerHTML="╮(๑•́ ₃•̀๑)╭有话好好说";
+			speak("Hi guys");
+		}
+		else{
+			wdExplain.innerHTML="(๑•́ ₃ •̀),,哪有这单词，是不是下面这一些？";
+		} 
 		research();
 	}
 }
 function research(){
-	if(wd.length>1)
-	for(var key in dic){
-		if(wd!=key && key.length>1)
-		if(wd.search(key)!=-1){
-			resultUl.innerHTML+='<button onclick="wdJump(\''+key+'\');">'+key+"</button>";
+	resultUl.innerHTML="";
+	if(wd.length>1){
+		for(var key in dic){
+			if(wd!=key)
+			if(key.search(wd)!=-1){
+				resultUl.innerHTML+='<button class="jump" onclick="wdJump(\''+key+'\');">'+key+"</button>";
+			}
 		}
-		else if(key.search(wd)!=-1){
-			resultUl.innerHTML+='<button onclick="wdJump(\''+key+'\');">'+key+"</button>";
+		// resultUl.innerHTML+='<br>';
+		for(var key in dic){
+			if(wd!=key)
+			if(wd.search(key)!=-1){
+				resultUl.innerHTML+='<button class="jump" onclick="wdJump(\''+key+'\');">'+key+"</button>";
+			}
 		}
 	}
 }
 function wdJump(twd){
 	wd=twd;
-	resultUl.innerHTML="";
 	wdName.innerHTML=wd;
 	wdExplain.innerHTML=dic[wd];
 	research();
 }
-function clearInput(){
-	var elem=document.querySelector('#searchDiv input[name="word"]');
-	elem.value="";
-	elem.style.color="#000";
-	elem.style.font="normal";
-}
 function checkIn(){
-	// console.log("innerHTML");
 	search();
 	clearInput();
+}
+function speak(){
+	speaker.text=wdName.innerHTML;
+	window.speechSynthesis.speak(speaker);
 }

@@ -24,20 +24,19 @@
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
 <body>
-	<!-- <nav>
-		高考单词查询
-	</nav> -->
-	<nav id="searchDiv">
-		<div id="searchBox">
-			<input type="text" name="word" onfocus="clearInput()" value="输入单词查询" style="color: #aaa" onchange="checkIn();"> 
-			<!-- <button onclick="search();">SEARCH</button> -->
-		</div>
-		
+	<nav id="searchDiv" class="container">
+		<input type="text" name="word" placeholder="输入单词查询" onchange="search();"> 	
 	</nav>
-	<div id="result">
+	<div id="result" class="container">
 		<div id="translation">
-			<p id="wdName">GO AHEAD!</p>
-			<p id="wdExplain"></p>
+			<button id="wdName" onclick="speak();">PRESEARCHING!</button>
+			<p id="wdExplain">
+				Provide 3500 college entrance examination vocabulary query and association, 
+				enter the word in the input box and press Enter to query.
+				Click a word to read the text aloud.<br><br>
+				提供高考3500词汇的查询和联想，在输入框中输入单词并回车来查询；单击单词可以朗读。<br><br>
+				这个网页由“矰”制作，发布于2020年4月21日，问题反馈邮箱1575989756@qq.com
+			</p>
 		</div>
 		
 		<div id="resultUl"></div>
