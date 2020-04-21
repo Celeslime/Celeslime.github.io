@@ -1,6 +1,7 @@
 var timer,wd="",guess="~";
 const speaker = new window.SpeechSynthesisUtterance();
 speaker.rate="0.5";
+speaker.lang="en";
 function save(){
 	var key=document.querySelector('#saveDiv input[name="key"]').value;
 	var val=document.querySelector('#saveDiv input[name="value"]').value;
