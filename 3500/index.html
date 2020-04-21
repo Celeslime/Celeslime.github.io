@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<!-- 
+    ________   ___  ___    _______   ___  ___
+   |\   ____\ |\  \|\  \  |\  ____\ |\  \|\  \
+   \ \  \___|_\ \  \ \  \ |\  \___| \ \  \\  \
+    \ \   ____\\ \  \ \  \\ \  \     \ \   _ \_
+     \ \  \___| \ \_ \_\  \\ \_ \_____\ \  \\_ \_
+      \ \__\     \||\_____\ \||\______\\ \__\|\__\
+       \|__|       \|_____|   \|______| \|__|\|__|
+
+向 网 课 时 代 致 敬
+这 个 网 页 由 “ 矰 ” 制 做 
+
+问题反馈：
+	GitHub:CeleSlime
+	QQ:1575989756
+	E-mail:1575989756@qq.com
+-->
+<head>
+	<title>高考单词查询</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width" initial-scale="1"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+<body>
+	<nav id="searchDiv" class="container">
+		<input type="text" name="word" placeholder="输入单词查询" onchange="search();"> 	
+	</nav>
+	<div id="result" class="container">
+		<div id="translation">
+			<button id="wdName" onclick="speak();">PRESEARCHING!</button>
+			<p id="wdExplain">
+				Provide 3500 college entrance examination vocabulary query and association, 
+				enter the word in the input box and press Enter to query.
+				Click a word to read the text aloud.<br><br>
+				提供高考3500词汇的查询和联想，在输入框中输入单词并回车来查询；单击单词可以朗读。<br><br>
+				这个网页由“矰”制作，发布于2020年4月21日，问题反馈邮箱1575989756@qq.com
+			</p>
+		</div>
+		
+		<div id="resultUl"></div>
+	</div>
+	</div>
+	<script type="text/javascript" src="js/dic.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>
