@@ -27,6 +27,9 @@ button.jump {
 }
 button.jump,
 a {
+	color: #fff;
+
+	text-decoration: none;
 	transition: .3s;
 }
 button.jump:hover {
