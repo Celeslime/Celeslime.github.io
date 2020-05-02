@@ -1,0 +1,48 @@
+<!-- <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg width="100%" height="100%" version="1.1"
+xmlns="http://www.w3.org/2000/svg">
+
+<defs>
+<filter id="Gaussian_Blur">
+<feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+</filter>
+</defs>
+
+<ellipse cx="200" cy="150" rx="70" ry="40"
+style="fill:#ff0000;stroke:#000000;
+stroke-width:2;filter:url(#Gaussian_Blur)"/>
+
+</svg> -->
+
+
+<!DOCTYPE svg>
+<svg>
+	<defs>
+		<filter id="Gaussian_Blur">
+
+			<feColorMatrix type="matrix" 
+			values="
+				0	1	0	0	0
+				0	1	0	0	0	
+				0	1	0	0	0	
+				0	0	0	1	0	" />
+		</filter>
+	</defs>
+	<circle cx="200" cy="200" r="70" fill="red" />
+	<img src="1.jpg">
+	<style type="text/css">
+		svg{
+			position: fixed;
+			height: 100%;
+			width: 100%;
+		}
+		img{
+			position: fixed;
+			height: 100%
+			width: 100%;
+			filter: url('#Gaussian_Blur');
+		}
+	</style>
+</svg>
