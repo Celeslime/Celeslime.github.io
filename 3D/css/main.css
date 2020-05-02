@@ -46,7 +46,6 @@ div{
 	position:fixed;
 	top:calc(50% - 30px);
 	left:calc(50% - 80px);
-/* 	transition:15s; */
 	transition:transform 0.1s,opacity 15s;
 	transition-timing-function:linear;
 }
