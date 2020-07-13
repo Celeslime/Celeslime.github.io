@@ -25,7 +25,8 @@ button.jump {
 	font-size: 110%;
 	color: #666666;
 }
-button.jump {
+button.jump,
+a[href] {
 	color: #666666;
 
 	text-decoration: none;
