@@ -35,7 +35,7 @@ a {
 	color: #fff;
 	
 	text-decoration: none;
-	trancition: .3s;
+	transition: .3s;
 }
 button.jump:hover {
 	color: #a8a8a8;
