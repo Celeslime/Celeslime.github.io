@@ -31,11 +31,11 @@ button.jump {
 	text-decoration: none;
 	transition: .3s;
 }
-a[href] {
+a {
 	color: #fff;
 	
 	text-decoration: none;
-	trancition .3s;
+	trancition: .3s;
 }
 button.jump:hover {
 	color: #a8a8a8;
