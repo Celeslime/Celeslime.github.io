@@ -1,0 +1,24 @@
+#Slct{
+	position:fixed;
+	background-color:#ff0;
+	color:#000;
+	border:solid 1px #f90;
+	opacity:0;
+	transition:opacity 0.3s;
+	box-sizing:border-box;
+	
+	height:100px;
+	width:100px;
+}
+#area{
+	position:fixed;
+/* 	background:#f0f; */
+	width:100%;
+	height:100%;
+	left:0;
+	top:0;
+}
+body{
+/* 	background-color:#cc4747; */
+	opacity:0.2;
+}
