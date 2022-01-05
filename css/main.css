@@ -1,4 +1,4 @@
-/*button {
+button {
 	background-image: linear-gradient(135deg, #ff0, #f0f);
 	position: fixed;
 	border: none;
@@ -46,8 +46,7 @@ h1 {
 #duck {
 	box-sizing: border-box;
 	padding-right: 10px;
-}*/
-
+}
 a{
 	text-decoration: none;
 	color: black;
@@ -56,5 +55,5 @@ a:visited{
 	color: black;
 }
 li{
-	text-
+
 }
