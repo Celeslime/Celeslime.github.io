@@ -77,15 +77,15 @@ function check() {
 	}
 	if(critRate<0.05){
 		critRate=0.05;
-		document.forms[0]['critRate'].value=5;
+		document.forms[0]['critRate'].value=5.0;
 	}
 	if(critRate>1){
 		critRate=1;
-		document.forms[0]['critRate'].value=100;
+		document.forms[0]['critRate'].value=100.0;
 	}
 	if(critDmg<0.5){
 		critDmg=0.5;
-		document.forms[0]['critDmg'].value=50;
+		document.forms[0]['critDmg'].value=50.0;
 	}
 }
 
