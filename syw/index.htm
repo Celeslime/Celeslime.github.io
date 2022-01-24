@@ -8,16 +8,22 @@
 	<link rel="icon" href="icon.png" sizes="32x32">
 </head>
 <body>
-	<form name="attr">
-		<p>基础攻击力 ATK.Base: </p><input type="text" name="atkBase" value="750"><br>
-		<p>攻击力 ATK: </p><input type="text" name="atk" value="1885"><br>
-		<p>暴击率 CRIT.Rate: </p><input type="text" name="critRate" value="46.6">%<br>
-		<p>暴击伤害 CRIT.DMG: </p><input type="text" name="critDmg" value="130.0">%<br><br>
-	</form>
-	<button onclick="return onKeyUp(event)">计算 Calc</button>
-	<div id="ans">
-		<div id="ex"></div>
-		<div id="hel"></div>
+	<div class="container">
+		<h2>原神：圣遗物计算器</h2>
+		<form name="attr">
+			<p>基础攻击力 ATK.Base: </p><input type="number" name="atkBase" value="750"><br>
+			<p>攻击力 ATK: </p><input type="number" name="atk" value="1885"><br>
+			<p>暴击率 CRIT.Rate%: </p><input type="number" name="critRate" value="46.6"><br>
+			<p>暴击伤害 CRIT.DMG%: </p><input type="number" name="critDmg" value="130.0"><br>
+		</form>
+		<button onclick="return onKeyUp(event)">计算 Calc</button>
+		<div id="ans">
+			<div id="ex"></div>
+			<div id="h">
+				<div id="hel"></div>
+				<div id="hel1"></div>
+			</div>
+		</div>
 	</div>
 	<script type="text/javascript" src="js/main.js"></script>
 </body>

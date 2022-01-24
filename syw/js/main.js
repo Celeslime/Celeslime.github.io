@@ -38,6 +38,14 @@ function calc(){
 	}else{
 		healthy['critDmg']=C/B*healthy['critRate']
 	}
+
+	healthy['critRate1']=100*(-b-Math.sqrt(b*b-4*a*c))/2/a;
+	if(healthy['critRate1']>100){
+		healthy['critRate1']=100;
+		healthy['critDmg1']=100*atk*C/A/atkBase-100;
+	}else{
+		healthy['critDmg1']=C/B*healthy['critRate1']
+	}
 }
 function print(){
 	ex.innerHTML=h("偏导(副词条参数) Partial Derivative：");
@@ -48,6 +56,10 @@ function print(){
 	hel.innerHTML=h("以攻击力为基础的健康值：")
 	hel.innerHTML+=p("暴击率 CRIT.Rate: ")+p1(healthy['critRate'].toFixed(1)+"%");
 	hel.innerHTML+=p("暴击伤害 CRIT.DMG: ")+p1(healthy['critDmg'].toFixed(1)+"%");
+
+	hel1.innerHTML=h("或者：")
+	hel1.innerHTML+=p("暴击率 CRIT.Rate: ")+p1(healthy['critRate1'].toFixed(1)+"%");
+	hel1.innerHTML+=p("暴击伤害 CRIT.DMG: ")+p1(healthy['critDmg1'].toFixed(1)+"%");
 }
 function p(text){
 	return '<p>'+text+'</p>';

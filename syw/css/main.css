@@ -1,0 +1,38 @@
+input,.num{
+	font-size:25px;
+}
+
+h1,p{
+	font-size:10px;
+	margin:0;
+}
+input{
+	background:#f9f9f9;
+	border:none;
+	width:100%;
+}
+.container {
+	max-width: 600px;
+	top: 0;
+	left: 0;
+	right: 0;
+	margin: 0 auto 800px auto;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 8px;
+}
+button{
+	float:right;
+	border:none;
+	padding:10px;
+	margin:10px;
+}
+#ans{
+	padding-top:50px;
+}
+.num{
+	background:#f9f9f9;
+}
+#h{
+	padding-top:20px;
+}
