@@ -31,8 +31,13 @@ button{
 	padding-top:50px;
 }
 .num{
-	background:#f9f9f9;
+	background:#d2ffeb;
+	border-bottom-right-radius:15px;
 }
 #h{
 	padding-top:20px;
+}
+.bg,input{
+	background:#f9f9f9;
+	border-bottom-right-radius:15px;
 }

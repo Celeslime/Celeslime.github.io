@@ -1,14 +1,21 @@
 // 奇妙的事情发生了 o‿≖✧
 var atkBase,atk,critRate,critDmg;
 var exp=new Array(),healthy=new Array();
+var maxE;
 var A=0.04975,
 	B=0.033,
-	C=0.066;
+	C=0.066,
+	D=16.75,
+	E=19.75;
+var yellow='#fff5d2',
+	red='#ffd6d2',
+	green='#d2ffeb';
 function onKeyUp(event){
 	atkBase=getValue('atkBase');
 	atk=getValue('atk');
 	critRate=getValue('critRate')/100;
 	critDmg=getValue('critDmg')/100;
+	elemMastery=getValue('elemMastery')/E;
 	check();
 	calc();
 	print();
@@ -25,10 +32,13 @@ function calc(){
 	//E(atk)=E(critRate)=E(critDMG)
 	//critRate*atk*C/atkBase/A=1+2*critRate*critRate
 	//a=2, b=atk*C/atkBase/A, c=1
-
-	exp['atk']=atkBase*(1+critRate*critDmg)*A;
-	exp['critRate']=atk*critDmg*B;
-	exp['critDmg']=atk*critRate*C;
+	tEM=1+2.78*E*elemMastery/(E*elemMastery+1400);
+	exp['atk']=atkBase*(1+critRate*critDmg)*A*tEM;
+	exp['atkSmall']=(1+critRate*critDmg)*D*tEM;
+	exp['critRate']=atk*critDmg*B*tEM;
+	exp['critDmg']=atk*critRate*C*tEM;
+	exp['elemMastery']=atk*(1+critRate*critDmg)*1400*2.78*E/(E*elemMastery+1400)/(E*elemMastery+1400);
+	getMax();
 
 	var a=2,b=-atk*C/(atkBase*A),c=1;
 	healthy['critRate']=100*(-b+Math.sqrt(b*b-4*a*c))/2/a;
@@ -48,24 +58,27 @@ function calc(){
 	}
 }
 function print(){
-	ex.innerHTML=h("偏导(副词条参数) Partial Derivative：");
-	ex.innerHTML+=p("攻击力 ATK: ")+p1(exp['atk'].toFixed(1));
-	ex.innerHTML+=p("暴击率 CRIT.Rate: ")+p1(exp['critRate'].toFixed(1));
-	ex.innerHTML+=p("暴击伤害 CRIT.DMG: ")+p1(exp['critDmg'].toFixed(1));
+	ex.innerHTML=h("偏导数(副词条参数) Partial Derivative：");
+	ex.innerHTML+=p("攻击力(大攻击) ATK: ")+p1(exp['atk'].toFixed(1),yellow);
+	ex.innerHTML+=p("暴击率 CRIT.Rate: ")+p1(exp['critRate'].toFixed(1),yellow);
+	ex.innerHTML+=p("暴击伤害 CRIT.DMG: ")+p1(exp['critDmg'].toFixed(1),yellow);
+	ex.innerHTML+=p("元素精通 Elemental Mastery: ")+p1(exp['elemMastery'].toFixed(1),yellow);
 
-	hel1.innerHTML=h("双爆健康范围(如果是NaN%，则不存在健康范围)，从：")
-	hel1.innerHTML+=p("暴击率 CRIT.Rate: ")+p1(healthy['critRate1'].toFixed(1)+"%");
-	hel1.innerHTML+=p("暴击伤害 CRIT.DMG: ")+p1(healthy['critDmg1'].toFixed(1)+"%");
+	ex.innerHTML+=p("攻击力(小攻击) ATK: ")+p1(exp['atkSmall'].toFixed(1),green);
+	
 
-	hel.innerHTML=h("到：")
-	hel.innerHTML+=p("暴击率 CRIT.Rate: ")+p1(healthy['critRate'].toFixed(1)+"%");
-	hel.innerHTML+=p("暴击伤害 CRIT.DMG: ")+p1(healthy['critDmg'].toFixed(1)+"%");
+	hel1.innerHTML=h("健康范围(如果是NaN%，则不存在健康范围)，从：")
+	hel1.innerHTML+=p("暴击率 CRIT.Rate: ")
+		+p1(healthy['critRate1'].toFixed(1)+"%-"+healthy['critRate'].toFixed(1)+"%",);
+	hel1.innerHTML+=p("暴击伤害 CRIT.DMG: ")
+		+p1(healthy['critDmg1'].toFixed(1)+"%-"+healthy['critDmg'].toFixed(1)+"%",);
 }
 function p(text){
 	return '<p>'+text+'</p>';
 }
-function p1(text){
-	return '<p class="num">'+text+'</p>';
+function p1(num,color='#f9f9f9'){
+	return '<div class="bg"><p class="num" style="width:'+(100*num/maxE)+'%;background:'+color+'">'
+		+num+'</p></div>';
 }
 function h(text){
 	return '<h1>'+text+'</h1>';
@@ -88,7 +101,15 @@ function check() {
 		document.forms[0]['critDmg'].value=50.0;
 	}
 }
-
+function getMax(){
+	maxE=exp['atk'];
+	var i;
+	for(i in exp){
+		if(exp[i]>maxE){
+			maxE=exp[i];
+		}
+	}
+}
 
 
 
