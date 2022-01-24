@@ -53,13 +53,13 @@ function print(){
 	ex.innerHTML+=p("暴击率 CRIT.Rate: ")+p1(exp['critRate'].toFixed(1));
 	ex.innerHTML+=p("暴击伤害 CRIT.DMG: ")+p1(exp['critDmg'].toFixed(1));
 
-	hel.innerHTML=h("以攻击力为基础的健康值：")
-	hel.innerHTML+=p("暴击率 CRIT.Rate: ")+p1(healthy['critRate'].toFixed(1)+"%");
-	hel.innerHTML+=p("暴击伤害 CRIT.DMG: ")+p1(healthy['critDmg'].toFixed(1)+"%");
-
-	hel1.innerHTML=h("或者：")
+	hel1.innerHTML=h("双爆健康范围(如果是NaN%，则不存在健康范围)，从：")
 	hel1.innerHTML+=p("暴击率 CRIT.Rate: ")+p1(healthy['critRate1'].toFixed(1)+"%");
 	hel1.innerHTML+=p("暴击伤害 CRIT.DMG: ")+p1(healthy['critDmg1'].toFixed(1)+"%");
+
+	hel.innerHTML=h("到：")
+	hel.innerHTML+=p("暴击率 CRIT.Rate: ")+p1(healthy['critRate'].toFixed(1)+"%");
+	hel.innerHTML+=p("暴击伤害 CRIT.DMG: ")+p1(healthy['critDmg'].toFixed(1)+"%");
 }
 function p(text){
 	return '<p>'+text+'</p>';
