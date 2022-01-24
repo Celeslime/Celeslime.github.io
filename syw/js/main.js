@@ -67,7 +67,7 @@ function print(){
 	ex.innerHTML+=p("攻击力(小攻击) ATK: ")+p1(exp['atkSmall'].toFixed(1),green);
 	
 
-	hel1.innerHTML=h("健康范围(如果是NaN%，则不存在健康范围)，从：")
+	hel1.innerHTML=h("健康范围(如果是NaN%，则不存在健康范围)：")
 	hel1.innerHTML+=p("暴击率 CRIT.Rate: ")
 		+p1(healthy['critRate1'].toFixed(1)+"%-"+healthy['critRate'].toFixed(1)+"%",);
 	hel1.innerHTML+=p("暴击伤害 CRIT.DMG: ")
