@@ -1,21 +1,21 @@
 // 奇妙的事情发生了 o‿≖✧
 var atkBase,atk,critRate,critDmg;
 var exp=new Array(),healthy=new Array();
-var maxE;
+var maxE=0;
 var A=0.04975,
 	B=0.033,
 	C=0.066,
 	D=16.75,
 	E=19.75;
-var yellow='#fff5d2',
-	red='#ffd6d2',
-	green='#d2ffeb';
+ var yellow='#F3FFAC',
+ 	red='#FFBFAC',
+ 	green='#ACFFDA';
 function onKeyUp(event){
 	atkBase=getValue('atkBase');
 	atk=getValue('atk');
 	critRate=getValue('critRate')/100;
 	critDmg=getValue('critDmg')/100;
-	elemMastery=getValue('elemMastery')/E;
+	elemMastery=getValue('elemMastery');
 	check();
 	calc();
 	print();
@@ -23,7 +23,12 @@ function onKeyUp(event){
 function getValue(name){
 	var elem=document.forms[0][name];
 	wd=elem.value;
-	return parseFloat(wd);
+	var n=parseFloat(wd);
+	if(isNaN(n)){
+		elem.value=0;
+		return 0;
+	}
+	return n;
 }
 function calc(){
 	//this part refer to...
@@ -32,12 +37,13 @@ function calc(){
 	//E(atk)=E(critRate)=E(critDMG)
 	//critRate*atk*C/atkBase/A=1+2*critRate*critRate
 	//a=2, b=atk*C/atkBase/A, c=1
-	tEM=1+2.78*E*elemMastery/(E*elemMastery+1400);
+	tEM=1+2.78*elemMastery/(elemMastery+1400);
+	exp['score']=atk*(1+critRate*critDmg)*tEM;
 	exp['atk']=atkBase*(1+critRate*critDmg)*A*tEM;
 	exp['atkSmall']=(1+critRate*critDmg)*D*tEM;
 	exp['critRate']=atk*critDmg*B*tEM;
 	exp['critDmg']=atk*critRate*C*tEM;
-	exp['elemMastery']=atk*(1+critRate*critDmg)*1400*2.78*E/(E*elemMastery+1400)/(E*elemMastery+1400);
+	exp['elemMastery']=atk*(1+critRate*critDmg)*1400*2.78*E/(elemMastery+1400)/(elemMastery+1400);
 	getMax();
 
 	var a=2,b=-atk*C/(atkBase*A),c=1;
@@ -59,24 +65,30 @@ function calc(){
 }
 function print(){
 	ex.innerHTML=h("偏导数(副词条参数) Partial Derivative：");
-	ex.innerHTML+=p("攻击力(大攻击) ATK: ")+p1(exp['atk'].toFixed(1),yellow);
-	ex.innerHTML+=p("暴击率 CRIT.Rate: ")+p1(exp['critRate'].toFixed(1),yellow);
-	ex.innerHTML+=p("暴击伤害 CRIT.DMG: ")+p1(exp['critDmg'].toFixed(1),yellow);
-	ex.innerHTML+=p("元素精通 Elemental Mastery: ")+p1(exp['elemMastery'].toFixed(1),yellow);
-
-	ex.innerHTML+=p("攻击力(小攻击) ATK: ")+p1(exp['atkSmall'].toFixed(1),green);
+	ex.innerHTML+=p("攻击力(大攻击) ATK: ")+pNum(exp['atk'].toFixed(1),green);
+	ex.innerHTML+=p("暴击率 CRIT.Rate: ")+pNum(exp['critRate'].toFixed(1),green);
+	ex.innerHTML+=p("暴击伤害 CRIT.DMG: ")+pNum(exp['critDmg'].toFixed(1),green);
+	ex.innerHTML+=p("元素精通(不包含<strong>反应覆盖率</strong>和<strong>反应倍率</strong>) Elemental Mastery: ")+pNum(exp['elemMastery'].toFixed(1),green);
+	ex.innerHTML+=p("攻击力(小攻击) ATK: ")+pNum(exp['atkSmall'].toFixed(1),green);
 	
 
 	hel1.innerHTML=h("健康范围(如果是NaN%，则不存在健康范围)：")
 	hel1.innerHTML+=p("暴击率 CRIT.Rate: ")
-		+p1(healthy['critRate1'].toFixed(1)+"%-"+healthy['critRate'].toFixed(1)+"%",);
+		+pCom(healthy['critRate1'].toFixed(1)+"%-"+healthy['critRate'].toFixed(1)+"%",);
 	hel1.innerHTML+=p("暴击伤害 CRIT.DMG: ")
-		+p1(healthy['critDmg1'].toFixed(1)+"%-"+healthy['critDmg'].toFixed(1)+"%",);
+		+pCom(healthy['critDmg1'].toFixed(1)+"%-"+healthy['critDmg'].toFixed(1)+"%",);
+
+	sc.innerHTML=h("综合分数 Score：");
+	sc.innerHTML+=pCom(exp['score'].toFixed(1));
 }
 function p(text){
 	return '<p>'+text+'</p>';
 }
-function p1(num,color='#f9f9f9'){
+function pCom(text,color='#f9f9f9'){
+	return '<div class="bg"><p class="num" style="background:'+color+'">'
+		+text+'</p></div>';
+}
+function pNum(num,color='#f9f9f9'){
 	return '<div class="bg"><p class="num" style="width:'+(100*num/maxE)+'%;background:'+color+'">'
 		+num+'</p></div>';
 }
@@ -105,7 +117,7 @@ function getMax(){
 	maxE=exp['atk'];
 	var i;
 	for(i in exp){
-		if(exp[i]>maxE){
+		if(exp[i]>maxE && i!='score'){
 			maxE=exp[i];
 		}
 	}
@@ -301,4 +313,4 @@ function getMax(){
 // 	document.querySelector('#searchDiv input[name="word"]').value="^acc.*(tion|ing)$";
 // 	search();
 // }
-// console.log("\n\n\n\n\n        萌是深藏不漏的✿◡‿◡\n\n\n\n\n\n");
+console.log("\n\n\n\n\n        萌是深藏不漏的✿◡‿◡\n\n\n\n\n\n");
