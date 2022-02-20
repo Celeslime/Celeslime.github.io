@@ -1,18 +1,18 @@
 // 奇妙的事情发生了 o‿≖✧
-var atkBase,atk,critRate,critDmg;
-var exp=new Array(),healthy=new Array();
+var atkBase,atkAdd,critRate,critDmg;
+var exp=new Array(),healthy=new Array(),expBase;
 var maxE=0;
 var A=0.04975,
 	B=0.033,
 	C=0.066,
-	D=16.75,
-	E=19.75;
+	D=16.75,//小公鸡
+	E=19.75;//精通
  var yellow='#F3FFAC',
  	red='#FFBFAC',
  	green='#ACFFDA';
 function onKeyUp(event){
 	atkBase=getValue('atkBase');
-	atk=getValue('atk');
+	atkAdd=getValue('atkAdd');
 	critRate=getValue('critRate')/100;
 	critDmg=getValue('critDmg')/100;
 	elemMastery=getValue('elemMastery');
@@ -21,7 +21,7 @@ function onKeyUp(event){
 	print();
 }
 function getValue(name){
-	var elem=document.forms[0][name];
+	var elem=document.forms[0][name]; 
 	wd=elem.value;
 	var n=parseFloat(wd);
 	if(isNaN(n)){
@@ -31,26 +31,19 @@ function getValue(name){
 	return n;
 }
 function calc(){
-	//this part refer to...
-	//hitExp = atk*(1+critRate*critDmg);
-	//atk    = atkBase*(1+atkRate)
-	//E(atk)=E(critRate)=E(critDMG)
-	//critRate*atk*C/atkBase/A=1+2*critRate*critRate
-	//a=2, b=atk*C/atkBase/A, c=1
-	tEM=1+2.78*elemMastery/(elemMastery+1400);
-	exp['score']=atk*(1+critRate*critDmg)*tEM;
-	exp['atk']=atkBase*(1+critRate*critDmg)*A*tEM;
-	exp['atkSmall']=(1+critRate*critDmg)*D*tEM;
-	exp['critRate']=atk*critDmg*B*tEM;
-	exp['critDmg']=atk*critRate*C*tEM;
-	exp['elemMastery']=atk*(1+critRate*critDmg)*1400*2.78*E/(elemMastery+1400)/(elemMastery+1400);
+	expBase=getExp(atkBase+atkBase,critRate,critDmg,elemMastery);
+	exp['atk']=getExp(atkBase*(1+A)+atkBase,critRate,critDmg,elemMastery)-expBase;
+	exp['critRate']=getExp(atkBase+atkBase,critRate+B,critDmg,elemMastery)-expBase;
+	exp['critDmg']=getExp(atkBase+atkBase,critRate,critDmg+C,elemMastery)-expBase;
+	exp['atkSmall']=getExp(atkBase+atkBase+D,critRate,critDmg,elemMastery)-expBase;
+	exp['elemMastery']=getExp(atkBase+atkBase,critRate,critDmg,elemMastery+E)-expBase;
 	getMax();
 
-	var a=2,b=-atk*C/(atkBase*A),c=1;
+	var a=2,b=-(atkBase+atkAdd)*C/(atkBase*A),c=1;
 	healthy['critRate']=100*(-b+Math.sqrt(b*b-4*a*c))/2/a;
 	if(healthy['critRate']>100){
 		healthy['critRate']=100;
-		healthy['critDmg']=100*atk*C/A/atkBase-100;
+		healthy['critDmg']=100*(atkBase+atkAdd)*C/A/atkBase-100;
 	}else{
 		healthy['critDmg']=C/B*healthy['critRate']
 	}
@@ -58,18 +51,33 @@ function calc(){
 	healthy['critRate1']=100*(-b-Math.sqrt(b*b-4*a*c))/2/a;
 	if(healthy['critRate1']>100){
 		healthy['critRate1']=100;
-		healthy['critDmg1']=100*atk*C/A/atkBase-100;
+		healthy['critDmg1']=100*(atkBase+atkAdd)*C/A/atkBase-100;
 	}else{
 		healthy['critDmg1']=C/B*healthy['critRate1']
 	}
 }
+function getEM(elemMastery){
+	return 2.78*elemMastery/(elemMastery+1400);
+}
+function getExp(atk,critRate,critDmg,elemMastery){
+	return atk*(1+critRate*critDmg)*(1+getEM(elemMastery));
+}
 function print(){
 	ex.innerHTML=h("偏导数(副词条参数) Partial Derivative：");
-	ex.innerHTML+=p("攻击力(大攻击) ATK: ")+pNum(exp['atk'].toFixed(1),green);
-	ex.innerHTML+=p("暴击率 CRIT.Rate: ")+pNum(exp['critRate'].toFixed(1),green);
-	ex.innerHTML+=p("暴击伤害 CRIT.DMG: ")+pNum(exp['critDmg'].toFixed(1),green);
-	ex.innerHTML+=p("元素精通(不包含<strong>反应覆盖率</strong>和<strong>反应倍率</strong>) Elemental Mastery: ")+pNum(exp['elemMastery'].toFixed(1),green);
-	ex.innerHTML+=p("攻击力(小攻击) ATK: ")+pNum(exp['atkSmall'].toFixed(1),green);
+
+	ex.innerHTML+=p("攻击力(大攻击) ATK: ")
+		+pNum(exp['atk'],green);
+
+	ex.innerHTML+=p("暴击率 CRIT.Rate: ")
+		+pNum(exp['critRate'],green);
+
+	ex.innerHTML+=p("暴击伤害 CRIT.DMG: ")
+		+pNum(exp['critDmg'],green);
+
+	ex.innerHTML+=p("元素精通(增幅 不包含<strong>反应覆盖率</strong>和<strong>反应倍率</strong>)Elemental Mastery: ")
+		+pNum(exp['elemMastery'],green);
+	ex.innerHTML+=p("攻击力(小攻击) ATK: ")
+		+pNum(exp['atkSmall'],green);
 	
 
 	hel1.innerHTML=h("健康范围(如果是NaN%，则不存在健康范围)：")
@@ -79,27 +87,26 @@ function print(){
 		+pCom(healthy['critDmg1'].toFixed(1)+"%-"+healthy['critDmg'].toFixed(1)+"%",);
 
 	sc.innerHTML=h("综合分数 Score：");
-	sc.innerHTML+=pCom(exp['score'].toFixed(1));
+	sc.innerHTML+=pCom(expBase.toFixed(1));
 }
 function p(text){
 	return '<p>'+text+'</p>';
 }
 function pCom(text,color='#f9f9f9'){
-	return '<div class="bg"><p class="num" style="background:'+color+'">'
-		+text+'</p></div>';
+	return '<div class="bg"><p class="num" style="'+
+	'background:'+color+';'
+	+'">'+text+'</p></div>';
 }
 function pNum(num,color='#f9f9f9'){
-	return '<div class="bg"><p class="num" style="width:'+(100*num/maxE)+'%;background:'+color+'">'
-		+num+'</p></div>';
+	return '<div class="bg"><p class="num" style="'+
+		'width:'+(100*num/maxE)+'%;'+
+		'background:'+color+';'+
+		'">'+num.toFixed(1)+'</p></div>';
 }
 function h(text){
 	return '<h1>'+text+'</h1>';
 }
 function check() {
-	if(atk<atkBase){
-		atk=atkBase;
-		document.forms[0]['atk'].value=atkBase;
-	}
 	if(critRate<0.05){
 		critRate=0.05;
 		document.forms[0]['critRate'].value=5.0;
