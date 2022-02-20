@@ -31,12 +31,12 @@ function getValue(name){
 	return n;
 }
 function calc(){
-	expBase=getExp(atkBase+atkBase,critRate,critDmg,elemMastery);
-	exp['atk']=getExp(atkBase*(1+A)+atkBase,critRate,critDmg,elemMastery)-expBase;
-	exp['critRate']=getExp(atkBase+atkBase,critRate+B,critDmg,elemMastery)-expBase;
-	exp['critDmg']=getExp(atkBase+atkBase,critRate,critDmg+C,elemMastery)-expBase;
-	exp['atkSmall']=getExp(atkBase+atkBase+D,critRate,critDmg,elemMastery)-expBase;
-	exp['elemMastery']=getExp(atkBase+atkBase,critRate,critDmg,elemMastery+E)-expBase;
+	expBase=getExp(atkBase+atkAdd,critRate,critDmg,elemMastery);
+	exp['atk']=getExp(atkBase*(1+A)+atkAdd,critRate,critDmg,elemMastery)-expBase;
+	exp['critRate']=getExp(atkBase+atkAdd,critRate+B,critDmg,elemMastery)-expBase;
+	exp['critDmg']=getExp(atkBase+atkAdd,critRate,critDmg+C,elemMastery)-expBase;
+	exp['atkSmall']=getExp(atkBase+atkAdd+D,critRate,critDmg,elemMastery)-expBase;
+	exp['elemMastery']=getExp(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expBase;
 	getMax();
 
 	var a=2,b=-(atkBase+atkAdd)*C/(atkBase*A),c=1;
