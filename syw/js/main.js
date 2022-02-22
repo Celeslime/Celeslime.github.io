@@ -32,12 +32,16 @@ function getValue(name){
 }
 function calc(){
 	expBase=getExp(atkBase+atkAdd,critRate,critDmg,elemMastery);
+	expOverloaded=getExpOverloaded(atkBase+atkAdd,critRate,critDmg,elemMastery);
 	exp['atk']=getExp(atkBase*(1+A)+atkAdd,critRate,critDmg,elemMastery)-expBase;
-	exp['critRate']=getExp(atkBase+atkAdd,critRate+B,critDmg,elemMastery)-expBase;
+	exp['critRate']=getExp(atkBase+atkAdd,(critRate+B)>=1?1:(critRate+B),critDmg,elemMastery)-expBase;
 	exp['critDmg']=getExp(atkBase+atkAdd,critRate,critDmg+C,elemMastery)-expBase;
 	exp['atkSmall']=getExp(atkBase+atkAdd+D,critRate,critDmg,elemMastery)-expBase;
 	exp['elemMastery']=getExp(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expBase;
 	getMax();
+
+	exp['Overloaded']=getExpOverloaded(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expOverloaded;
+	
 
 	var a=2,b=-(atkBase+atkAdd)*C/(atkBase*A),c=1;
 	healthy['critRate']=100*(-b+Math.sqrt(b*b-4*a*c))/2/a;
@@ -55,56 +59,6 @@ function calc(){
 	}else{
 		healthy['critDmg1']=C/B*healthy['critRate1']
 	}
-}
-function getEM(elemMastery){
-	return 2.78*elemMastery/(elemMastery+1400);
-}
-function getExp(atk,critRate,critDmg,elemMastery){
-	return atk*(1+critRate*critDmg)*(1+getEM(elemMastery));
-}
-function print(){
-	ex.innerHTML=h("偏导数(副词条参数) Partial Derivative：");
-
-	ex.innerHTML+=p("攻击力(大攻击) ATK: ")
-		+pNum(exp['atk'],green);
-
-	ex.innerHTML+=p("暴击率 CRIT.Rate: ")
-		+pNum(exp['critRate'],green);
-
-	ex.innerHTML+=p("暴击伤害 CRIT.DMG: ")
-		+pNum(exp['critDmg'],green);
-
-	ex.innerHTML+=p("元素精通(增幅 不包含<strong>反应覆盖率</strong>和<strong>反应倍率</strong>)Elemental Mastery: ")
-		+pNum(exp['elemMastery'],green);
-	ex.innerHTML+=p("攻击力(小攻击) ATK: ")
-		+pNum(exp['atkSmall'],green);
-	
-
-	hel1.innerHTML=h("健康范围(如果是NaN%，则不存在健康范围)：")
-	hel1.innerHTML+=p("暴击率 CRIT.Rate: ")
-		+pCom(healthy['critRate1'].toFixed(1)+"%-"+healthy['critRate'].toFixed(1)+"%",);
-	hel1.innerHTML+=p("暴击伤害 CRIT.DMG: ")
-		+pCom(healthy['critDmg1'].toFixed(1)+"%-"+healthy['critDmg'].toFixed(1)+"%",);
-
-	sc.innerHTML=h("综合分数 Score：");
-	sc.innerHTML+=pCom(expBase.toFixed(1));
-}
-function p(text){
-	return '<p>'+text+'</p>';
-}
-function pCom(text,color='#f9f9f9'){
-	return '<div class="bg"><p class="num" style="'+
-	'background:'+color+';'
-	+'">'+text+'</p></div>';
-}
-function pNum(num,color='#f9f9f9'){
-	return '<div class="bg"><p class="num" style="'+
-		'width:'+(100*num/maxE)+'%;'+
-		'background:'+color+';'+
-		'">'+num.toFixed(1)+'</p></div>';
-}
-function h(text){
-	return '<h1>'+text+'</h1>';
 }
 function check() {
 	if(critRate<0.05){
@@ -128,6 +82,68 @@ function getMax(){
 			maxE=exp[i];
 		}
 	}
+}
+
+/****元素精通****/
+function getEMRate(elemMastery){
+	return 25*elemMastery/(elemMastery+1400)/9;
+}
+function getOverloaded(elemMastery){
+	return 723.29*4*(1+16*elemMastery/(elemMastery+2000));
+}
+/****伤害****/
+function getExp(atk,critRate,critDmg,elemMastery){
+	return atk*(1+critRate*critDmg)*(1+getEMRate(elemMastery));
+}
+function getExpOverloaded(atk,critRate,critDmg,elemMastery){
+	return atk*(1+critRate*critDmg)*(1+0.0015*elemMastery)+getOverloaded(elemMastery)/1.706;
+}
+/****输出****/
+function print(){
+	ex.innerHTML=h("偏导数(副词条参数) Partial Derivative：");
+
+	ex.innerHTML+=p("攻击力(大攻击) ATK: ")
+		+colorDiv(exp['atk'],green);
+
+	ex.innerHTML+=p("暴击率 CRIT.Rate: ")
+		+colorDiv(exp['critRate'],green);
+
+	ex.innerHTML+=p("暴击伤害 CRIT.DMG: ")
+		+colorDiv(exp['critDmg'],green);
+
+	ex.innerHTML+=p("攻击力(小攻击) ATK: ")
+		+colorDiv(exp['atkSmall'],green);
+	ex.innerHTML+=p("元素精通(<strong>增幅</strong> 不包含<strong>反应覆盖率</strong>和<strong>反应倍率</strong>)Elemental Mastery: ")
+		+colorDiv(exp['elemMastery'],green);
+
+
+	ex.innerHTML+=p("元素精通(<strong>八重神子超载专栏</strong> 不包含<strong>反应覆盖率</strong>)Elemental Mastery: ")
+		+div(exp['Overloaded'].toFixed(1));
+	hel1.innerHTML=h("健康范围(如果是NaN%，则不存在健康范围)：")
+	hel1.innerHTML+=p("暴击率 CRIT.Rate: ")
+		+div(healthy['critRate1'].toFixed(1)+"%-"+healthy['critRate'].toFixed(1)+"%");
+	hel1.innerHTML+=p("暴击伤害 CRIT.DMG: ")
+		+div(healthy['critDmg1'].toFixed(1)+"%-"+healthy['critDmg'].toFixed(1)+"%");
+
+	sc.innerHTML=h("综合分数 Score：");
+	sc.innerHTML+=div(expBase.toFixed(1));
+}
+function p(text){
+	return '<p>'+text+'</p>';
+}
+function div(text,color='#f9f9f9'){
+	return '<div class="bg"><p class="num" style="'+
+	'background:'+color+';'
+	+'">'+text+'</p></div>';
+}
+function colorDiv(num,color='#f9f9f9'){
+	return '<div class="bg"><p class="num" style="'+
+		'width:'+((100*num/maxE)>=100?100:(100*num/maxE))+'%;'+
+		'background:'+color+';'+
+		'">'+num.toFixed(1)+'</p></div>';
+}
+function h(text){
+	return '<h1>'+text+'</h1>';
 }
 
 
