@@ -1,16 +1,17 @@
 // 奇妙的事情发生了 o‿≖✧
 var atkBase,atkAdd,critRate,critDmg;
-var exp=new Array(),healthy=new Array(),expBase;
-var maxE=0;
+var exp=new Array(),expEM=new Array(),healthy=new Array(),expBase;
+var maxA=0,maxB=0;
 var A=0.04975,
 	B=0.033,
 	C=0.066,
 	D=16.75,//小公鸡
 	E=19.75;//精通
 var RATIO=1.25;
-var yellow='#F3FFAC',
- 	red='#FFBFAC',
- 	green='#ACFFDA';
+var yellow='#ffa',
+ 	red='#fba',
+ 	orange='#fec',
+ 	green='#afd';
 function onKeyUp(event){
 	atkBase=getValue('atkBase');
 	atkAdd=getValue('atkAdd');
@@ -32,17 +33,21 @@ function getValue(name){
 	return n;
 }
 function calc(){
-	expBase=getExp(atkBase+atkAdd,critRate,critDmg,elemMastery);
-	expOverloaded=getExpOverloaded(atkBase+atkAdd,critRate,critDmg,elemMastery);
-	expBaChong=getExpBaChong(atkBase+atkAdd,critRate,critDmg,elemMastery);
-	exp['atk']=getExp(atkBase*(1+A)+atkAdd,critRate,critDmg,elemMastery)-expBase;
-	exp['critRate']=getExp(atkBase+atkAdd,(critRate+B)>=1?1:(critRate+B),critDmg,elemMastery)-expBase;
-	exp['critDmg']=getExp(atkBase+atkAdd,critRate,critDmg+C,elemMastery)-expBase;
-	exp['atkSmall']=getExp(atkBase+atkAdd+D,critRate,critDmg,elemMastery)-expBase;
-	exp['elemMastery']=getExp(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expBase;
-	exp['Overloaded']=(getExpOverloaded(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expOverloaded)/2;
-	exp['BaChong']=(getExpBaChong(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expBaChong)/2;
-	getMax();
+	expBase       =getExp(atkBase+atkAdd,critRate,critDmg,elemMastery);
+	expOverloaded =getExpOverloaded(atkBase+atkAdd,critRate,critDmg,elemMastery);
+	expBaChong    =getExpBaChong(atkBase+atkAdd,critRate,critDmg,elemMastery);
+
+	exp['atk']      =getExp(atkBase*(1+A)+atkAdd,critRate,critDmg,elemMastery)-expBase;
+	exp['atkSmall'] =getExp(atkBase+atkAdd+D,critRate,critDmg,elemMastery)-expBase;
+	exp['elemMastery'] =getExp(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expBase;
+	exp['critRate'] =getExp(atkBase+atkAdd,(critRate+B)>=1?1:(critRate+B),critDmg,elemMastery)-expBase;
+	exp['critDmg']  =getExp(atkBase+atkAdd,critRate,critDmg+C,elemMastery)-expBase;
+	getMaxA();
+
+	
+	expEM['Overloaded']  =(getExpOverloaded(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expOverloaded);
+	expEM['BaChong']     =(getExpBaChong(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expBaChong);
+	getMaxB()
 
 	var a=2,b=-(atkBase+atkAdd)*C/(atkBase*A),c=1;
 	healthy['critRate']=100*(-b+Math.sqrt(b*b-4*a*c))/2/a;
@@ -75,16 +80,24 @@ function check() {
 		document.forms[0]['critDmg'].value=50.0;
 	}
 }
-function getMax(){
-	maxE=exp['atk'];
+function getMaxA(){
+	maxA=exp['atk'];
 	var i;
 	for(i in exp){
-		if(exp[i]>maxE && i!='score'){
-			maxE=exp[i];
+		if(exp[i]>maxA && i!='score'){
+			maxA=exp[i];
 		}
 	}
 }
-
+function getMaxB(){
+	maxB=expEM['Overloaded'];
+	var i;
+	for(i in expEM){
+		if(expEM[i]>maxB && i!='score'){
+			maxB=expEM[i];
+		}
+	}
+}
 /****元素精通****/
 function getEMRate(elemMastery){
 	return 25*elemMastery/(elemMastery+1400)/9;
@@ -104,28 +117,38 @@ function getExpBaChong(atk,critRate,critDmg,elemMastery){
 }
 /****输出****/
 function print(){
+	sc.innerHTML=h("综合分数 Score：");
+	sc.innerHTML+=div(expBase.toFixed(1))+"<br>";
+
 	ex.innerHTML=h("偏导数(副词条参数) Partial Derivative：");
-	colum("攻击力(大攻击) ATK: ",exp['atk'],green);
-	colum("暴击率 CRIT.Rate: ",exp['critRate'],green);
-	colum("暴击伤害 CRIT.DMG: ",exp['critDmg'],green);
-	colum("攻击力(小攻击) ATK: ",exp['atkSmall'],green);
+	colum("攻击力(大攻击) ATK: ",exp['atk'],green,maxA);
+	colum("攻击力(小攻击) ATK: ",exp['atkSmall'],green,maxA);
+	colum("元素精通(增幅) 融化2.0 蒸发1.5 Elemental Mastery: ",exp['elemMastery'],green,maxA);
+	colum("暴击率 CRIT.Rate: ",exp['critRate'],green,maxA);
+	colum("暴击伤害 CRIT.DMG: ",exp['critDmg'],green,maxA);
+	ex.innerHTML+="<br>";
 
-	ex.innerHTML+=h("元素精通 请注意 反应覆盖率 和 扩散次数 Elemental Mastery: ");
-	colum("增幅：<strong>融化2.0；蒸发1.5</strong>",exp['elemMastery'],green);
-	colum("剧变(技能倍率RATIO="+(RATIO*100)+"%时)：<strong>超载2.0；碎冰1.5；感电1.2；扩散0.6；超导0.5</strong>",exp['Overloaded'],green);
-	colum("八重神子专栏(技能倍率170.6%时)：<strong>超载2.0；感电1.2；超导0.5</strong>",exp['BaChong'],green)
+	ex.innerHTML+=h("元素精通(剧变 90级 "+(RATIO*100)+"%技能倍率) Elemental Mastery: ");
+	colum("扩散 <strong>每种元素最多扩散两次 可能触发其他剧变</strong>",expEM['Overloaded']*0.3,orange,maxB);
+	colum("超载 <strong>爆炸</strong>",expEM['Overloaded'],orange,maxB);
+	colum("感电 <strong>攻击间隔一秒</strong>",expEM['Overloaded']*0.6,orange,maxB);
+	colum("超导 仅用于吸收雷元素",expEM['Overloaded']*0.25,orange,maxB);
+	colum("碎冰 冻结",expEM['Overloaded']*0.75,orange,maxB);
 
-	hel1.innerHTML=h("健康范围(如果是NaN%，则不存在健康范围)：")
+	colum("八重神子(170.6%技能倍率)：超载 <strong>爆炸</strong>",expEM['BaChong'],orange,maxB);
+	colum("八重神子(170.6%技能倍率)：感电 <strong>攻击间隔一秒</strong>",expEM['BaChong']*0.6,orange,maxB);
+	ex.innerHTML+="<br>";
+
+	hel1.innerHTML=h("健康范围(如果是NaN%，则不存在健康范围)：");
 	hel1.innerHTML+=p("暴击率 CRIT.Rate: ")
 		+div(healthy['critRate1'].toFixed(1)+"%-"+healthy['critRate'].toFixed(1)+"%");
 	hel1.innerHTML+=p("暴击伤害 CRIT.DMG: ")
 		+div(healthy['critDmg1'].toFixed(1)+"%-"+healthy['critDmg'].toFixed(1)+"%");
 
-	sc.innerHTML=h("综合分数 Score：");
-	sc.innerHTML+=div(expBase.toFixed(1));
+	
 }
-function colum(text,num,color){
-	ex.innerHTML+=p(text)+colorDiv(num,color);
+function colum(text,num,color,max){
+	ex.innerHTML+=p(text)+colorDiv(num,color,max);
 }
 function p(text){
 	return '<p>'+text+'</p>';
@@ -135,9 +158,9 @@ function div(text,color='#f9f9f9'){
 	'background:'+color+';'
 	+'">'+text+'</p></div>';
 }
-function colorDiv(num,color='#f9f9f9'){
+function colorDiv(num,color='#f9f9f9',max){
 	return '<div class="bg"><p class="num" style="'+
-		'width:'+((100*num/maxE)>=100?100:(100*num/maxE))+'%;'+
+		'width:'+((100*num/max)>=100?100:(100*num/max))+'%;'+
 		'background:'+color+';'+
 		'">'+num.toFixed(1)+'</p></div>';
 }
@@ -335,4 +358,4 @@ function h(text){
 // 	document.querySelector('#searchDiv input[name="word"]').value="^acc.*(tion|ing)$";
 // 	search();
 // }
-console.log("\n\n\n\n\n        萌是深藏不漏的✿◡‿◡\n\n\n\n\n\n");
+console.log("\n\n\n\n\n        萌是深藏不漏的✿◡‿◡\n\n\n\n\n\ntip:修改ratio来修改技能倍率");
