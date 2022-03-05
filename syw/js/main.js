@@ -34,14 +34,18 @@ function getValue(name){
 }
 function calc(){
 	expBase       =getExp(atkBase+atkAdd,critRate,critDmg,elemMastery);
+	expBaChong1   =getExpBaChong1(atkBase+atkAdd,critRate,critDmg,elemMastery)
+
 	expOverloaded =getExpOverloaded(atkBase+atkAdd,critRate,critDmg,elemMastery);
 	expBaChong    =getExpBaChong(atkBase+atkAdd,critRate,critDmg,elemMastery);
 
 	exp['atk']      =getExp(atkBase*(1+A)+atkAdd,critRate,critDmg,elemMastery)-expBase;
 	exp['atkSmall'] =getExp(atkBase+atkAdd+D,critRate,critDmg,elemMastery)-expBase;
 	exp['elemMastery'] =getExp(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expBase;
+	exp['BaChong'] =getExp(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expBase;
 	exp['critRate'] =getExp(atkBase+atkAdd,(critRate+B)>=1?1:(critRate+B),critDmg,elemMastery)-expBase;
 	exp['critDmg']  =getExp(atkBase+atkAdd,critRate,critDmg+C,elemMastery)-expBase;
+	exp['BaChong']  =getExpBaChong1(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expBaChong1;
 	getMaxA();
 
 	
@@ -112,8 +116,12 @@ function getExp(atk,critRate,critDmg,elemMastery){
 function getExpOverloaded(atk,critRate,critDmg,elemMastery){
 	return atk*(1+critRate*critDmg)+getOverloaded(elemMastery)/RATIO;
 }
+/****八重神子****/
 function getExpBaChong(atk,critRate,critDmg,elemMastery){
 	return atk*(1+critRate*critDmg)*(1+0.0015*elemMastery)+getOverloaded(elemMastery)/1.706;
+}
+function getExpBaChong1(atk,critRate,critDmg,elemMastery){
+	return atk*(1+critRate*critDmg)*(1+0.0015*elemMastery);
 }
 /****输出****/
 function print(){
@@ -126,6 +134,7 @@ function print(){
 	colum("元素精通(增幅) 融化2.0 蒸发1.5 Elemental Mastery: ",exp['elemMastery'],green,maxA);
 	colum("暴击率 CRIT.Rate: ",exp['critRate'],green,maxA);
 	colum("暴击伤害 CRIT.DMG: ",exp['critDmg'],green,maxA);
+	colum("元素精通(八重神子) 天赋 Elemental Mastery: ",exp['BaChong'],green,maxA);
 	ex.innerHTML+="<br>";
 
 	ex.innerHTML+=h("元素精通(单次剧变 90级 附着周期2.5s 高攻速加倍"+(RATIO*100)+"%技能倍率) Elemental Mastery: ");
@@ -149,6 +158,9 @@ function print(){
 }
 function colum(text,num,color,max){
 	ex.innerHTML+=p(text)+colorDiv(num,color,max);
+}
+function bar(text,num){
+	ex.innerHTML+=p(text)+div(num);
 }
 function p(text){
 	return '<p>'+text+'</p>';
