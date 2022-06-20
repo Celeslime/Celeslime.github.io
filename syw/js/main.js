@@ -196,12 +196,10 @@ function print(){
 	sc.innerHTML+=div(expBase.toFixed(FixNum))+"<br>";
 
 	sc.innerHTML+=h("修正数据 Fixed:");
-	sc.innerHTML+=p('攻击力增加 ATK.addition:')+div(healthy['atkAdd'].toFixed(0));
-	sc.innerHTML+=p('攻击力 ATK:')+div((atkBase+healthy['atkAdd']).toFixed(0));
-	sc.innerHTML+=p('暴击率 CRIT.Rate:')+div((100*healthy['critRate']).toFixed(0));
-	sc.innerHTML+=p('暴击伤害 CRIT.Dmg:')+div((100*healthy['critDmg']).toFixed(0));
+	sc.innerHTML+=p('攻击力 ATK:')+div((atkBase+healthy['atkAdd']).toFixed(0)+' = '+atkBase+' + '+healthy['atkAdd'].toFixed(0));
+	sc.innerHTML+=p('暴击率 暴击伤害 CRIT:')+div((100*healthy['critRate']).toFixed(0)+'%+'+(100*healthy['critDmg']).toFixed(0)+"%");
 	var scFix=getExp(atkBase+healthy['atkAdd'],healthy['critRate'],healthy['critDmg'],elemMastery);
-	sc.innerHTML+=p('修正分数 CRIT.Dmg:')+div(scFix.toFixed(FixNum)+' (+'+(100*(scFix/expBase-1)).toFixed(FixNum)+'%)')+'<br>';
+	sc.innerHTML+=p('修正分数 Score.Fixed:')+div(scFix.toFixed(FixNum)+' (+'+(100*(scFix/expBase-1)).toFixed(FixNum)+'%)')+'<br>';
 
 	ex.innerHTML=h("偏导数(副词条参数) Partial Derivative：");
 	colum("攻击力(大攻击) ATK: ",exp['atk'],green,maxA);
