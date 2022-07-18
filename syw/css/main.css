@@ -1,7 +1,9 @@
 input,.num{
 	font-size:25px;
 }
-
+p.num{
+	white-space:nowrap;
+}
 h1,p{
 	font-size:10px;
 	margin:0;
