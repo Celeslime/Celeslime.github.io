@@ -5,11 +5,18 @@ var expBase,expEMBase;
 var maxA=0,maxB=0,RATIO=2.00;
 
 //以下数据由副词套保留两位小数后取平均值获得
-var A=0.0496, //攻击力百分比
-	B=0.033,  //啧
-	C=0.066,  //啧啧
-	D=16.535, //攻击力
-	E=19.815 ;//精通
+// var A=0.0496, //攻击力百分比
+// 	B=0.033,  //啧
+// 	C=0.066,  //啧啧
+// 	D=16.535, //攻击力
+// 	E=19.815 ;//精通
+//以下数据由副词矫正获得
+var A=3/60,   //攻击力百分比
+	B=2/60,   //暴击率
+	C=4/60,   //暴击伤害
+	D=1000/60,//小攻击
+	E=1200/60;//元素精通
+
 //结果保留位数
 var FixNum=1;
 //搞颜色(*/ω＼*)
@@ -18,11 +25,12 @@ var yellow='#ffa',
  	orange='#fec',
  	green='#afd';
 //交互
-function onKeyUp(event){
+function onKeyUp(){
 	getValues();
 	check();
 	calc();
 	print();
+	console.log("done")
 }
 function getValues(){
 	atkBase=getValue('atkBase');
@@ -41,6 +49,9 @@ function getValue(name){
 	}
 	return n;
 }
+//var timer=setInterval(onKeyUp,100);
+
+
 //算法
 function calc(){
 	expBase=getExp(atkBase+atkAdd,critRate,critDmg,elemMastery);
@@ -61,9 +72,14 @@ function calc(){
 	maxB=expEM['Overloaded']*1.4*0.8;
 
 	//这里用拉格朗日约束的一个推导
-	var scouce=(atkAdd/atkBase)/A+critRate/B+critDmg/C,s1=scouce+1/3;
+	var scouce=(atkAdd/atkBase)/A+critRate/B+critDmg/C;
+	var scouceFull=scouce-1/B;
+
 	var expAllATK=getExp(1+A*(scouce-0.05/B-0.50/C),0.05,0.50,0);
-	var hRate=(s1+Math.sqrt(s1*s1-1.5))/6,hATK=1/8/hRate+hRate-1/3;
+
+	var s2=1/A+scouce,s3=1/B/C;
+	var hRate=(s2+Math.sqrt(s2*s2-12*s3))/6,hATK=scouce-2*hRate;
+
 	var expBest=getExp(1+A*hATK,B*hRate,C*hRate,0);
 	//极值点特判
 	if(expBest>expAllATK){
@@ -110,10 +126,10 @@ function getMaxA(){
 }
 /****元素精通****/
 function getEMRate(elemMastery){
-	return 25*elemMastery/(elemMastery+1400)/9;
+	return 25/9*elemMastery/(elemMastery+1400);
 }
 function getOverloaded(elemMastery){
-	return 723.29*4*(1+16*elemMastery/(elemMastery+2000))/3;
+	return 2893*(1+16*elemMastery/(elemMastery+2000));
 }
 /****伤害****/
 function getExp(atk,cR,cD,eM){
@@ -136,12 +152,12 @@ function print(){
 	var fixVal=scFix-expBase,fixColor=green;
 	if(maxA<fixVal){
 		fixColor=red;
-		maxA*=1.2
+		maxA*=1.1
 	}
 	sc.innerHTML+=h("修正数据 Fixed:");
 	sc.innerHTML+=p('攻击力 ATK:')+div(atkBase+' + '+healthy['atkAdd'].toFixed(0)+' = '+(atkBase+healthy['atkAdd']).toFixed(0));
 	sc.innerHTML+=p('暴击率 暴击伤害 CRIT:')+div((100*healthy['critRate']).toFixed(0)+'%+'+(100*healthy['critDmg']).toFixed(0)+"%");
-	sc.innerHTML+=p('修正分数增量 Fixed:')+div(fixVal.toFixed(FixNum),fixVal/maxA>1?1:fixVal/maxA,fixColor)+'<br>';
+	sc.innerHTML+=p('修正分数增量 Fixed:')+div(fixVal.toFixed(FixNum),fixVal/maxA,fixColor)+'<br>';
 
 	ex.innerHTML=h("偏导数/偏增量(每份副词条) Partial Derivative：");
 	colum("攻击力百分比 ATK.Rate: ",exp['atk'],green,maxA);
@@ -166,6 +182,8 @@ function bar(text,num){
 	ex.innerHTML+=p(text)+DIV(num);
 }
 function div(text,rate=1,color='#f9f9f9'){
+	if(rate>1)rate=1;
+	if(rate<0)rate=0;
 	return  '<div class="bg">'+
 				'<p class="num" style="width:'+(100*rate)+'%;background:'+color+';">'+
 					text+
