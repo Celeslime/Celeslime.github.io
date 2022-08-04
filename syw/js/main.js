@@ -62,18 +62,20 @@ function calc(){
 	exp['critRate']=getExp(atkBase+atkAdd,critRate+B,critDmg,elemMastery)-expBase;
 	exp['critDmg']=getExp(atkBase+atkAdd,critRate,critDmg+C,elemMastery)-expBase;
 	getMaxA();
-	//在这里以超载为一个基准量
-	expEMBase=getOverloaded(elemMastery);
-	expEM['Overloaded']=expEMBase*1.4*(1-0.2);//超载
-	expEM['Swirl']=expEMBase*0.3*1.6*(1+0.1);//扩散
-	expEM['ElectroCharged']=expEMBase*0.6*1.4*(1-0.2);//感电
-	expEM['Superconduct']=expEMBase*0.25*1.4*(1-0.2);//超导
-	expEM['Frozen']=expEMBase*0.75*(1-0.2);//碎冰
-	maxB=expEM['Overloaded']*1.4*0.8;
+
+	expEM={
+		'Overloaded'    :8.0*getUpheaval(elemMastery,0.4)*0.90,//超载
+		'Frozen'        :6.0*getUpheaval(elemMastery,0.0)*0.90,//碎冰
+		'ElectroCharged':4.8*getUpheaval(elemMastery,0.4)*0.90,//感电
+		'Swirl'         :2.4*getUpheaval(elemMastery,0.6)*1.15,//扩散
+		'Superconduct'  :2.0*getUpheaval(elemMastery,0.4)*0.90,//超导
+		'Burn'          :1.0*getUpheaval(elemMastery,0.4)*0.90,//燃烧
+	};
+	
+	maxB=expEM['Overloaded'];
 
 	//这里用拉格朗日约束的一个推导
 	var scouce=(atkAdd/atkBase)/A+critRate/B+critDmg/C;
-	var scouceFull=scouce-1/B;
 
 	var expAllATK=getExp(1+A*(scouce-0.05/B-0.50/C),0.05,0.50,0);
 
@@ -103,7 +105,7 @@ function calc(){
 	}
 }
 function check() {
-	//暴击率《通常》不低于5%
+	//暴击率通常不低于5%
 	//暴击伤害不低于50%
 	if(critDmg<0.5){
 		critDmg=0.5;
@@ -128,8 +130,8 @@ function getMaxA(){
 function getEMRate(elemMastery){
 	return 25/9*elemMastery/(elemMastery+1400);
 }
-function getOverloaded(elemMastery){
-	return 2893*(1+16*elemMastery/(elemMastery+2000));
+function getUpheaval(elemMastery,rate=0){
+	return 1085/3*(1+16*elemMastery/(elemMastery+2000)+rate);
 }
 /****伤害****/
 function getExp(atk,cR,cD,eM){
@@ -157,22 +159,23 @@ function print(){
 	sc.innerHTML+=h("修正数据 Fixed:");
 	sc.innerHTML+=p('攻击力 ATK:')+div(atkBase+' + '+healthy['atkAdd'].toFixed(0)+' = '+(atkBase+healthy['atkAdd']).toFixed(0));
 	sc.innerHTML+=p('暴击率 暴击伤害 CRIT:')+div((100*healthy['critRate']).toFixed(0)+'%+'+(100*healthy['critDmg']).toFixed(0)+"%");
-	sc.innerHTML+=p('修正分数增量 Fixed:')+div(fixVal.toFixed(FixNum),fixVal/maxA,fixColor)+'<br>';
+	sc.innerHTML+=p('修正分数增量 Fix:')+div(fixVal.toFixed(FixNum),fixVal/maxA,fixColor)+'<br>';
 
 	ex.innerHTML=h("偏导数/偏增量(每份副词条) Partial Derivative：");
-	colum("攻击力百分比 ATK.Rate: ",exp['atk'],green,maxA);
-	colum("攻击力 ATK: ",exp['atkSmall'],green,maxA);
-	colum("元素精通.增幅 下位元素1.5 上位元素2.0 Elemental Mastery: ",exp['elemMastery'],green,maxA);
-	colum("暴击率 CRIT.Rate: ",exp['critRate'],green,maxA);
-	colum("暴击伤害 CRIT.DMG: ",exp['critDmg'],green,maxA);
+	colum("攻击力百分比 ATK.Rate: +"+(A*100).toFixed(FixNum)+"%"	,exp['atk'],green,maxA);
+	colum("攻击力 ATK: +"+D.toFixed(FixNum)						,exp['atkSmall'],green,maxA);
+	colum("元素精通.增幅 Elemental Mastery: +"+E.toFixed(FixNum)	,exp['elemMastery'],green,maxA);
+	colum("暴击率 CRIT.Rate: +"+(B*100).toFixed(FixNum)+"%"		,exp['critRate'],green,maxA);
+	colum("暴击伤害 CRIT.DMG: +"+(C*100).toFixed(FixNum)+"%"		,exp['critDmg'],green,maxA);
 	ex.innerHTML+="<br>";
 
-	ex.innerHTML+=h("元素精通.剧变伤害 20%抗性(单次触发) Elemental Mastery: ");
-	colum("扩散 (风套:60%伤害 40%减抗) 最多两段 可能触发其他剧变",expEM['Swirl'],orange,maxB);
-	colum("超载 (如雷/火套:40%伤害) 火伤 爆炸削韧",expEM['Overloaded'],orange,maxB);
-	colum("超导 (如雷:40%伤害) 冰伤 减40%物抗",expEM['Superconduct'],orange,maxB);
-	colum("冻结 碎冰",expEM['Frozen'],orange,maxB);
-	colum("感电 (如雷:40%伤害) 持续反应",expEM['ElectroCharged'],orange,maxB);
+	ex.innerHTML+=h("元素精通.剧变伤害 10%抗性(单次触发) Elemental Mastery: ");
+	colum("扩散 (翠绿) 最多两段 可触发其他剧变"	,expEM['Swirl'],orange,maxB);
+	colum("超载 (如雷/魔女) 削韧" 				,expEM['Overloaded'],orange,maxB);
+	colum("超导 (如雷) 降低40%物抗"				,expEM['Superconduct'],orange,maxB);
+	colum("冻结 碎冰"							,expEM['Frozen'],orange,maxB);
+	colum("感电 (如雷) 持续反应"					,expEM['ElectroCharged'],orange,maxB);
+	colum("燃烧 (魔女) 持续反应"					,expEM['Burn'],orange,maxB);
 
 }
 function colum(text,num,color,max){
