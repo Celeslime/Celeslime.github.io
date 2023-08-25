@@ -38,6 +38,7 @@ function getValues(){
 	critRate=getValue('critRate')/100;
 	critDmg=getValue('critDmg')/100;
 	elemMastery=getValue('elemMastery');
+	//dmg=getValue('dmg')/100;
 }
 function getValue(name){
 	var elem=document.forms[0][name]; 
@@ -61,6 +62,8 @@ function calc(){
 	exp['elemMastery']=getExp(atkBase+atkAdd,critRate,critDmg,elemMastery+E)-expBase;
 	exp['critRate']=getExp(atkBase+atkAdd,critRate+B,critDmg,elemMastery)-expBase;
 	exp['critDmg']=getExp(atkBase+atkAdd,critRate,critDmg+C,elemMastery)-expBase;
+	//exp['dmg']=expBase*(1+dmg+0.05)/(1+dmg)-expBase;
+	exp['atkBase']=getExp((atkBase+atkAdd-370)*(atkBase+20)/atkBase+370,critRate,critDmg,elemMastery)-expBase;
 	getMaxA();
 
 	expEM={
@@ -167,6 +170,8 @@ function print(){
 	colum("元素精通.增幅 Elemental Mastery: +"+E.toFixed(FixNum)	,exp['elemMastery'],green,maxA);
 	colum("暴击率 CRIT.Rate: +"+(B*100).toFixed(FixNum)+"%"		,exp['critRate'],green,maxA);
 	colum("暴击伤害 CRIT.DMG: +"+(C*100).toFixed(FixNum)+"%"		,exp['critDmg'],green,maxA);
+	colum("基础攻击力 ATK.Base: +20.0"							,exp['atkBase'],green,maxA);
+	//colum("伤害加成 DMG: +"+(A*100).toFixed(FixNum)+"%"		,exp['dmg'],green,maxA);
 	ex.innerHTML+="<br>";
 
 	ex.innerHTML+=h("元素精通.剧变伤害 10%抗性(单次触发) Elemental Mastery: ");

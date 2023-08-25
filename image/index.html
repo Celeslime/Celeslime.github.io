@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ヾ(≧▽≦*)o</title>
+	<meta name="viewport" content="width=device-width" initial-scale="1"/>
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<script type="text/javascript">//获取当前时间
+	var vWeek, vWeek_s, vDay;
+	function time() {
+		vWeek = ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+	 	var date = new Date();
+	 	year 	= set0(date.getFullYear(),4);
+	 	month 	= set0(date.getMonth()+1);
+     	day 	= set0(date.getDate());
+	 	hours	= set0(date.getHours());
+	 	minutes = set0(date.getMinutes());
+	 	seconds = set0(date.getSeconds());
+	 	vWeek_s = date.getDay();
+		document.getElementById("time").innerHTML = 
+			year + "年" + month + "月" + day + "日"
+			+ "\t<br>" + hours + ":" + minutes + ":" + seconds
+			+ "\t<br>" + vWeek[vWeek_s];
+ 
+	};
+	function set0(num,p=2) {
+		return ('000000000'+num).slice(-p);
+	}
+	setInterval("time()", 1000);
+	</script>
+</head>
+<body>
+	<p id="time"></p>
+</body>
+</html>
