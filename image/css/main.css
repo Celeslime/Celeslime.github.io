@@ -5,19 +5,24 @@
 line {
 	stroke-linecap: round;
 }
-#y {
+#C1 {
 	stroke: #DDD;
 	stroke-dasharray: 1194;
 	transition: 0.99s linear;
 	fill: none;
 }
-#hour {
+#C2 {
 	stroke: #CCC;
 	stroke-dasharray: 1069;
 	transition: 1s;
 	fill: none;
 }
-
+#C3{
+	stroke: #BBB;
+	stroke-dasharray: 942.5;
+	transition: 1s;
+	fill: none;
+}
 
 #X {
 	stroke: #6666;
@@ -43,7 +48,7 @@ line {
 	fill: none;
 }
 
-body{
+body {
 	display: flex;
 	min-height: 100vh;
 	justify-content: center;
@@ -52,18 +57,19 @@ body{
 	margin: 0 auto;
 	width: 110%;
 	margin-top: -30px;
+	max-width: 800px;
 }
-p{	
+p {
 	position: absolute;
 	font-family: consolas;
 	margin: 3px;
 	color: #5C5C5C;
 }
-p#time{
+p#time {
 	font-size: 32px;
 	margin-bottom: 35px;
 }
-p#date{
+p#date {
 	font-size: 14px;
 	margin-top: 35px;
 }

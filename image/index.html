@@ -4,8 +4,10 @@
 	<title>ヾ(≧▽≦*)o</title>
 	<meta name="viewport" content="width=device-width" initial-scale="1"/>
 	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<script src="js/calendar.js"></script>
 	<script type="text/javascript">//获取当前时间
 	var vWeek, vWeek_s, vDay;
+	L=calendar.solar2lunar();
 	pi = 3.1415926535897932384;
 	q2 = 141.4213562373
 	vWeek = ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
@@ -21,12 +23,14 @@
 	 	vWeek_s = date.getDay();
 		c1=190*pi*2;
 		c2=170*pi*2;
+		c3=150*pi*2;
 		k1=(date.getMonth()*30.5+date.getDay()-35)/365.25;//一年
-		k2=(date.getHours()+date.getMinutes()/60)/24;//一日
-		k3=(date.getSeconds()+1)/60;//一分
-
-		document.querySelector("#y").setAttribute('stroke-dashoffset',c1*(1-k1));
-		document.querySelector("#hour").setAttribute('stroke-dashoffset',c2*(1-k2));
+		k3=(date.getHours()+date.getMinutes()/60)/24;//一日
+		k2=(L.lDay+date.getHours()/24)/30;//一月
+		k9=(date.getSeconds()+1)/60;//一分
+		document.querySelector("#C1").setAttribute('stroke-dashoffset',c1*(1-k1));
+		document.querySelector("#C2").setAttribute('stroke-dashoffset',c2*(1-k2));
+		document.querySelector("#C3").setAttribute('stroke-dashoffset',c3*(1-k3));
 
 		document.getElementById("time").innerHTML=hours+":"+minutes+":"+seconds;
 		document.getElementById("date").innerHTML=year + "-" + month + "-" + day + " "+vWeek[vWeek_s];
@@ -44,15 +48,16 @@
 	<p id="time"></p>
 	<p id="date"></p>
 	<svg width="400" height="400">
-		<circle id='y' stroke-width='20' cx='200' cy='200' r='190' transform="rotate(135 200 200)"/> 
-		<circle id='hour' stroke-width='20' cx='200' cy='200' r='170' transform="rotate(90 200 200)"/> 
+		<circle id='C1' stroke-width='20' cx='200' cy='200' r='190' transform="rotate(135 200 200)"/> 
+		<circle id='C2' stroke-width='20' cx='200' cy='200' r='170' transform="rotate(90 200 200)"/> 
+		<circle id='C3' stroke-width='20' cx='200' cy='200' r='150' transform="rotate(90 200 200)"/> 
 
 		<line id='X' x1='0' y1='200' x2='400' y2='200' />
 		<line id='X' x1='200' y1='0' x2='200' y2='400' />
 		<line id='X' x1='58.578' y1='58.578' x2='341.421' y2='341.421' />
 		<line id='X' x1='58.578' y1='341.421' x2='341.421' y2='58.578' />
-		<circle id='WT'   cx='200' cy='200' r='75' />   
 
+		<circle id='WT'   cx='200' cy='200' r='75' />   
 		<circle id='CK'   cx='200' cy='200' r='197.5' />     
 		<circle id='CK_ID'   cx='200' cy='200' r='180' transform="rotate(0 200 200)"/> 
 		<!-- transform="rotate(-0.85 200 200)" -->
