@@ -6,9 +6,12 @@
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<script type="text/javascript">//获取当前时间
 	var vWeek, vWeek_s, vDay;
-	function time() {
-		vWeek = ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
-	 	var date = new Date();
+	pi = 3.1415926535897932384;
+	q2 = 141.4213562373
+	vWeek = ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+	var date = new Date();
+	function time() {	
+		date = new Date();
 	 	year 	= set0(date.getFullYear(),4);
 	 	month 	= set0(date.getMonth()+1);
      	day 	= set0(date.getDate());
@@ -16,19 +19,43 @@
 	 	minutes = set0(date.getMinutes());
 	 	seconds = set0(date.getSeconds());
 	 	vWeek_s = date.getDay();
-		document.getElementById("time").innerHTML = 
-			year + "年" + month + "月" + day + "日"
-			+ "\t<br>" + hours + ":" + minutes + ":" + seconds
-			+ "\t<br>" + vWeek[vWeek_s];
+		c1=190*pi*2;
+		c2=170*pi*2;
+		k1=(date.getMonth()*30.5+date.getDay()-35)/365.25;//一年
+		k2=(date.getHours()+date.getMinutes()/60)/24;//一日
+		k3=(date.getSeconds()+1)/60;//一分
+
+		document.querySelector("#y").setAttribute('stroke-dashoffset',c1*(1-k1));
+		document.querySelector("#hour").setAttribute('stroke-dashoffset',c2*(1-k2));
+
+		document.getElementById("time").innerHTML=hours+":"+minutes+":"+seconds;
+		document.getElementById("date").innerHTML=year + "-" + month + "-" + day + " "+vWeek[vWeek_s];
  
 	};
 	function set0(num,p=2) {
 		return ('000000000'+num).slice(-p);
 	}
+	
 	setInterval("time()", 1000);
+	time();
 	</script>
 </head>
 <body>
 	<p id="time"></p>
+	<p id="date"></p>
+	<svg width="400" height="400">
+		<circle id='y' stroke-width='20' cx='200' cy='200' r='190' transform="rotate(135 200 200)"/> 
+		<circle id='hour' stroke-width='20' cx='200' cy='200' r='170' transform="rotate(90 200 200)"/> 
+
+		<line id='X' x1='0' y1='200' x2='400' y2='200' />
+		<line id='X' x1='200' y1='0' x2='200' y2='400' />
+		<line id='X' x1='58.578' y1='58.578' x2='341.421' y2='341.421' />
+		<line id='X' x1='58.578' y1='341.421' x2='341.421' y2='58.578' />
+		<circle id='WT'   cx='200' cy='200' r='75' />   
+
+		<circle id='CK'   cx='200' cy='200' r='197.5' />     
+		<circle id='CK_ID'   cx='200' cy='200' r='180' transform="rotate(0 200 200)"/> 
+		<!-- transform="rotate(-0.85 200 200)" -->
+	</svg>
 </body>
 </html>

@@ -1,0 +1,66 @@
+:root {
+	--num: 500;
+}
+
+line {
+	stroke-linecap: round;
+}
+#y {
+	stroke: #DDD;
+	stroke-dasharray: 1194;
+	transition: 0.99s linear;
+	fill: none;
+}
+#hour {
+	stroke: #CCC;
+	stroke-dasharray: 1069;
+	transition: 1s;
+	fill: none;
+}
+
+
+#X {
+	stroke: #6666;
+	stroke-width: 3;
+	stroke-dasharray: 21.05;
+}
+#WT {
+	fill: #FFF;
+}
+#CK {
+	stroke: #666;
+	stroke-width: 5;
+	fill: none;
+	display: none;
+}
+#CK_ID {
+	stroke: #8888;
+	stroke-width: 10;
+	stroke-linecap: round;
+	stroke-dashoffset: 1130.973;
+	stroke-dasharray: 0 47.124;
+	/* 	stroke-dasharray: 5 94.5; */
+	fill: none;
+}
+
+body{
+	display: flex;
+	min-height: 100vh;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+p{	
+	position: absolute;
+	font-family: consolas;
+	margin: 3px;
+	color: #5C5C5C;
+}
+p#time{
+	font-size: 32px;
+	margin-bottom: 35px;
+}
+p#date{
+	font-size: 14px;
+	margin-top: 35px;
+}
