@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>ヾ(≧▽≦*)o</title>
+	<title>Timer</title>
 	<meta name="viewport" content="width=device-width" initial-scale="1"/>
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<script src="js/calendar.js"></script>
@@ -26,14 +26,14 @@
 		c3=150*pi*2;
 		k1=(date.getMonth()*30.5+date.getDay()-35)/365.25;//一年
 		k3=(date.getHours()+date.getMinutes()/60)/24;//一日
-		k2=(L.lDay+date.getHours()/24)/30;//一月
+		k2=(L.lDay-1+date.getHours()/24)/30;//一月
 		k9=(date.getSeconds()+1)/60;//一分
 		document.querySelector("#C1").setAttribute('stroke-dashoffset',c1*(1-k1));
 		document.querySelector("#C2").setAttribute('stroke-dashoffset',c2*(1-k2));
 		document.querySelector("#C3").setAttribute('stroke-dashoffset',c3*(1-k3));
 
 		document.getElementById("time").innerHTML=hours+":"+minutes+":"+seconds;
-		document.getElementById("date").innerHTML=year + "-" + month + "-" + day + " "+vWeek[vWeek_s];
+		document.getElementById("date").innerHTML=month + "月" + day + "日 "+vWeek[vWeek_s];
  
 	};
 	function set0(num,p=2) {
@@ -61,6 +61,12 @@
 		<circle id='CK'   cx='200' cy='200' r='197.5' />     
 		<circle id='CK_ID'   cx='200' cy='200' r='180' transform="rotate(0 200 200)"/> 
 		<!-- transform="rotate(-0.85 200 200)" -->
+		<defs>
+    		<linearGradient id="myLinearGradient1">
+      			<stop offset="0%"   stop-color="#000" stop-opacity="1"/>
+      			<stop offset="100%" stop-color="#fff" stop-opacity="1"/>
+    		</linearGradient>
+		</defs>
 	</svg>
 </body>
 </html>
