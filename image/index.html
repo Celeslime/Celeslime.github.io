@@ -36,7 +36,9 @@
                 c1 = 190 * pi * 2;
                 c2 = 170 * pi * 2;
                 c3 = 150 * pi * 2;
-                k1 = (date.getMonth() * 30.5 + date.getDay() - 35) / 365.25; // 一年
+                Y=365.25
+                k1 = (date.getMonth() * (Y/12) + date.getDate() - 35) / Y; // 一年
+                // k1 = (2 * 30.5 + 4 - 35 -31) / 365.25; 
                 k3 = (date.getHours() + date.getMinutes() / 60) / 24; // 一日
                 k2 = (L.lDay - 1 + date.getHours() / 24) / 30; // 一月
                 k9 = (date.getSeconds() + 1) / 60; // 一分
