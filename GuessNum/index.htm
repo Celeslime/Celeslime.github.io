@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible
+        " content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Guess Number</title>
+        <link href="css/main.css" rel="stylesheet">
+        <script>
+            // 猜数程序
+            var k = 10;
+            var count = 0;
+            //生成从0到2^k随机数
+            guessNum = Math.floor(Math.pow(2, k) * Math.random());
+            //提示范围
+            alert('请输入一个0到' + (Math.pow(2, k) - 1) + '之间的整数');
+            while(true) {
+                inputNum = prompt('请输入一个数字');
+                if (inputNum == guessNum) {
+                    alert('猜对了');
+                    break;
+                } else if(inputNum > guessNum) {
+                    alert('猜大了');
+                } else {
+                    alert('猜小了');
+                }
+                count++;
+            }
+            alert('您总共猜了' + count + '次');
+        </script>
+    </head>
+    <body>
+        this page writen asist to codegeex
+    </body>
+</html>
+

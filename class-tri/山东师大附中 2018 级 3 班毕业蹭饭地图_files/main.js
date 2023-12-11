@@ -10,6 +10,7 @@ var borderColor = '#029fd4';
 var spotColor = '#ff9070';
 var tooltipColor = '#c8c841';
 
+// 判断当前操作系统是否为移动设备
 var os = function () {
     var ua = navigator.userAgent,
         isWindowsPhone = /(?:Windows Phone)/.test(ua),
@@ -31,7 +32,7 @@ var os = function () {
 option = {
     title: {
         text: '山东师大附中 2018 级 3 班毕业蹭饭地图（交互版）',
-        // subtext: '班主任：傅平修\n\n任课老师：孙国旺、傅平修、颜廷波、曹立、宋志刚、王凤芝、李伟、王醒、牛丽华、孙晓峰',
+        // subtext: '班主任：',
         left: 'center',
         textStyle: { color: textColor, fontSize: 30 },
         subtextStyle: { color: textColor, fontSize: 15 }
@@ -156,6 +157,7 @@ if (option && typeof option === "object") {
     setTimeout(function () { alert("使用说明：\n1) 点一下大学对应的橙色标记，会显示出在这个大学的同学名单\n2) 点一下每个省份的地图，将会进入到各个省份的高清大图模式\n3) 对于人数较多的区，也提供高清大图，可以点\n4) 点两下背景图片将返回到上一级地图\n5) 如果使用电脑查看此蹭饭图，还可以直接用鼠标滚轮进行缩放\n6) 地图右侧小手按钮重置地图\n7) 网页改编自 https://ssfz.top 山东师大附中 2018 级 10 班毕业蹭饭地图") }, 500);
 }
 
+// 改变地图，传入新的地点
 function changeMap(newPlace) {
     function changeSubtitle() {
         var stuList = new Array();
