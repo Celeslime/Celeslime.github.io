@@ -39,7 +39,7 @@ var os = function () {
 option = {
     title: {
         text: '山东师大附中 2018 级 3 班毕业蹭饭地图',
-        // subtext:'小标题',
+        subtext: '',
         left:'center',
         textStyle: { color: textColor, fontSize: 30 },
         subtextStyle: { color: textColor, fontSize: 15 }
@@ -88,8 +88,8 @@ option = {
         label: {
             show: false
         },
-        roam: true,
-        // roam: os.isPc, // 如果 roam 开启 true，在手机上缩放会稍微有一点卡顿
+        // roam: true,
+        roam: os.isPc, // 如果 roam 开启 true，在手机上缩放会稍微有一点卡顿
         itemStyle: {
             normal: {
                 areaColor: mainColor,
