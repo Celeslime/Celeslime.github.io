@@ -56,20 +56,30 @@ var os = function () {
 }();
 
 option = {
-    title: {
-        text: '毕业蹭饭地图',
-        subtext: '山东师大附中 2018 级 3 班',
-        left:'center',
-        textStyle: {
-            color: textColor,
-            fontSize: 25,
-            textShadow: '2px 2px 4px #000000',
+    graphic: [{
+        type: 'text', // 图形类型为文本
+        left: 'center', // 文本水平居中
+        top: 15, // 文本距离顶部的距离
+        style: { // 文本样式设置
+            text: '{a|毕业蹭饭地图}\n\n{b|山东师大附中 2018 级 3 班}',
+            rich: {
+                a: {
+                    fontSize: '25px',
+                    fill: textColor, // 字体颜色
+                    stroke: borderColor, // 描边颜色
+                    lineWidth: 2, // 描边宽度
+					textAlign: 'center',
+                },
+                b: {
+                    fontSize: '15px',
+                    fill: textColor, // 字体颜色
+                    stroke: borderColor, // 描边颜色
+                    lineWidth: 2, // 描边宽度
+                },
+            },
         },
-        subtextStyle: {
-            color: textColor, 
-            fontSize: 15 
-        }
-    },
+        z:99,
+      }],
     tooltip: {
         trigger: 'item',
         // triggerOn:'mousemove',
@@ -107,7 +117,8 @@ option = {
                     if(parentMaps.length > 0){
                         changeMap(parentMaps[parentMaps.length - 1]);
                         var popPlace=parentMaps.pop();
-                        option.title.subtext = '山东师大附中 2018 级 3 班'+(popPlace=='china'?'':' - '+popPlace);
+						option.graphic[0].style.text = 
+							'{a|毕业蹭饭地图}\n\n{b|山东师大附中 2018 级 3 班'+(popPlace=='china'?'':' - '+popPlace)+'}';
                     }
                     myChart.setOption(option, true);
                 }
@@ -194,9 +205,11 @@ if (option && typeof option === "object") {
 // 改变地图，传入新的地点
 function changeMap(newPlace) {
     if(newPlace != 'china')
-        option.title.subtext = '山东师大附中 2018 级 3 班 - ' + newPlace;
+		option.graphic[0].style.text =
+			'{a|毕业蹭饭地图}\n\n{b|山东师大附中 2018 级 3 班 - '+newPlace+'}';
     else
-        option.title.subtext = '山东师大附中 2018 级 3 班';
+		option.graphic[0].style.text =
+			'{a|毕业蹭饭地图}\n\n{b|山东师大附中 2018 级 3 班}';
     option.geo.map = newPlace;
     myChart.setOption(option, true);
 }
