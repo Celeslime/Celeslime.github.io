@@ -2,13 +2,13 @@
 	--mainColor: #f3f8ff;
 	--textColor: #fff;
 	--borderColor: #50c8f1;
-	--spotColor: #ff9070;
+	--spotColor: #ff5c2e90;
 	--tooltipColor: #fff;
 }
 body{
 	background: linear-gradient(45deg, #06dce3, #06dce3);
 	margin: 0;
 }
-#main > div:nth-child(2){
-	background-color: #0000008a!important;
-}
+/* #main > div:nth-child(2){
+	background-color: #000000!important;
+} */
