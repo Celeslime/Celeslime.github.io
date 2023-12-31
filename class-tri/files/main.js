@@ -1,7 +1,7 @@
 ﻿// 这个地图参考了 https://github.com/Heriyadi235/17dbsyg2cft，在此致谢
 
 var dom = document.getElementById("main");
-var myChart = echarts.init(dom, 'shine');
+var myChart = echarts.init(dom);
 var rootStyles = getComputedStyle(document.documentElement);
 option = null;
 
@@ -62,7 +62,8 @@ option = {
         left:'center',
         textStyle: {
             color: textColor,
-            fontSize: 25
+            fontSize: 25,
+            textShadow: '2px 2px 4px #000000',
         },
         subtextStyle: {
             color: textColor, 
@@ -106,7 +107,7 @@ option = {
                     if(parentMaps.length > 0){
                         changeMap(parentMaps[parentMaps.length - 1]);
                         var popPlace=parentMaps.pop();
-                        option.title.subtext = '山东师大附中 2018 级 3 班'+(popPlace=='china'?'':'-'+popPlace);
+                        option.title.subtext = '山东师大附中 2018 级 3 班'+(popPlace=='china'?'':' - '+popPlace);
                     }
                     myChart.setOption(option, true);
                 }
@@ -166,14 +167,14 @@ option = {
 
 
 var parentMaps = new Array(); // 维护一个 array，用于记录地图路径
-
+//e.g. http://127.0.0.1:3000/class-tri#威海
 function checkUrl() {
     var url = window.location.href;
     if (url.indexOf('#') == -1) return 'china';
-    // place = url.substr(url.indexOf('#') + 1);
+    place = url.substring(url.indexOf('#') + 1);
     place = decodeURI(place);
+    console.log(place);
     if (MAPS.indexOf(place) != -1) {
-        // dontBack = true;
         parentMaps.push('china');
         option.geo.label.show = true;
         return place;
@@ -182,15 +183,12 @@ function checkUrl() {
 };
 option.geo.map = checkUrl();
 
-
 if (option && typeof option === "object") {
     myChart.setOption(option, true);
     myChart.resize();
-    setTimeout(function () {
-        // alert(
-        //     "使用说明：\n1) 点一下大学对应的橙色标记，会显示出在这个大学的同学名单\n2) 点一下每个省份的地图，将会进入到各个省份的高清大图模式\n3) 对于人数较多的区，也提供高清大图，可以点\n4) 点两下背景图片将返回到上一级地图\n5) 如果使用电脑查看此蹭饭图，还可以直接用鼠标滚轮进行缩放\n6) 地图右侧小手按钮重置地图\n7) 网页改编自 https://ssfz.top 山东师大附中 2018 级 10 班毕业蹭饭地图"
-        // ) 
-    },500);
+    // setTimeout(function () {
+    //     alert("使用说明：\n1) 点一下大学对应的橙色标记，会显示出在这个大学的同学名单\n2) 点一下每个省份的地图，将会进入到各个省份的高清大图模式\n3) 对于人数较多的区，也提供高清大图，可以点\n4) 点两下背景图片将返回到上一级地图\n5) 如果使用电脑查看此蹭饭图，还可以直接用鼠标滚轮进行缩放\n6) 地图右侧小手按钮重置地图\n7) 网页改编自 https://ssfz.top 山东师大附中 2018 级 10 班毕业蹭饭地图") 
+    // },500);
 }
 
 // 改变地图，传入新的地点
@@ -203,8 +201,9 @@ function changeMap(newPlace) {
     myChart.setOption(option, true);
 }
 myChart.on('click', function (params) {
-    // if (params.name == '南海诸岛') {}
-    // dontBack = true;
+    if (params.name == '南海诸岛') {
+        params.name = '海南';
+    }
     if (MAPS.indexOf(params.name) != -1) {
         parentMaps.push(option.geo.map);
         changeMap(params.name);
