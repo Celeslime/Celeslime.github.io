@@ -173,7 +173,7 @@ option = {
         itemStyle: {
             normal: {color: spotColor}
         }
-    },]
+    },],
 };
 
 
