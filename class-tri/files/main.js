@@ -101,8 +101,8 @@ option = {
         // show: false,
         orient: 'vertical',
         itemSize: 28,
-        top: 'top',
-        left: 'left',
+        top: 15,
+        left: 15,
         feature: {
             // saveAsImage: {},
             // 这个自带的存图功能不能保存背景图
