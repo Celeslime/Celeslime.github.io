@@ -57,14 +57,17 @@ var os = function () {
 
 option = {
     title: {
-        text: '山东师大附中 2018 级 3 班毕业蹭饭地图',
-        subtext: '',
+        text: '毕业蹭饭地图',
+        subtext: '山东师大附中 2018 级 3 班',
         left:'center',
         textStyle: {
             color: textColor,
             fontSize: 25
         },
-        // subtextStyle: { color: textColor, fontSize: 15 }
+        subtextStyle: {
+            color: textColor, 
+            fontSize: 15 
+        }
     },
     tooltip: {
         trigger: 'item',
@@ -102,9 +105,9 @@ option = {
                     option.geo.roam = true;
                     if(parentMaps.length > 0){
                         changeMap(parentMaps[parentMaps.length - 1]);
-                        parentMaps.pop();
+                        var popPlace=parentMaps.pop();
+                        option.title.subtext = '山东师大附中 2018 级 3 班'+(popPlace=='china'?'':'-'+popPlace);
                     }
-                    option.title.text = '山东师大附中 2018 级 3 班毕业蹭饭地图';
                     myChart.setOption(option, true);
                 }
             }
@@ -193,9 +196,9 @@ if (option && typeof option === "object") {
 // 改变地图，传入新的地点
 function changeMap(newPlace) {
     if(newPlace != 'china')
-        option.title.text = '山东师大附中 2018 级 3 班毕业蹭饭地图 - ' + newPlace;
+        option.title.subtext = '山东师大附中 2018 级 3 班 - ' + newPlace;
     else
-        option.title.text = '山东师大附中 2018 级 3 班毕业蹭饭地图';
+        option.title.subtext = '山东师大附中 2018 级 3 班';
     option.geo.map = newPlace;
     myChart.setOption(option, true);
 }
