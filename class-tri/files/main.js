@@ -1,6 +1,4 @@
-﻿// 这个地图参考了 https://github.com/Heriyadi235/17dbsyg2cft，在此致谢
-
-var dom = document.getElementById("main");
+﻿var dom = document.getElementById("main");
 var myChart = echarts.init(dom);
 var rootStyles = getComputedStyle(document.documentElement);
 option = null;
@@ -132,7 +130,9 @@ option = {
         },
     },
     geo: {
-        // zoom: 1.3,
+        // zoom: 1.2,
+        zoom: 2.5,
+        left: -100,
         map: 'china',
         label: {
             normal: {
@@ -187,7 +187,7 @@ function checkUrl() {
     console.log(place);
     if (MAPS.indexOf(place) != -1) {
         parentMaps.push('china');
-        option.geo.label.show = true;
+        // option.geo.label.show = true;
         return place;
     }
     else return 'china';
@@ -204,12 +204,19 @@ if (option && typeof option === "object") {
 
 // 改变地图，传入新的地点
 function changeMap(newPlace) {
-    if(newPlace != 'china')
-		option.graphic[0].style.text =
+    if(newPlace != 'china'){
+        option.graphic[0].style.text =
 			'{a|毕业蹭饭地图}\n\n{b|山东师大附中 2018 级 3 班 - '+newPlace+'}';
-    else
-		option.graphic[0].style.text =
+        option.geo.zoom = 1;
+        option.geo.left = 'center';
+    }
+    else{
+        option.graphic[0].style.text =
 			'{a|毕业蹭饭地图}\n\n{b|山东师大附中 2018 级 3 班}';
+        option.geo.zoom = 2.5;
+        option.geo.left = -100;
+    }
+		
     option.geo.map = newPlace;
     myChart.setOption(option, true);
 }
