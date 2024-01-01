@@ -144,7 +144,10 @@ option = {
         },
         //缩放
         roam: true,
-        // roam: os.isPc, 
+        scaleLimit: {
+            min: 1,
+            max: 10,
+        },
         itemStyle: {
             normal: {
                 areaColor: mainColor,
@@ -245,4 +248,16 @@ myChart.on('click', function (params) {
 //         changeMap(parentMaps[parentMaps.length - 1]);
 //         parentMaps.pop();
 //     }
+// });
+// 
+
+// 监听zoom，用于设置scaleLimit
+// var zoomK=3;
+// myChart.on('georoam',function(params){
+//     var option = myChart.getOption();//获得option对象
+// 	if(params.zoom!=null&&params.zoom!=undefined){ //捕捉到缩放时
+//         console.log(option.geo[0].zoom);
+//         // option.geo[0].zoom*=params.zoom;
+//         myChart.setOption(option);//设置option
+// 	}
 // });
