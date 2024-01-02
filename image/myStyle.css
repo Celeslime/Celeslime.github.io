@@ -1,0 +1,42 @@
+body {
+	background: #fafafa;
+	margin: 0;
+}
+:focus {
+	outline: none;
+}
+#head {
+	position: relative;
+	background: linear-gradient(120deg, #0084ff, #003cff);
+	color: #fff;
+	left: 0;
+	top: 0;
+	box-sizing: border-box;
+	padding: 20px;
+}
+h1 {
+	margin: 0;
+}
+#main {
+	transition: .5s;
+}
+#duck {
+	box-sizing: border-box;
+	padding-right: 10px;
+}
+a{
+	text-decoration: none;
+	color: black;
+}
+a:visited{
+	color: black;
+}
+li{
+
+}
+.container{
+	/* max-width: 500px; */
+    margin: auto;
+    padding: 20px;
+	/* background: #d5d5d5; */
+}

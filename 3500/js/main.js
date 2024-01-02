@@ -1,7 +1,7 @@
 // 奇妙的事情发生了 o‿≖✧
 var timer,wd="",guess="~";
 const speaker=new window.SpeechSynthesisUtterance();
-speaker.rate="0.5";
+speaker.rate="0.75";
 speaker.lang="en";
 function search(){
 	var elem=document.querySelector('#searchDiv input[name="word"]');
