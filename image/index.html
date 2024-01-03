@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
-
     <head>
         <meta charset="utf-8">
         <title>Timer</title>
-        <meta name="viewport" content="width=device-width" initial-scale="1"/>
-        <link rel="stylesheet" type="text/css" href="css/main.css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=0.8, user-scalable=no">
+        <link rel="stylesheet" type="text/css" href="time.css"/>
         <script src="js/calendar.js"></script>
         <script type="text/javascript">
             // 获取当前时间
@@ -38,10 +37,12 @@
                 c2 = 170 * pi * 2;
                 c3 = 150 * pi * 2;
                 Y=365.25
-                k1 = (date.getMonth() * (Y/12) + date.getDate() - 35) / Y; // 一年
+                k1 = (date.getHours() + date.getMinutes() / 60) / 24; // 一日
+                k2 = (L.lDay-1 + date.getHours()/24) / 30; // 一月
+                k3 = ((date.getMonth()-0)*(Y/12) + (date.getDate()-1) + 10) / Y; // 一年
                 // k1 = (2 * 30.5 + 4 - 35 -31) / 365.25; 
-                k3 = (date.getHours() + date.getMinutes() / 60) / 24; // 一日
-                k2 = (L.lDay - 1 + date.getHours() / 24) / 30; // 一月
+                if(k3<0)k3+=1;
+                if(k3>1)k3-=1;
                 k9 = (date.getSeconds() + 1) / 60; // 一分
                 document.querySelector("#C1").setAttribute("stroke-dashoffset", c1 * (1 - k1));
                 document.querySelector("#C2").setAttribute("stroke-dashoffset", c2 * (1 - k2));
@@ -54,7 +55,7 @@
                 return("000000000" + num).slice(- p);
             }
 
-            setInterval("time()", 1000);
+            timer=setInterval(time, 1000);
             time();
         </script>
     </head>
@@ -63,7 +64,7 @@
         <p id="time"></p>
         <p id="date"></p>
         <svg width="400" height="400">
-            <circle id="C1" stroke-width="20" cx="200" cy="200" r="190" transform="rotate(135 200 200)"/>
+            <circle id="C1" stroke-width="20" cx="200" cy="200" r="190" transform="rotate(90 200 200)"/>
             <circle id="C2" stroke-width="20" cx="200" cy="200" r="170" transform="rotate(90 200 200)"/>
             <circle id="C3" stroke-width="20" cx="200" cy="200" r="150" transform="rotate(90 200 200)"/>
 
