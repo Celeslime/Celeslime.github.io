@@ -1,11 +1,6 @@
 :root {
 	--num: 500;
 }
-
-line {
-	stroke-linecap: round;
-}
-
 #C1 {
 	stroke: #DDD;
 	stroke-dasharray: 1194;
@@ -28,9 +23,11 @@ line {
 }
 
 #X {
-	stroke: #6666;
-	stroke-width: 3;
-	stroke-dasharray: 21.05;
+	stroke: #1116;
+	stroke-width: 8;
+	stroke-dasharray: 0 20;
+    stroke-dashoffset: 10;
+	stroke-linecap: round;
 }
 
 #WT {
@@ -43,12 +40,15 @@ line {
 	fill: none;
 	display: none;
 }
-
+circle.dynamic { 
+	stroke-width: 14px;
+	stroke-linecap: round;
+}
 #CK_ID {
-	stroke: #8888;
+	stroke: #8886;
 	stroke-width: 8;
 	stroke-linecap: round;
-	stroke-dashoffset: 1068.142;
+	/* stroke-dashoffset: 1068.142; */
 	stroke-dasharray: 0 44.506;
 	/* 	stroke-dasharray: 5 94.5; */
 	fill: none;
@@ -60,7 +60,7 @@ body {
 	justify-content: center;
 	align-items: center;
 	/* flex-direction: column; */
-	margin: -10% auto;
+	margin: -30px auto;
 	/* width: 100%; */
 	/* margin-top: -30px; */
 	/* max-width: 80px; */
