@@ -19,21 +19,6 @@ borderColor = rootStyles.getPropertyValue('--borderColor');
 spotColor = rootStyles.getPropertyValue('--spotColor');
 tooltipColor = rootStyles.getPropertyValue('--tooltipColor');
 
-// 获取位置
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
-}
-function successCallback(position) {
-    // console.log('纬度：', position.coords.latitude);
-    // console.log('经度：', position.coords.longitude);
-    // console.log('精度：', position.coords.accuracy);
-    option.series[0].data.push({name: '我的位置', value: [position.coords.longitude, position.coords.latitude, '', '某某省 您的定位所在位置']});
-    myChart.setOption(option);
-}
-function errorCallback(error) {
-    console.log('获取地理位置信息失败：', error.message);
-}
-
 // 判断当前操作系统是否为移动设备
 var os = function () {
     var ua = navigator.userAgent,
@@ -235,6 +220,23 @@ myChart.on('click', function (params) {
     }
 });
 
+// 获取位置
+if (navigator.geolocation && os.isPc) {
+    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+}
+function successCallback(position) {
+    // console.log('纬度：', position.coords.latitude);
+    // console.log('经度：', position.coords.longitude);
+    // console.log('精度：', position.coords.accuracy);
+    option.series[0].data.push({
+        name: '我的位置', 
+        value: [position.coords.longitude, position.coords.latitude,'','某某省 定位所在位置']
+    });
+    myChart.setOption(option);
+}
+function errorCallback(error) {
+    console.log('获取地理位置信息失败：', error.message);
+}
 // 由于拖拽地图也会触发 click 事件，所以这里判断一下鼠标按下和抬起的位置坐标变化
 // var downX, downY;
 // $('#main').mousedown(function (e) {
