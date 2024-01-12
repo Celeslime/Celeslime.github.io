@@ -3,7 +3,6 @@
 	--textColor: #fff;
 	--borderColor: #50c8f1;
 	--spotColor: #ff5c2e90;
-	--tooltipColor: #fff;
 }
 body{
 	background: linear-gradient(45deg, #06dce3, #06dce3);
