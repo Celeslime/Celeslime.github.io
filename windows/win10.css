@@ -1,0 +1,64 @@
+html {
+	background: #fff;
+}
+
+/* 按钮盒************ */
+.btnBox {
+	padding: 4px;
+}
+
+
+/* 按钮类****************** */
+button {
+	height: 28px;
+	width: 86px;
+	box-sizing: border-box!important;
+	border: solid 1px rgb(173, 173, 173);
+	background-color: rgb(225, 225, 225);
+	margin: 4px;
+	transition: .3s;
+}
+button:focus {
+	outline: none;
+	border-color: rgb(0, 120, 215);
+	border-width: 2px;
+}
+button:hover {
+	background-color: rgb(229, 241, 251);
+	border-color: rgb(0, 120, 215);
+	border-width: 1px;
+}
+button:disabled {
+	background: rgb(204, 204, 204);
+	border-color: rgb(191, 191, 191);
+}
+button:active {
+	background-color: rgb(204, 228, 247);
+	border-color: rgb(0, 84, 153);
+	border-width: 1px;
+}
+
+/* 边框类******************* */
+.border {
+	height: 650px;
+	width: 420px;
+	background-color: rgb(240, 240, 240);
+	box-shadow: 0 0 17px #0005;
+	border: solid 1px rgb(107, 107, 107);
+}
+
+/* 头类***************** */
+#head {
+	background-color: #fff;
+	height: 30px;
+	padding: 6px;
+	box-sizing: border-box;
+	font-size: 70%;
+}
+#icon {
+	height: 18px;
+	width: 18px;
+	box-sizing: border-box;
+	margin: 2px 4px 2px 2px;
+	float: left;
+}
