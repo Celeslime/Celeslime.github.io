@@ -1,4 +1,4 @@
-﻿var chartDom = document.getElementById("main");
+var chartDom = document.getElementById("main");
 var myChart = echarts.init(chartDom, null, 
     // 通过svg渲染，可以一试，反正兼容不了一点
     // {renderer: 'svg'}
