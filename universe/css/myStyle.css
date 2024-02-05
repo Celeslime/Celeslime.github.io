@@ -1,0 +1,45 @@
+:root {
+	--center_color: #fff;
+	--globle_color: #40a7ff;
+	--background_color: #222;
+	--planet_size: 8px;
+	--center_size: 16px;
+}
+body {
+	position: fixed;
+	margin: 0;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: var(--background_color);
+}
+#toolbox{
+	padding: 10px;
+}
+#universe{
+	position: fixed;
+	top: 50%;
+	left: 50%;
+}
+#center{
+	height: var(--center_size);
+	width: var(--center_size);
+	margin: calc(var(--center_size)/-2) calc(var(--center_size)/-2);
+	background-color: var(--center_color);
+	border-radius: calc(var(--center_size)/2);
+	box-shadow: var(--center_color) 0 0 5px;
+	z-index: 1;
+}
+.planet{
+	position: fixed;
+	height: var(--planet_size);
+	width: var(--planet_size);
+	margin: calc(var(--planet_size)/-2) calc(var(--planet_size)/-2);
+	background-color: var(--globle_color);
+	border-radius: calc(var(--planet_size)/2);
+	box-shadow: var(--globle_color) 0 0 5px;
+}
+button{
+	padding: 10px;
+}
