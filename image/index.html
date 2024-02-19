@@ -6,6 +6,36 @@
         <meta name="viewport" content="width=device-width, initial-scale=0.8, user-scalable=no">
         <link rel="stylesheet" type="text/css" href="time.css"/>
         <script src="js/calendar.js"></script>
+    </head>
+
+    <body>
+        <p id="time"></p>
+        <p id="date"></p>
+        <svg width="400" height="400" id="player1">
+            <circle class="dynamic" id="C1" cx="200" cy="200" r="190" transform="rotate(90 200 200)"/>
+            <circle class="dynamic" id="C2" cx="200" cy="200" r="170" transform="rotate(90 200 200)"/>
+            <circle class="dynamic" id="C3" cx="200" cy="200" r="150" transform="rotate(90 200 200)"/>
+
+            <line id="X" x1="0" y1="200" x2="400" y2="200"/>
+            <line id="X" x1="200" y1="0" x2="200" y2="400"/>
+            <line id="X" x1="58.578" y1="58.578" x2="341.421" y2="341.421"/>
+            <line id="X" x1="58.578" y1="341.421" x2="341.421" y2="58.578"/>
+
+            <circle id="WT" cx="200" cy="200" r="140"/>
+            <!-- r=75 or r=140 -->
+            <circle id="CK" cx="200" cy="200" r="197.5"/>
+            <circle id="CK_ID" cx="200" cy="200" r="170"/>
+            <!-- transform="rotate(-0.85 200 200)" -->
+            <defs>
+                <linearGradient id="myLinearGradient1">
+                    <stop offset="0%" stop-color="#000" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="#fff" stop-opacity="1"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        <button onclick="show1()" id="bt">
+            timer
+        </button>
         <script type="text/javascript">
             // 获取当前时间
             var vWeek,
@@ -57,34 +87,20 @@
 
             timer=setInterval(time, 1000);
             time();
+            let timerContainer = null;
+            let pipWindow = null;
+            bt.addEventListener("click", async () => {
+                const player = document.querySelector("#player1");
+
+                // 打开一个画中画窗口。
+                const pipWindow = await documentPictureInPicture.requestWindow();
+
+                // 将播放器移动到画中画窗口中。
+                pipWindow.document.body.append(player);
+            });
+
+
         </script>
-    </head>
-
-    <body>
-        <p id="time"></p>
-        <p id="date"></p>
-        <svg width="400" height="400">
-            <circle class="dynamic" id="C1" cx="200" cy="200" r="190" transform="rotate(90 200 200)"/>
-            <circle class="dynamic" id="C2" cx="200" cy="200" r="170" transform="rotate(90 200 200)"/>
-            <circle class="dynamic" id="C3" cx="200" cy="200" r="150" transform="rotate(90 200 200)"/>
-
-            <line id="X" x1="0" y1="200" x2="400" y2="200"/>
-            <line id="X" x1="200" y1="0" x2="200" y2="400"/>
-            <line id="X" x1="58.578" y1="58.578" x2="341.421" y2="341.421"/>
-            <line id="X" x1="58.578" y1="341.421" x2="341.421" y2="58.578"/>
-
-            <circle id="WT" cx="200" cy="200" r="140"/>
-            <!-- r=75 or r=140 -->
-            <circle id="CK" cx="200" cy="200" r="197.5"/>
-            <circle id="CK_ID" cx="200" cy="200" r="170"/>
-            <!-- transform="rotate(-0.85 200 200)" -->
-            <defs>
-                <linearGradient id="myLinearGradient1">
-                    <stop offset="0%" stop-color="#000" stop-opacity="1"/>
-                    <stop offset="100%" stop-color="#fff" stop-opacity="1"/>
-                </linearGradient>
-            </defs>
-        </svg>
     </body>
 
 </html>
