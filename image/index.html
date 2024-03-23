@@ -88,10 +88,10 @@
             timer=setInterval(time, 1000);
             time();
             let timerContainer = null;
-            let pipWindow = null;
+            // let pipWindow = null;
             bt.addEventListener("click", async () => {
                 const player = document.querySelector("#player1");
-
+                console.log(player)
                 // 打开一个画中画窗口。
                 const pipWindow = await documentPictureInPicture.requestWindow();
 
