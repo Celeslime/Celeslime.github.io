@@ -3,14 +3,17 @@
 	--xf-backgound-color: #efefef;
 	--xf-font-color: #78767a
 }
-body {
+html {
 	background: var(--xf-backgound-color);
 	margin: 0;
-	/* position: fixed; */
-	left: 0;
-	right: 0;
-	top: 0;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
 	bottom: 0;
+	position: fixed;
+	top: 0;
+	right: 0;
+	left: 0;
 }
 li, a, h1, h2, h3, p, svg, span{
 	color: var(--xf-font-color);
@@ -30,10 +33,10 @@ a{
 }
 .container{
 	max-width: 600px;
-    margin: 0 auto;
+	margin: auto;
 	padding: 10px;
-    width: 100%;
-    box-sizing: border-box;
+	width: 100%;
+	box-sizing: border-box;
 }
 .card{
 	margin: 20px;
@@ -63,7 +66,7 @@ a{
 	margin-left: 20px;
 }
 .footer{
-	margin: 64px 0 40px 0;
+	margin: 64px 0;
 	display: flex;
 	align-items: center;
 	/* padding-left: 20px; */
@@ -74,4 +77,11 @@ a{
 .footname{
 	margin: 0 15px 0 5px;
 	/* font-weight: bold; */
+}
+
+#error_h1 {
+    margin-top: 0;
+}
+#error_a {
+	text-decoration: line-through;
 }

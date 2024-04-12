@@ -1,5 +1,6 @@
 :root {
 	--num: 500;
+	--bg-color: #f1f1f1;
 }
 #C1 {
 	stroke: #DDD;
@@ -31,7 +32,7 @@
 }
 
 #WT {
-	fill: #FFF;
+	fill: var(--bg-color);
 }
 
 #CK {
@@ -54,18 +55,17 @@ circle.dynamic {
 	fill: none;
 }
 
+html {
+	background-color: var(--bg-color);
+}
 body {
 	display: flex;
 	min-height: 100vh;
 	justify-content: center;
 	align-items: center;
-	/* flex-direction: column; */
 	margin: -30px auto;
-	/* width: 100%; */
-	/* margin-top: -30px; */
-	/* max-width: 80px; */
+	background-color: transparent;
 }
-
 p {
 	position: fixed;
 	/* font-family: 'Times New Roman'; */

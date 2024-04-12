@@ -1,0 +1,79 @@
+:root{
+	--xf-shadow-out: 0.2rem 0.2rem 0.4rem rgba(42, 42, 42, 0.25), -0.2rem -0.2rem 0.4rem #fff;
+	--xf-backgound-color: #efefef;
+	--xf-font-color: #78767a
+}
+html {
+	background: var(--xf-backgound-color);
+	margin: 0;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+}
+li, a, h1, h2, h3, p, svg, span{
+	color: var(--xf-font-color);
+}
+li{
+	list-style: circle;
+	font-weight: bold;
+}
+ul{
+	padding-inline-start: 20px;
+}
+a{
+	text-decoration: none;
+}
+:focus {
+	outline: none;
+}
+.container{
+	max-width: 600px;
+	margin: 0 auto;
+	padding: 10px;
+	width: 100%;
+	box-sizing: border-box;
+}
+.card{
+	margin: 20px;
+	padding: 20px 50px;
+	border-radius: 15px;
+	box-shadow: var(--xf-shadow-out);
+}
+#profile_container{
+	display: flex;
+	justify-content: center;
+	padding: 50px 0;
+}
+#profile{
+	/* filter: hue-rotate(240deg); */
+	height: 100px;
+	animation: colorbar 10s infinite;
+}
+@keyframes colorbar {
+	0%{
+		filter: hue-rotate(0deg);
+	}
+	100%{
+		filter: hue-rotate(360deg);
+	}
+}
+#main_content > .footer{
+	margin-left: 20px;
+}
+.footer{
+	margin: 64px 0;
+	display: flex;
+	align-items: center;
+	/* padding-left: 20px; */
+}
+.footicon{
+	height: 16px;
+}
+.footname{
+	margin: 0 15px 0 5px;
+	/* font-weight: bold; */
+}
+
+h1#error_h1 {
+    margin-top: 0;
+}
