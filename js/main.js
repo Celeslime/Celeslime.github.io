@@ -7,9 +7,9 @@
 	var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
 	var qqBtn = document.getElementById("qq-btn");
 
-	/* scrollspy：找视口垂直中心所在的分区，高亮侧边圆点与导航 */
+	/* scrollspy：找视口顶部附近（100px 处）所在的分区，与锚点跳转的 scroll-margin 统一 */
 	function spy() {
-		var mark = window.innerHeight * 0.5;
+		var mark = 100;
 		var current = null;
 		for (var i = 0; i < sections.length; i++) {
 			var r = sections[i].getBoundingClientRect();
@@ -19,9 +19,9 @@
 			}
 		}
 		if (!current) {
-			/* 页面底部：视口中心已越过最后分区时，高亮最后一个 */
+			/* 页面底部：最后一个分区已进入视口时，高亮它 */
 			var last = sections[sections.length - 1].getBoundingClientRect();
-			if (last.top < mark) current = sections[sections.length - 1];
+			if (last.top < window.innerHeight) current = sections[sections.length - 1];
 			/* 顶部 hero 区：不做高亮 */
 		}
 		if (!current) return;

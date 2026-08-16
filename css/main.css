@@ -47,13 +47,17 @@ body{
 	font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
 	color: var(--text);
 	min-height: 100vh;
-	/* 背景细点阵纹理（与 hero 统一） */
-	background-image: radial-gradient(circle, rgba(70, 150, 210, 0.15) 1.2px, transparent 1.5px);
-	background-size: 22px 22px;
+	/* 背景细网格纹理（与 hero 统一） */
+	background-image:
+		linear-gradient(rgba(70, 150, 210, 0.06) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(70, 150, 210, 0.06) 1px, transparent 1px);
+	background-size: 26px 26px;
 }
 
 html.dark body{
-	background-image: radial-gradient(circle, rgba(160, 200, 240, 0.08) 1.2px, transparent 1.5px);
+	background-image:
+		linear-gradient(rgba(160, 200, 240, 0.04) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(160, 200, 240, 0.04) 1px, transparent 1px);
 }
 
 a{
@@ -135,8 +139,10 @@ html.dark .nav-logo img{
 /* ---------- 顶部欢迎区（浅蓝白清爽风） ---------- */
 .hero{
 	background:
-		radial-gradient(circle, rgba(70, 150, 210, 0.16) 1.2px, transparent 1.5px) 0 0 / 22px 22px,
+		linear-gradient(rgba(70, 150, 210, 0.07) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(70, 150, 210, 0.07) 1px, transparent 1px),
 		linear-gradient(180deg, #eef6fc 0%, #f7fafc 100%);
+	background-size: 26px 26px, 26px 26px, 100% 100%;
 	border-bottom: 1px solid var(--border);
 	padding: 72px 20px 84px;
 	text-align: center;
@@ -144,8 +150,10 @@ html.dark .nav-logo img{
 
 html.dark .hero{
 	background:
-		radial-gradient(circle, rgba(160, 200, 240, 0.09) 1.2px, transparent 1.5px) 0 0 / 22px 22px,
+		linear-gradient(rgba(160, 200, 240, 0.05) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(160, 200, 240, 0.05) 1px, transparent 1px),
 		linear-gradient(180deg, #14222f 0%, #0e1a26 100%);
+	background-size: 26px 26px, 26px 26px, 100% 100%;
 }
 
 .hero-inner{
@@ -334,6 +342,18 @@ html.dark #profile{
 html.dark .badge.old{
 	background: #243447;
 	color: #94b0c6;
+}
+
+.badge.wip{
+	background: #fef3c7;
+	color: #b45309;
+	border: 1px solid #fde68a;
+}
+
+html.dark .badge.wip{
+	background: #3a2f14;
+	color: #fbbf24;
+	border-color: #57491c;
 }
 
 .badge.toy{
