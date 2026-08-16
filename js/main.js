@@ -69,14 +69,23 @@
 	});
 
 	/* QQ：点击复制号码（无风险链接，永不失效） */
-	function showTip(text) {
+	function showTip(text, face) {
 		var tip = document.createElement("div");
-		tip.textContent = text;
 		tip.style.cssText =
 			"position:fixed;top:64px;left:50%;transform:translateX(-50%);" +
 			"background:var(--blue-light);color:var(--blue-deep);" +
 			"padding:8px 18px;border-radius:999px;font-size:0.9rem;" +
+			"text-align:center;max-width:88vw;" +
 			"box-shadow:var(--shadow-out);z-index:99;transition:opacity 0.6s ease;";
+		/* 文案可正常折行；颜文字用 nowrap span 包住，保证永远完整不被打断 */
+		tip.appendChild(document.createTextNode(text));
+		if (face) {
+			var faceSpan = document.createElement("span");
+			faceSpan.style.whiteSpace = "nowrap";
+			faceSpan.style.marginLeft = "0.5em";
+			faceSpan.textContent = face;
+			tip.appendChild(faceSpan);
+		}
 		document.body.appendChild(tip);
 		setTimeout(function () {
 			tip.style.opacity = "0";
@@ -113,25 +122,25 @@
 
 	/* 彩蛋：只有"情感"标签可触发，随机弹一句告白 */
 	var loveTips = [
-		"我喜欢你",
-		"遇见你，是这里最棒的事",
-		"你值得被认真对待",
-		"想把世界上的温柔都给你",
-		"谢谢你点开这里，也谢谢你存在",
-		"今天也在偷偷喜欢你",
-		"爱意藏在每一行代码里",
-		"无论何时看到你，都会心动",
-		"你是我藏在心里最温柔的秘密",
-		"我的未来，希望每个日出日落都有你",
-		"我可以错过很多，但不想错过你",
-		"喜欢你，是我做过最勇敢的事"
+		{ t: "我喜欢你", f: "(♡˙︶˙♡)" },
+		{ t: "遇见你，是这里最棒的事", f: "٩(♡ε♡)۶" },
+		{ t: "你值得被认真对待", f: "(˶ᵕ ᵕ˶)" },
+		{ t: "想把世界上的温柔都给你", f: "(´,,•ω•,,)♡" },
+		{ t: "谢谢你点开这里，也谢谢你存在", f: "(˶‾᷄ ⁻̫ ‾᷅˵)" },
+		{ t: "今天也在偷偷喜欢你", f: "(⁄ ⁄•⁄ω⁄•⁄ ⁄)" },
+		{ t: "爱意藏在每一行代码里", f: "♡(>ᴗ•)" },
+		{ t: "无论何时看到你，都会心动", f: "(๑˃ᴗ˂)ﻭ" },
+		{ t: "你是我藏在心里最温柔的秘密", f: "(•ө•)♡" },
+		{ t: "我的未来，希望每个日出日落都有你", f: "✧(≖ ◡ ≖✿)" },
+		{ t: "我可以错过很多，但不想错过你", f: "(´｡• ᵕ •｡`)" },
+		{ t: "喜欢你，是我做过最勇敢的事", f: "(๑•̀ㅂ•́)و✧" }
 	];
 	var tags = Array.prototype.slice.call(document.querySelectorAll(".tag"));
 	tags.forEach(function (t) {
 		if (t.textContent.trim() !== "情感") return;
 		t.addEventListener("click", function () {
-			var msg = loveTips[Math.floor(Math.random() * loveTips.length)];
-			showTip(msg);
+			var item = loveTips[Math.floor(Math.random() * loveTips.length)];
+			showTip(item.t, item.f);
 		});
 	});
 })();
