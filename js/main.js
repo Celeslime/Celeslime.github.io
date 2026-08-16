@@ -111,23 +111,24 @@
 		});
 	}
 
-	/* 彩蛋：点击领域标签，随机弹一条情感小语 */
-	var emotionTips = [
-		"今天也要好好吃饭呀 🍚",
-		"写完这行代码就去休息一下吧 ☕",
-		"你认真折腾小工具的样子很酷 ✨",
-		"星辰大海和 Bug 都值得慢慢来 🌊",
-		"把胡思乱想做成能点的小东西，已经很棒了 🧩",
-		"偶尔摆烂也是生活的一部分 🌱",
-		"代码不会背叛你，它只是需要调试 🐞",
-		"做自己喜欢的事，时间会给出答案 ⏳",
-		"你头像的花，是数学画出来的浪漫 🌸",
-		"今天也有在发光哦 ✨"
+	/* 彩蛋：只有"情感"标签可触发，随机弹一句告白 */
+	var loveTips = [
+		"我喜欢你 💙",
+		"遇见你，是这里最棒的事 ✨",
+		"你值得被认真对待 🌸",
+		"想把世界上的温柔都给你 🫶",
+		"你的存在让今天变好了 ☀️",
+		"谢谢你点开这里，也谢谢你存在 💫",
+		"今天也在偷偷喜欢你 🤍",
+		"爱意藏在每一行代码里 💙",
+		"无论何时看到你，都会心动 💘",
+		"你是我的 flower，数学都算不出的浪漫 🌹"
 	];
 	var tags = Array.prototype.slice.call(document.querySelectorAll(".tag"));
 	tags.forEach(function (t) {
+		if (t.textContent.trim() !== "情感") return;
 		t.addEventListener("click", function () {
-			var msg = emotionTips[Math.floor(Math.random() * emotionTips.length)];
+			var msg = loveTips[Math.floor(Math.random() * loveTips.length)];
 			showTip(msg);
 		});
 	});
