@@ -1,24 +1,34 @@
 :root{
-	--bg: #efefef;
-	--card: #f7f7f8;
-	--text: #78767a;
-	--text-strong: #4a484d;
-	--accent: #9b8cff;
-	--accent-soft: rgba(155, 140, 255, 0.14);
-	--shadow-out: 0.2rem 0.2rem 0.4rem rgba(42, 42, 42, 0.25), -0.2rem -0.2rem 0.4rem #fff;
-	--shadow-hover: 0.35rem 0.35rem 0.7rem rgba(42, 42, 42, 0.22), -0.25rem -0.25rem 0.6rem #fff;
+	/* 主色取自头像 flower #4696d2，蓝白基调参考 zotero-chinese */
+	--blue: #4696d2;
+	--blue-dark: #2c6f9e;
+	--blue-deep: #1f5b8a;
+	--blue-light: #eaf4fb;
+	--blue-soft: #f4f9fd;
+
+	--bg: #f7fafc;
+	--card: #ffffff;
+	--border: #d6e8f5;
+	--text: #3d5a73;
+	--text-strong: #1f3a52;
+	--shadow-out: 0 3px 12px rgba(70, 150, 210, 0.12);
+	--shadow-hover: 0 10px 24px rgba(70, 150, 210, 0.2);
 }
 
-@media (prefers-color-scheme: dark){
-	:root{
-		--bg: #17161b;
-		--card: #1f1e25;
-		--text: #a8a5b0;
-		--text-strong: #d9d6e0;
-		--accent-soft: rgba(155, 140, 255, 0.18);
-		--shadow-out: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.55), -0.15rem -0.15rem 0.4rem rgba(255, 255, 255, 0.04);
-		--shadow-hover: 0.3rem 0.3rem 0.7rem rgba(0, 0, 0, 0.6), -0.2rem -0.2rem 0.5rem rgba(255, 255, 255, 0.05);
-	}
+html.dark{
+	--blue: #63aadd;
+	--blue-dark: #7db9e4;
+	--blue-deep: #9cc7e8;
+	--blue-light: #1d3346;
+	--blue-soft: #16242f;
+
+	--bg: #0e1a26;
+	--card: #16242f;
+	--border: #244055;
+	--text: #a8c1d6;
+	--text-strong: #d7e6f2;
+	--shadow-out: 0 3px 14px rgba(0, 0, 0, 0.5);
+	--shadow-hover: 0 10px 26px rgba(0, 0, 0, 0.6);
 }
 
 *{
@@ -31,18 +41,9 @@ html{
 
 body{
 	margin: 0;
-	font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+	font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
 	color: var(--text);
 	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-}
-
-.container{
-	width: 100%;
-	max-width: 860px;
-	margin: 0 auto;
-	padding: 16px;
 }
 
 a{
@@ -51,32 +52,39 @@ a{
 }
 
 :focus{
-	outline: 2px solid var(--accent);
+	outline: 2px solid var(--blue);
 	outline-offset: 2px;
 }
 
-/* ---------- 名片区 ---------- */
-#profile_container{
-	display: flex;
-	justify-content: center;
-	padding: 48px 0 8px;
+.container{
+	width: 100%;
+	max-width: 880px;
+	margin: 0 auto;
+	padding: 28px 20px;
 }
 
-#profile_card{
+/* ---------- 顶部欢迎横幅 ---------- */
+.hero{
+	background: linear-gradient(135deg, var(--blue-deep) 0%, var(--blue) 55%, #7ec2ef 100%);
+	padding: 56px 20px 72px;
+	text-align: center;
+}
+
+.hero-inner{
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	text-align: center;
-	opacity: 0;
-	transform: translateY(14px);
 	animation: rise-in 0.7s ease forwards;
 }
 
 #profile{
-	height: 96px;
+	height: 110px;
+	width: 110px;
 	border-radius: 50%;
+	background: #fff;
+	padding: 6px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 	animation: colorbar 10s infinite;
-	box-shadow: var(--shadow-out);
 }
 
 @keyframes colorbar{
@@ -85,38 +93,41 @@ a{
 }
 
 #name{
-	margin: 18px 0 4px;
-	color: var(--text-strong);
-	font-size: 1.6rem;
+	margin: 18px 0 6px;
+	color: #fff;
+	font-size: 1.7rem;
+	letter-spacing: 1px;
+	text-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
 #slogan{
 	margin: 0;
-	opacity: 0.8;
+	color: rgba(255, 255, 255, 0.9);
+	font-size: 0.98rem;
 }
 
 #social{
 	display: flex;
 	gap: 14px;
-	margin-top: 12px;
+	margin-top: 18px;
 }
 
 #social a{
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 40px;
-	height: 40px;
+	width: 42px;
+	height: 42px;
 	border-radius: 50%;
-	background: var(--card);
-	box-shadow: var(--shadow-out);
-	transition: transform 0.18s ease, box-shadow 0.18s ease;
+	background: rgba(255, 255, 255, 0.18);
+	backdrop-filter: blur(4px);
+	color: #fff;
+	transition: background 0.18s ease, transform 0.18s ease;
 }
 
 #social a:hover{
+	background: rgba(255, 255, 255, 0.32);
 	transform: translateY(-3px);
-	box-shadow: var(--shadow-hover);
-	color: var(--accent);
 }
 
 #social svg{
@@ -124,35 +135,42 @@ a{
 	height: 20px;
 }
 
-/* ---------- 卡片区 ---------- */
-.card{
-	margin: 28px 0;
-	padding: 24px 28px;
-	border-radius: 18px;
-	background: var(--card);
-	box-shadow: var(--shadow-out);
-	opacity: 0;
-	transform: translateY(14px);
-	animation: rise-in 0.7s ease forwards;
-	animation-delay: 0.15s;
-}
-
 @keyframes rise-in{
+	from{
+		opacity: 0;
+		transform: translateY(14px);
+	}
 	to{
 		opacity: 1;
 		transform: translateY(0);
 	}
 }
 
-.card h2{
-	margin: 0 0 18px;
-	font-size: 1.2rem;
-	color: var(--text-strong);
-	letter-spacing: 2px;
+/* ---------- 分区 ---------- */
+.card-section{
+	margin: 0 0 34px;
 }
 
-/* ---------- 项目网格 ---------- */
-#grid{
+.section-title{
+	margin: 0 0 16px;
+	font-size: 1.15rem;
+	color: var(--blue-deep);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	letter-spacing: 1px;
+}
+
+.section-title::after{
+	content: "";
+	flex: 1;
+	height: 2px;
+	border-radius: 2px;
+	background: linear-gradient(90deg, var(--blue), transparent);
+}
+
+/* ---------- 卡片网格 ---------- */
+.grid{
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 	gap: 16px;
@@ -162,17 +180,18 @@ a{
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	padding: 18px;
-	border-radius: 14px;
+	padding: 20px;
+	border-radius: 16px;
 	background: var(--card);
-	border: 1px solid rgba(128, 128, 128, 0.14);
+	border: 1px solid var(--border);
+	box-shadow: var(--shadow-out);
 	transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .tile:hover{
 	transform: translateY(-4px);
 	box-shadow: var(--shadow-hover);
-	border-color: var(--accent);
+	border-color: var(--blue);
 }
 
 .tile_head{
@@ -190,20 +209,26 @@ a{
 
 .badge{
 	flex-shrink: 0;
-	font-size: 0.75rem;
-	padding: 2px 8px;
+	font-size: 0.72rem;
+	padding: 2px 9px;
 	border-radius: 999px;
 	font-weight: 600;
 }
 
 .badge.ok{
-	background: var(--accent-soft);
-	color: var(--accent);
+	background: var(--blue-light);
+	color: var(--blue-dark);
 }
 
 .badge.toy{
-	background: rgba(140, 160, 255, 0.14);
-	color: #6f8cff;
+	background: #f1f5f9;
+	color: #94a3b8;
+	border: 1px solid var(--border);
+}
+
+html.dark .badge.toy{
+	background: #243447;
+	color: #94b0c6;
 }
 
 .tile_desc{
@@ -218,6 +243,8 @@ a{
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	color: var(--text);
+	opacity: 0.75;
 }
 
 .footicon{
@@ -230,13 +257,16 @@ a{
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 480px){
+	.hero{
+		padding: 40px 16px 56px;
+	}
+	#name{
+		font-size: 1.35rem;
+	}
 	.container{
-		padding: 10px;
+		padding: 20px 14px;
 	}
-	.card{
-		padding: 18px 16px;
-	}
-	#grid{
+	.grid{
 		grid-template-columns: 1fr;
 	}
 }

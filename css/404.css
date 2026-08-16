@@ -20,7 +20,7 @@
 
 #error_a{
 	word-break: break-all;
-	color: var(--accent);
+	color: var(--blue-dark);
 }
 
 .back{
@@ -28,14 +28,15 @@
 	margin-top: 10px;
 	padding: 8px 22px;
 	border-radius: 999px;
-	background: var(--card);
+	background: var(--blue);
 	box-shadow: var(--shadow-out);
-	color: var(--text-strong);
+	color: #fff;
 	font-weight: 600;
-	transition: transform 0.18s ease, box-shadow 0.18s ease;
+	transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
 .back:hover{
 	transform: translateY(-3px);
 	box-shadow: var(--shadow-hover);
+	background: var(--blue-dark);
 }

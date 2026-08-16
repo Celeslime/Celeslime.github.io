@@ -7,6 +7,16 @@
     <link rel="stylesheet" type="text/css" href="/css/main.css">
     <link rel="stylesheet" type="text/css" href="/css/404.css">
     <link rel="icon" href="/images/flower.p.min.svg" type="image/svg+xml">
+    <script>
+        /* 暗色模式防闪烁 */
+        (function(){
+            try{
+                if(localStorage.getItem("theme")==="dark" || (!localStorage.getItem("theme") && matchMedia("(prefers-color-scheme: dark)").matches)){
+                    document.documentElement.classList.add("dark");
+                }
+            }catch(e){}
+        })();
+    </script>
 </head>
 <body>
     <main class="error_box">
