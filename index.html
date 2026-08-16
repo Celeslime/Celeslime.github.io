@@ -8,9 +8,14 @@
 	<link rel="stylesheet" type="text/css" href="./css/main.css">
 	<link rel="icon" href="./images/flower.p.min.svg" type="image/svg+xml">
 	<script>
-		/* 暗色模式防闪烁 + js 可用标记 */
+		/* 暗色模式防闪烁 + js 可用标记 + 清除残留 hash（避免刷新自动滚到锚点） */
 		(function(){
 			document.documentElement.classList.add("js");
+			try{
+				if(location.hash){
+					history.replaceState(null, "", location.pathname + location.search);
+				}
+			}catch(e){}
 			try{
 				if(localStorage.getItem("theme")==="dark" || (!localStorage.getItem("theme") && matchMedia("(prefers-color-scheme: dark)").matches)){
 					document.documentElement.classList.add("dark");
