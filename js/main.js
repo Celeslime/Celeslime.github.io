@@ -122,6 +122,7 @@
 
 	/* 彩蛋：只有"情感"标签可触发，随机弹一句告白 */
 	var loveTips = [
+<<<<<<< HEAD
 		{ t: "我喜欢你", f: "(♡˙︶˙♡)" },
 		{ t: "遇见你，是这里最棒的事", f: "٩(♡ε♡)۶" },
 		{ t: "你值得被认真对待", f: "(˶ᵕ ᵕ˶)" },
@@ -134,13 +135,32 @@
 		{ t: "我的未来，希望每个日出日落都有你", f: "✧(≖ ◡ ≖✿)" },
 		{ t: "我可以错过很多，但不想错过你", f: "(´｡• ᵕ •｡`)" },
 		{ t: "喜欢你，是我做过最勇敢的事", f: "(๑•̀ㅂ•́)و✧" }
+=======
+		"我喜欢你",
+		"遇见你，是这里最棒的事",
+		"你值得被认真对待",
+		"想把世界上的温柔都给你",
+		"谢谢你点开这里，也谢谢你存在",
+		"今天也在偷偷喜欢你",
+		"爱意藏在每一行代码里",
+		"无论何时看到你，都会心动",
+		"你是我藏在心里最温柔的秘密",
+		"我的未来，希望每个日出日落都有你",
+		"我可以错过很多，但不想错过你",
+		"喜欢你，是我做过最勇敢的事"
+>>>>>>> 2d67cf7b6dc48afcb87ed3ea14204ce42b1103b5
 	];
 	var tags = Array.prototype.slice.call(document.querySelectorAll(".tag"));
 	tags.forEach(function (t) {
 		if (t.textContent.trim() !== "情感") return;
 		t.addEventListener("click", function () {
+<<<<<<< HEAD
 			var item = loveTips[Math.floor(Math.random() * loveTips.length)];
 			showTip(item.t, item.f);
+=======
+			var msg = loveTips[Math.floor(Math.random() * loveTips.length)];
+			showTip(msg);
+>>>>>>> 2d67cf7b6dc48afcb87ed3ea14204ce42b1103b5
 		});
 	});
 })();
