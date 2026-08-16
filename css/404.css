@@ -1,0 +1,41 @@
+.error_box{
+	min-height: 70vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	gap: 4px;
+}
+
+.error_box h1{
+	font-size: 2.4rem;
+	margin: 0;
+	color: var(--text-strong);
+}
+
+.error_box p{
+	margin: 6px 0;
+}
+
+#error_a{
+	word-break: break-all;
+	color: var(--accent);
+}
+
+.back{
+	display: inline-block;
+	margin-top: 10px;
+	padding: 8px 22px;
+	border-radius: 999px;
+	background: var(--card);
+	box-shadow: var(--shadow-out);
+	color: var(--text-strong);
+	font-weight: 600;
+	transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.back:hover{
+	transform: translateY(-3px);
+	box-shadow: var(--shadow-hover);
+}

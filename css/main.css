@@ -1,0 +1,242 @@
+:root{
+	--bg: #efefef;
+	--card: #f7f7f8;
+	--text: #78767a;
+	--text-strong: #4a484d;
+	--accent: #9b8cff;
+	--accent-soft: rgba(155, 140, 255, 0.14);
+	--shadow-out: 0.2rem 0.2rem 0.4rem rgba(42, 42, 42, 0.25), -0.2rem -0.2rem 0.4rem #fff;
+	--shadow-hover: 0.35rem 0.35rem 0.7rem rgba(42, 42, 42, 0.22), -0.25rem -0.25rem 0.6rem #fff;
+}
+
+@media (prefers-color-scheme: dark){
+	:root{
+		--bg: #17161b;
+		--card: #1f1e25;
+		--text: #a8a5b0;
+		--text-strong: #d9d6e0;
+		--accent-soft: rgba(155, 140, 255, 0.18);
+		--shadow-out: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.55), -0.15rem -0.15rem 0.4rem rgba(255, 255, 255, 0.04);
+		--shadow-hover: 0.3rem 0.3rem 0.7rem rgba(0, 0, 0, 0.6), -0.2rem -0.2rem 0.5rem rgba(255, 255, 255, 0.05);
+	}
+}
+
+*{
+	box-sizing: border-box;
+}
+
+html{
+	background: var(--bg);
+}
+
+body{
+	margin: 0;
+	font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+	color: var(--text);
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.container{
+	width: 100%;
+	max-width: 860px;
+	margin: 0 auto;
+	padding: 16px;
+}
+
+a{
+	color: inherit;
+	text-decoration: none;
+}
+
+:focus{
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}
+
+/* ---------- 名片区 ---------- */
+#profile_container{
+	display: flex;
+	justify-content: center;
+	padding: 48px 0 8px;
+}
+
+#profile_card{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	opacity: 0;
+	transform: translateY(14px);
+	animation: rise-in 0.7s ease forwards;
+}
+
+#profile{
+	height: 96px;
+	border-radius: 50%;
+	animation: colorbar 10s infinite;
+	box-shadow: var(--shadow-out);
+}
+
+@keyframes colorbar{
+	0%{ filter: hue-rotate(0deg); }
+	100%{ filter: hue-rotate(360deg); }
+}
+
+#name{
+	margin: 18px 0 4px;
+	color: var(--text-strong);
+	font-size: 1.6rem;
+}
+
+#slogan{
+	margin: 0;
+	opacity: 0.8;
+}
+
+#social{
+	display: flex;
+	gap: 14px;
+	margin-top: 12px;
+}
+
+#social a{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: var(--card);
+	box-shadow: var(--shadow-out);
+	transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+#social a:hover{
+	transform: translateY(-3px);
+	box-shadow: var(--shadow-hover);
+	color: var(--accent);
+}
+
+#social svg{
+	width: 20px;
+	height: 20px;
+}
+
+/* ---------- 卡片区 ---------- */
+.card{
+	margin: 28px 0;
+	padding: 24px 28px;
+	border-radius: 18px;
+	background: var(--card);
+	box-shadow: var(--shadow-out);
+	opacity: 0;
+	transform: translateY(14px);
+	animation: rise-in 0.7s ease forwards;
+	animation-delay: 0.15s;
+}
+
+@keyframes rise-in{
+	to{
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.card h2{
+	margin: 0 0 18px;
+	font-size: 1.2rem;
+	color: var(--text-strong);
+	letter-spacing: 2px;
+}
+
+/* ---------- 项目网格 ---------- */
+#grid{
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+	gap: 16px;
+}
+
+.tile{
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 18px;
+	border-radius: 14px;
+	background: var(--card);
+	border: 1px solid rgba(128, 128, 128, 0.14);
+	transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.tile:hover{
+	transform: translateY(-4px);
+	box-shadow: var(--shadow-hover);
+	border-color: var(--accent);
+}
+
+.tile_head{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.tile_name{
+	font-weight: 600;
+	color: var(--text-strong);
+	font-size: 1.02rem;
+}
+
+.badge{
+	flex-shrink: 0;
+	font-size: 0.75rem;
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-weight: 600;
+}
+
+.badge.ok{
+	background: var(--accent-soft);
+	color: var(--accent);
+}
+
+.badge.toy{
+	background: rgba(140, 160, 255, 0.14);
+	color: #6f8cff;
+}
+
+.tile_desc{
+	margin: 0;
+	font-size: 0.88rem;
+	opacity: 0.82;
+}
+
+/* ---------- 页脚 ---------- */
+.footer{
+	margin: 40px 0 48px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.footicon{
+	height: 16px;
+}
+
+.footname{
+	margin: 0 15px 0 5px;
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 480px){
+	.container{
+		padding: 10px;
+	}
+	.card{
+		padding: 18px 16px;
+	}
+	#grid{
+		grid-template-columns: 1fr;
+	}
+}

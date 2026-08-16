@@ -1,27 +1,24 @@
-var timer;
-if(localStorage.vis){
-	hello.style.display="none";
-}
-else{
-	// head.style.top="-124px";
-	// duck.style.display="none";
-	// duck.style.
-	main.style.filter="blur(10px)";
-}
-function getIn(){
-	localStorage.setItem("vis",true);
-	hello.style.opacity ="0";
-	timer=setInterval(dsp,300);
-	// duck.style.display='block';
-	// duck.style.opacity='1';
-	main.style.filter="blur(0px)";
-}
-function dsp(){
-	hello.style.display="none";
+/* 首次访问欢迎提示（不阻塞页面，自动淡出） */
+(function () {
+	"use strict";
 
-	console.log("visited!");
-	// localStorage.vis="";
+	if (localStorage.getItem("vis")) {
+		return;
+	}
+	localStorage.setItem("vis", "1");
 
-	clearInterval(timer);
-	// head.style.top="0px";
-}
+	var tip = document.createElement("div");
+	tip.id = "welcome";
+	tip.textContent = "欢迎光临ヾ(≧▽≦*)o";
+	tip.style.cssText =
+		"position:fixed;top:16px;left:50%;transform:translateX(-50%);" +
+		"background:var(--accent-soft,#efe);color:var(--text-strong,#4a484d);" +
+		"padding:8px 18px;border-radius:999px;font-size:0.9rem;" +
+		"box-shadow:var(--shadow-out);transition:opacity 0.6s ease;z-index:99;";
+	document.body.appendChild(tip);
+
+	setTimeout(function () {
+		tip.style.opacity = "0";
+		setTimeout(function () { tip.remove(); }, 650);
+	}, 2600);
+})();
