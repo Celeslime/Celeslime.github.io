@@ -1,23 +1,31 @@
-/* 滚动位置感知：scrollspy 高亮 + 顶部进度条 + QQ 复制 */
+/* 滚动位置感知：scrollspy（右侧目录 + 导航高亮）+ QQ 复制 */
 (function () {
 	"use strict";
 
 	var sections = Array.prototype.slice.call(document.querySelectorAll(".card-section"));
 	var dots = Array.prototype.slice.call(document.querySelectorAll(".side-dots a"));
 	var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
-	var progress = document.getElementById("progress");
 	var qqBtn = document.getElementById("qq-btn");
 
-	/* scrollspy：找出当前视口中部所在的分区，高亮侧边目录与导航 */
+	/* scrollspy：找视口垂直中心所在的分区，高亮侧边圆点与导航 */
 	function spy() {
-		var mark = window.scrollY + window.innerHeight * 0.35;
+		var mark = window.innerHeight * 0.5;
 		var current = null;
 		for (var i = 0; i < sections.length; i++) {
-			if (sections[i].offsetTop <= mark) {
+			var r = sections[i].getBoundingClientRect();
+			if (r.top <= mark && r.bottom > mark) {
 				current = sections[i];
+				break;
 			}
 		}
+		if (!current) {
+			/* 页面底部：视口中心已越过最后分区时，高亮最后一个 */
+			var last = sections[sections.length - 1].getBoundingClientRect();
+			if (last.top < mark) current = sections[sections.length - 1];
+			/* 顶部 hero 区：不做高亮 */
+		}
 		if (!current) return;
+
 		var id = current.id;
 		dots.forEach(function (d) {
 			d.classList.toggle("active", d.getAttribute("data-target") === id);
@@ -28,19 +36,8 @@
 		});
 	}
 
-	/* 顶部滚动进度条 */
-	function updateProgress() {
-		var h = document.documentElement.scrollHeight - window.innerHeight;
-		var p = h > 0 ? (window.scrollY / h) * 100 : 0;
-		if (progress) progress.style.width = p + "%";
-	}
-
-	function onScroll() {
-		spy();
-		updateProgress();
-	}
-	window.addEventListener("scroll", onScroll, { passive: true });
-	onScroll();
+	window.addEventListener("scroll", spy, { passive: true });
+	spy();
 
 	/* QQ：点击复制号码（无风险链接，永不失效） */
 	function showTip(text) {

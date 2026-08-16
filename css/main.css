@@ -47,13 +47,13 @@ body{
 	font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
 	color: var(--text);
 	min-height: 100vh;
-	/* 背景细点阵纹理，增强层次 */
-	background-image: radial-gradient(circle, rgba(70, 150, 210, 0.09) 1px, transparent 1px);
-	background-size: 24px 24px;
+	/* 背景细点阵纹理（与 hero 统一） */
+	background-image: radial-gradient(circle, rgba(70, 150, 210, 0.15) 1.2px, transparent 1.5px);
+	background-size: 22px 22px;
 }
 
 html.dark body{
-	background-image: radial-gradient(circle, rgba(160, 200, 240, 0.05) 1px, transparent 1px);
+	background-image: radial-gradient(circle, rgba(160, 200, 240, 0.08) 1.2px, transparent 1.5px);
 }
 
 a{
@@ -134,14 +134,18 @@ html.dark .nav-logo img{
 
 /* ---------- 顶部欢迎区（浅蓝白清爽风） ---------- */
 .hero{
-	background: linear-gradient(180deg, #eef6fc 0%, #f7fafc 100%);
+	background:
+		radial-gradient(circle, rgba(70, 150, 210, 0.16) 1.2px, transparent 1.5px) 0 0 / 22px 22px,
+		linear-gradient(180deg, #eef6fc 0%, #f7fafc 100%);
 	border-bottom: 1px solid var(--border);
 	padding: 72px 20px 84px;
 	text-align: center;
 }
 
 html.dark .hero{
-	background: linear-gradient(180deg, #14222f 0%, #0e1a26 100%);
+	background:
+		radial-gradient(circle, rgba(160, 200, 240, 0.09) 1.2px, transparent 1.5px) 0 0 / 22px 22px,
+		linear-gradient(180deg, #14222f 0%, #0e1a26 100%);
 }
 
 .hero-inner{
@@ -216,11 +220,6 @@ html.dark #profile{
 	height: 20px;
 }
 
-/* QQ 企鹅图标视觉重心偏下，微调居中 */
-#qq-btn svg{
-	transform: translateY(-1px);
-}
-
 @keyframes rise-in{
 	from{
 		opacity: 0;
@@ -235,6 +234,13 @@ html.dark #profile{
 /* ---------- 分区 ---------- */
 .card-section{
 	margin: 0 0 52px;
+	/* 锚点跳转时给 sticky 导航让位 */
+	scroll-margin-top: 72px;
+}
+
+.anchor{
+	display: block;
+	scroll-margin-top: 72px;
 }
 
 .section-head{
@@ -373,17 +379,6 @@ html.dark .badge.toy{
 	transform: translateY(-2px);
 	background: var(--blue-light);
 	border-color: var(--blue);
-}
-
-/* ---------- 滚动进度条 ---------- */
-.progress{
-	position: fixed;
-	top: 0;
-	left: 0;
-	height: 3px;
-	width: 0;
-	background: linear-gradient(90deg, var(--blue), #7ec2ef);
-	z-index: 60;
 }
 
 /* ---------- 右侧锚点目录 ---------- */
