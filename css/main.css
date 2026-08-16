@@ -47,6 +47,13 @@ body{
 	font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
 	color: var(--text);
 	min-height: 100vh;
+	/* 背景细点阵纹理，增强层次 */
+	background-image: radial-gradient(circle, rgba(70, 150, 210, 0.09) 1px, transparent 1px);
+	background-size: 24px 24px;
+}
+
+html.dark body{
+	background-image: radial-gradient(circle, rgba(160, 200, 240, 0.05) 1px, transparent 1px);
 }
 
 a{
@@ -209,10 +216,9 @@ html.dark #profile{
 	height: 20px;
 }
 
-.qq-text{
-	font-size: 0.86rem;
-	font-weight: 700;
-	letter-spacing: 1px;
+/* QQ 企鹅图标视觉重心偏下，微调居中 */
+#qq-btn svg{
+	transform: translateY(-1px);
 }
 
 @keyframes rise-in{
@@ -229,26 +235,6 @@ html.dark #profile{
 /* ---------- 分区 ---------- */
 .card-section{
 	margin: 0 0 52px;
-}
-
-/* 进入视口浮现动画（仅 JS 可用时启用） */
-.js .card-section{
-	opacity: 0;
-	transform: translateY(24px);
-	transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.js .card-section.visible{
-	opacity: 1;
-	transform: none;
-}
-
-@media (prefers-reduced-motion: reduce){
-	.js .card-section{
-		opacity: 1;
-		transform: none;
-		transition: none;
-	}
 }
 
 .section-head{
@@ -387,6 +373,54 @@ html.dark .badge.toy{
 	transform: translateY(-2px);
 	background: var(--blue-light);
 	border-color: var(--blue);
+}
+
+/* ---------- 滚动进度条 ---------- */
+.progress{
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 3px;
+	width: 0;
+	background: linear-gradient(90deg, var(--blue), #7ec2ef);
+	z-index: 60;
+}
+
+/* ---------- 右侧锚点目录 ---------- */
+.side-dots{
+	position: fixed;
+	right: 22px;
+	top: 50%;
+	transform: translateY(-50%);
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	z-index: 40;
+}
+
+.side-dots a{
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--card);
+	border: 2px solid var(--blue);
+	box-shadow: var(--shadow-out);
+	transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.side-dots a:hover{
+	transform: scale(1.25);
+}
+
+.side-dots a.active{
+	background: var(--blue);
+	transform: scale(1.35);
+}
+
+@media (max-width: 768px){
+	.side-dots{
+		display: none;
+	}
 }
 
 /* ---------- 页脚 ---------- */
