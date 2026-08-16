@@ -47,9 +47,9 @@ body{
 	font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
 	color: var(--text);
 	min-height: 100vh;
-	/* flower 原图做页面背景：中心对齐左上角，尺寸 1680px（840=1680/2 使中心落在 (0,0)） */
+	/* flower 原图做页面背景：中心对齐右上角，尺寸 1680px（840=1680/2 使中心落在右缘顶角） */
 	background:
-		url("../images/flower.min.svg") no-repeat -840px -840px / 1680px 1680px,
+		url("../images/flower.min.svg") no-repeat calc(100% + 840px) -840px / 1680px 1680px,
 		var(--bg);
 }
 
@@ -68,6 +68,12 @@ a{
 	max-width: 900px;
 	margin: 0 auto;
 	padding: 40px 20px 20px;
+	/* 0.7 遮罩，压住透出的 flower 纹理，保证正文可读 */
+	background: rgba(247, 250, 252, 0.7);
+}
+
+html.dark .container{
+	background: rgba(14, 26, 38, 0.7);
 }
 
 /* ---------- 顶部导航 ---------- */
@@ -132,14 +138,14 @@ html.dark .nav-logo img{
 /* ---------- 顶部欢迎区（浅蓝白清爽风） ---------- */
 .hero{
 	/* 半透明渐变，露出 body 的 flower 纹理（中心在页面左上角） */
-	background: linear-gradient(180deg, rgba(236, 247, 255, 0.85), rgba(247, 250, 252, 0.85));
+	background: linear-gradient(180deg, rgba(236, 247, 255, 0.7), rgba(247, 250, 252, 0.7));
 	/* border-bottom: 1px solid var(--border); */
 	padding: 184px 20px 84px;
 	text-align: center;
 }
 
 html.dark .hero{
-	background: linear-gradient(180deg, rgba(20, 34, 47, 0.85), rgba(14, 26, 38, 0.85));
+	background: linear-gradient(180deg, rgba(20, 34, 47, 0.7), rgba(14, 26, 38, 0.7));
 }
 
 .hero-inner{
