@@ -139,7 +139,7 @@ html.dark .nav-logo img{
 	/* 半透明渐变，露出 body 的 flower 纹理（中心在页面左上角） */
 	background: linear-gradient(180deg, rgba(236, 247, 255, 0.7), rgba(247, 250, 252, 0.7));
 	/* border-bottom: 1px solid var(--border); */
-	padding: 184px 20px 84px;
+	padding: 135px 20px 84px;
 	text-align: center;
 }
 
