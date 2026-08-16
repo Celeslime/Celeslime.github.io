@@ -49,7 +49,7 @@ body{
 	min-height: 100vh;
 	/* flower 原图做页面背景：中心对齐右上角，尺寸 1680px（840=1680/2 使中心落在右缘顶角） */
 	background:
-		url("../images/flower.min.svg") no-repeat calc(100% + 840px) -840px / 1680px 1680px,
+		url("../images/flower.min.svg") no-repeat calc(100% + 800px) -840px / 1680px 1680px,
 		var(--bg);
 }
 
@@ -65,9 +65,9 @@ a{
 
 .container{
 	width: 100%;
-	max-width: 900px;
 	margin: 0 auto;
-	padding: 40px 20px 20px;
+	/* 全宽遮罩：左右 padding 撑出 900px 内容区，背景覆盖含 margin 的整行 */
+	padding: 40px max(20px, calc((100% - 900px) / 2)) 20px;
 	/* 0.7 遮罩，压住透出的 flower 纹理，保证正文可读 */
 	background: rgba(247, 250, 252, 0.7);
 }

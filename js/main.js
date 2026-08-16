@@ -48,6 +48,18 @@
 	window.addEventListener("scroll", onScroll, { passive: true });
 	spy();
 
+	/* 锚点链接：平滑滚动且不写 URL hash（避免刷新时自动下滑到锚点） */
+	var anchors = Array.prototype.slice.call(document.querySelectorAll('a[href^="#"]'));
+	anchors.forEach(function (a) {
+		a.addEventListener("click", function (e) {
+			var target = document.getElementById(a.getAttribute("href").slice(1));
+			if (target) {
+				e.preventDefault();
+				target.scrollIntoView({ behavior: "smooth", block: "start" });
+			}
+		});
+	});
+
 	/* QQ：点击复制号码（无风险链接，永不失效） */
 	function showTip(text) {
 		var tip = document.createElement("div");
