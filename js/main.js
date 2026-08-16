@@ -2,6 +2,14 @@
 (function () {
 	"use strict";
 
+	/* 关闭浏览器滚动位置自动恢复，刷新统一回到顶部，避免被残留位置/锚点带偏 */
+	try {
+		if ("scrollRestoration" in history) {
+			history.scrollRestoration = "manual";
+		}
+		window.scrollTo(0, 0);
+	} catch (e) {}
+
 	var sections = Array.prototype.slice.call(document.querySelectorAll(".card-section"));
 	var dots = Array.prototype.slice.call(document.querySelectorAll(".side-dots a"));
 	var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
@@ -48,6 +56,18 @@
 	window.addEventListener("scroll", onScroll, { passive: true });
 	spy();
 
+	/* 锚点链接：平滑滚动且不写 URL hash（避免刷新时自动下滑到锚点） */
+	var anchors = Array.prototype.slice.call(document.querySelectorAll('a[href^="#"]'));
+	anchors.forEach(function (a) {
+		a.addEventListener("click", function (e) {
+			var target = document.getElementById(a.getAttribute("href").slice(1));
+			if (target) {
+				e.preventDefault();
+				target.scrollIntoView({ behavior: "smooth", block: "start" });
+			}
+		});
+	});
+
 	/* QQ：点击复制号码（无风险链接，永不失效） */
 	function showTip(text) {
 		var tip = document.createElement("div");
@@ -90,6 +110,30 @@
 			}
 		});
 	}
+
+	/* 彩蛋：只有"情感"标签可触发，随机弹一句告白 */
+	var loveTips = [
+		"我喜欢你",
+		"遇见你，是这里最棒的事",
+		"你值得被认真对待",
+		"想把世界上的温柔都给你",
+		"谢谢你点开这里，也谢谢你存在",
+		"今天也在偷偷喜欢你",
+		"爱意藏在每一行代码里",
+		"无论何时看到你，都会心动",
+		"你是我藏在心里最温柔的秘密",
+		"我的未来，希望每个日出日落都有你",
+		"我可以错过很多，但不想错过你",
+		"喜欢你，是我做过最勇敢的事"
+	];
+	var tags = Array.prototype.slice.call(document.querySelectorAll(".tag"));
+	tags.forEach(function (t) {
+		if (t.textContent.trim() !== "情感") return;
+		t.addEventListener("click", function () {
+			var msg = loveTips[Math.floor(Math.random() * loveTips.length)];
+			showTip(msg);
+		});
+	});
 })();
 
 /* 首次访问欢迎提示（不阻塞页面，自动淡出） */
