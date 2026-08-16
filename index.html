@@ -15,6 +15,9 @@
 				if(location.hash){
 					history.replaceState(null, "", location.pathname + location.search);
 				}
+				if("scrollRestoration" in history){
+					history.scrollRestoration = "manual";
+				}
 			}catch(e){}
 			try{
 				if(localStorage.getItem("theme")==="dark" || (!localStorage.getItem("theme") && matchMedia("(prefers-color-scheme: dark)").matches)){

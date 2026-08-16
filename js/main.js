@@ -2,6 +2,14 @@
 (function () {
 	"use strict";
 
+	/* 关闭浏览器滚动位置自动恢复，刷新统一回到顶部，避免被残留位置/锚点带偏 */
+	try {
+		if ("scrollRestoration" in history) {
+			history.scrollRestoration = "manual";
+		}
+		window.scrollTo(0, 0);
+	} catch (e) {}
+
 	var sections = Array.prototype.slice.call(document.querySelectorAll(".card-section"));
 	var dots = Array.prototype.slice.call(document.querySelectorAll(".side-dots a"));
 	var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
