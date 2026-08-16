@@ -19,10 +19,9 @@
 			}
 		}
 		if (!current) {
-			/* 页面底部：最后一个分区已进入视口时，高亮它 */
-			var last = sections[sections.length - 1].getBoundingClientRect();
-			if (last.top < window.innerHeight) current = sections[sections.length - 1];
-			/* 顶部 hero 区：不做高亮 */
+			/* 仅当滚动接近页面底部时，才高亮最后一个分区（避免顶部/跳转中途误高亮） */
+			var nearBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight) < 2;
+			if (nearBottom) current = sections[sections.length - 1];
 		}
 		if (!current) return;
 
@@ -36,7 +35,17 @@
 		});
 	}
 
-	window.addEventListener("scroll", spy, { passive: true });
+	var ticking = false;
+	function onScroll() {
+		if (!ticking) {
+			ticking = true;
+			window.requestAnimationFrame(function () {
+				spy();
+				ticking = false;
+			});
+		}
+	}
+	window.addEventListener("scroll", onScroll, { passive: true });
 	spy();
 
 	/* QQ：点击复制号码（无风险链接，永不失效） */
