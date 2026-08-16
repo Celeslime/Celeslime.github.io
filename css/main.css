@@ -438,6 +438,12 @@ html.dark .badge.toy{
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 480px){
+	body{
+		/* 移动端降低 flower 背景图尺寸（700px，中心仍对齐右上角） */
+		background:
+			url("../images/flower.min.svg") no-repeat calc(100% + 350px) -350px / 700px 700px,
+			var(--bg);
+	}
 	.hero{
 		padding: 52px 16px 64px;
 	}
