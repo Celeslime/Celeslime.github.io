@@ -6,7 +6,6 @@
 
 - [3500 · 高考英语词汇](https://celeslime.github.io/3500/) — 高考 3500 词的查询、联想与朗读
 - [5500 · 考研英语词汇](https://celeslime.github.io/5500/) — 考研 5500 词的查询、联想与朗读
-- [class-tri · 蹭饭地图](https://github.com/Celeslime/class-tri) — 山师附中 2018 级 3 班毕业去向一览
 - [syw · 原神面板计算器](https://celeslime.github.io/syw/) — 原神角色面板伤害计算
 - [timer · 计时器](https://celeslime.github.io/timer/) — 环形倒计时与日期
 - [universe · 星球模拟](https://celeslime.github.io/universe/) — 万有引力下的星球运动模拟（玩具）
