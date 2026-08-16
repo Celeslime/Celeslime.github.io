@@ -39,9 +39,6 @@ html.dark{
 
 html{
 	background: var(--bg);
-	scroll-behavior: smooth;
-	/* 禁用滚动锚定：避免刷新时因顶部动画/加载导致视口自动偏移 */
-	overflow-anchor: none;
 }
 
 body{
