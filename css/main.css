@@ -13,6 +13,7 @@
 	--text-strong: #1f3a52;
 	--shadow-out: 0 3px 12px rgba(70, 150, 210, 0.12);
 	--shadow-hover: 0 10px 24px rgba(70, 150, 210, 0.2);
+	--nav-bg: rgba(247, 250, 252, 0.82);
 }
 
 html.dark{
@@ -29,6 +30,7 @@ html.dark{
 	--text-strong: #d7e6f2;
 	--shadow-out: 0 3px 14px rgba(0, 0, 0, 0.5);
 	--shadow-hover: 0 10px 26px rgba(0, 0, 0, 0.6);
+	--nav-bg: rgba(14, 26, 38, 0.82);
 }
 
 *{
@@ -37,6 +39,7 @@ html.dark{
 
 html{
 	background: var(--bg);
+	scroll-behavior: smooth;
 }
 
 body{
@@ -58,16 +61,70 @@ a{
 
 .container{
 	width: 100%;
-	max-width: 880px;
+	max-width: 900px;
 	margin: 0 auto;
-	padding: 28px 20px;
+	padding: 40px 20px 20px;
+}
+
+/* ---------- 顶部导航 ---------- */
+.nav{
+	position: sticky;
+	top: 0;
+	z-index: 50;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 56px;
+	padding: 0 max(20px, calc((100vw - 900px) / 2));
+	background: var(--nav-bg);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border-bottom: 1px solid var(--border);
+}
+
+.nav-logo{
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 700;
+	font-size: 1.05rem;
+	color: var(--blue-deep);
+}
+
+.nav-logo img{
+	height: 26px;
+	width: 26px;
+	border-radius: 50%;
+	background: #fff;
+	padding: 2px;
+	border: 1px solid var(--border);
+}
+
+html.dark .nav-logo img{
+	background: var(--card);
+}
+
+.nav-links{
+	display: flex;
+	gap: 22px;
+}
+
+.nav-links a{
+	font-size: 0.92rem;
+	color: var(--text);
+	font-weight: 500;
+	transition: color 0.18s ease;
+}
+
+.nav-links a:hover{
+	color: var(--blue);
 }
 
 /* ---------- 顶部欢迎区（浅蓝白清爽风） ---------- */
 .hero{
 	background: linear-gradient(180deg, #eef6fc 0%, #f7fafc 100%);
 	border-bottom: 1px solid var(--border);
-	padding: 56px 20px 72px;
+	padding: 72px 20px 84px;
 	text-align: center;
 }
 
@@ -83,8 +140,8 @@ html.dark .hero{
 }
 
 #profile{
-	height: 108px;
-	width: 108px;
+	height: 112px;
+	width: 112px;
 	border-radius: 50%;
 	background: #fff;
 	padding: 6px;
@@ -104,9 +161,9 @@ html.dark #profile{
 }
 
 #name{
-	margin: 18px 0 6px;
+	margin: 22px 0 8px;
 	color: var(--blue-deep);
-	font-size: 1.7rem;
+	font-size: 1.75rem;
 	letter-spacing: 1px;
 }
 
@@ -119,7 +176,7 @@ html.dark #profile{
 #social{
 	display: flex;
 	gap: 14px;
-	margin-top: 18px;
+	margin-top: 20px;
 }
 
 #social a{
@@ -160,12 +217,16 @@ html.dark #profile{
 
 /* ---------- 分区 ---------- */
 .card-section{
-	margin: 0 0 34px;
+	margin: 0 0 52px;
+}
+
+.section-head{
+	margin-bottom: 20px;
 }
 
 .section-title{
-	margin: 0 0 16px;
-	font-size: 1.15rem;
+	margin: 0 0 6px;
+	font-size: 1.2rem;
 	color: var(--blue-deep);
 	display: flex;
 	align-items: center;
@@ -173,12 +234,10 @@ html.dark #profile{
 	letter-spacing: 1px;
 }
 
-.section-title::after{
-	content: "";
-	flex: 1;
-	height: 2px;
-	border-radius: 2px;
-	background: linear-gradient(90deg, var(--blue), transparent);
+.section-sub{
+	margin: 0;
+	font-size: 0.86rem;
+	opacity: 0.7;
 }
 
 /* ---------- 卡片网格 ---------- */
@@ -206,11 +265,17 @@ html.dark #profile{
 	border-color: var(--blue);
 }
 
-.tile_head{
+.tile-top{
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 8px;
+	margin-bottom: 4px;
+}
+
+.tile-icon{
+	font-size: 1.5rem;
+	line-height: 1;
 }
 
 .tile_name{
@@ -249,9 +314,37 @@ html.dark .badge.toy{
 	opacity: 0.82;
 }
 
+/* ---------- 领域标签 ---------- */
+.tags{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.tag{
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 16px;
+	border-radius: 999px;
+	background: var(--card);
+	border: 1px solid var(--border);
+	box-shadow: var(--shadow-out);
+	color: var(--blue-dark);
+	font-size: 0.88rem;
+	font-weight: 500;
+	transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.tag:hover{
+	transform: translateY(-2px);
+	background: var(--blue-light);
+	border-color: var(--blue);
+}
+
 /* ---------- 页脚 ---------- */
 .footer{
-	margin: 40px 0 48px;
+	margin: 48px 0 52px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -270,15 +363,18 @@ html.dark .badge.toy{
 /* ---------- 响应式 ---------- */
 @media (max-width: 480px){
 	.hero{
-		padding: 40px 16px 56px;
+		padding: 52px 16px 64px;
 	}
 	#name{
-		font-size: 1.35rem;
+		font-size: 1.4rem;
 	}
 	.container{
-		padding: 20px 14px;
+		padding: 28px 14px 16px;
 	}
 	.grid{
 		grid-template-columns: 1fr;
+	}
+	.nav-links{
+		gap: 14px;
 	}
 }
