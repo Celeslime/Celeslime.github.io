@@ -313,6 +313,7 @@ html.dark #profile{
 .badge.ok{
 	background: var(--blue-light);
 	color: var(--blue-dark);
+	border: 1px solid var(--border);
 }
 
 .badge.old{
@@ -324,18 +325,6 @@ html.dark #profile{
 html.dark .badge.old{
 	background: #243447;
 	color: #94b0c6;
-}
-
-.badge.wip{
-	background: #fef3c7;
-	color: #b45309;
-	border: 1px solid #fde68a;
-}
-
-html.dark .badge.wip{
-	background: #3a2f14;
-	color: #fbbf24;
-	border-color: #57491c;
 }
 
 .badge.toy{
