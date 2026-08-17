@@ -115,6 +115,7 @@ html.dark .nav-logo img{
 
 .nav-links{
 	display: flex;
+	align-items: center;
 	gap: 22px;
 }
 
@@ -133,6 +134,38 @@ html.dark .nav-logo img{
 	color: var(--blue);
 	font-weight: 600;
 }
+
+/* ---------- 主题切换按钮 ---------- */
+.nav-theme-btn{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	padding: 0;
+	border: 1px solid var(--border);
+	border-radius: 50%;
+	background: var(--card);
+	color: var(--blue-dark);
+	cursor: pointer;
+	transition: background 0.18s ease, transform 0.18s ease, color 0.18s ease;
+	margin-left: 2px;
+}
+
+.nav-theme-btn:hover{
+	background: var(--blue-light);
+	color: var(--blue-deep);
+	transform: translateY(-2px);
+}
+
+.theme-icon{
+	width: 17px;
+	height: 17px;
+	display: none;
+}
+
+html:not(.dark) .theme-sun{ display: block; }
+html.dark .theme-moon{ display: block; }
 
 /* ---------- 顶部欢迎区（浅蓝白清爽风） ---------- */
 .hero{

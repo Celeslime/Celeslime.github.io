@@ -2,102 +2,373 @@
 <html lang="zh-cn">
     <head>
         <meta charset="utf-8">
-        <title>Timer</title>
+        <title>Timer · 天相</title>
         <meta name="viewport" content="width=device-width, initial-scale=0.8, user-scalable=no">
         <link rel="stylesheet" type="text/css" href="./index.css"/>
         <script src="./calendar.js"></script>
     </head>
 
     <body>
+        <!-- 星空（夜间可见） -->
+        <div id="stars"></div>
+
+        <!-- 天空渐变背景 -->
+        <div id="sky"></div>
+
+        <!-- 时间 / 日期 / 农历（绝对定位覆盖在 SVG 之上） -->
         <p id="time"></p>
         <p id="date"></p>
+        <p id="lunar"></p>
+
+        <!-- 环形时钟 SVG -->
         <svg width="400" height="400" id="player1">
-            <circle class="dynamic" id="C1" cx="200" cy="200" r="190" transform="rotate(90 200 200)"/>
-            <circle class="dynamic" id="C2" cx="200" cy="200" r="170" transform="rotate(90 200 200)"/>
-            <circle class="dynamic" id="C3" cx="200" cy="200" r="150" transform="rotate(90 200 200)"/>
-
-            <line id="X" x1="0" y1="200" x2="400" y2="200"/>
-            <line id="X" x1="200" y1="0" x2="200" y2="400"/>
-            <line id="X" x1="58.578" y1="58.578" x2="341.421" y2="341.421"/>
-            <line id="X" x1="58.578" y1="341.421" x2="341.421" y2="58.578"/>
-
-            <circle id="WT" cx="200" cy="200" r="140"/>
-            <!-- r=75 or r=140 -->
-            <circle id="CK" cx="200" cy="200" r="197.5"/>
-            <circle id="CK_ID" cx="200" cy="200" r="170"/>
-            <!-- transform="rotate(-0.85 200 200)" -->
             <defs>
-                <linearGradient id="myLinearGradient1">
-                    <stop offset="0%" stop-color="#000" stop-opacity="1"/>
-                    <stop offset="100%" stop-color="#fff" stop-opacity="1"/>
-                </linearGradient>
+                <!-- 太阳光晕滤镜 -->
+                <filter id="glow-sun" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur1"/>
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur2"/>
+                    <feMerge>
+                        <feMergeNode in="blur2"/>
+                        <feMergeNode in="blur1"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+                <!-- 月亮光晕滤镜（柔和） -->
+                <filter id="glow-moon" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+                    <feMerge>
+                        <feMergeNode in="blur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
             </defs>
+
+            <!-- 进度圆环（从 12 点方向起笔：rotate(90) 将圆路径起点转到顶部） -->
+            <circle class="dynamic ring-track" id="C1-track" cx="200" cy="200" r="190" transform="rotate(90 200 200)"/>
+            <circle class="dynamic ring-fill"  id="C1" cx="200" cy="200" r="190" transform="rotate(90 200 200)"/>
+
+            <circle class="dynamic ring-track" id="C2-track" cx="200" cy="200" r="170" transform="rotate(90 200 200)"/>
+            <circle class="dynamic ring-fill"  id="C2" cx="200" cy="200" r="170" transform="rotate(90 200 200)"/>
+
+            <circle class="dynamic ring-track" id="C3-track" cx="200" cy="200" r="150" transform="rotate(90 200 200)"/>
+            <circle class="dynamic ring-fill"  id="C3" cx="200" cy="200" r="150" transform="rotate(90 200 200)"/>
+
+            <!-- 表盘辅助线：十字 + 对角线（圆点虚线） -->
+            <line class="dial" x1="0" y1="200" x2="400" y2="200"/>
+            <line class="dial" x1="200" y1="0" x2="200" y2="400"/>
+            <line class="dial" x1="58.578" y1="58.578" x2="341.421" y2="341.421"/>
+            <line class="dial" x1="58.578" y1="341.421" x2="341.421" y2="58.578"/>
+
+            <!-- 中环点状刻度（24 等分 = 每小时一格） -->
+            <circle id="CK_ID" cx="200" cy="200" r="170"/>
+
+            <!-- 中心底色圆 -->
+            <circle id="WT" cx="200" cy="200" r="140"/>
+
+            <!-- 太阳/月亮指示器（在日环 C1 上移动）
+                 初始 opacity 0，启动时原地淡入（transform 直接定位到当前时刻的太阳位置） -->
+            <g id="celestial-body" style="transform: translate(0px, 0px); opacity: 0">
+                <!-- 外层光晕 -->
+                <circle id="sun-halo" cx="200" cy="10" r="14"/>
+                <!-- 内核 -->
+                <circle id="sun-core" cx="200" cy="10" r="7"/>
+            </g>
         </svg>
+
         <script type="text/javascript">
-            // 获取当前时间
-            var vWeek,
-                vWeek_s,
-                vDay;
-            L = calendar.solar2lunar();
-            pi = 3.1415926535897932384;
-            q2 = 141.4213562373;
-            vWeek = [
-                "星期天",
-                "星期一",
-                "星期二",
-                "星期三",
-                "星期四",
-                "星期五",
-                "星期六",
+            /* ============================================================
+             * 天相时钟：模拟一日之间的天相变化
+             *
+             * 三个同心圆环分别指示「一日 / 农历一月 / 一年」的进度。
+             * 天空背景随时刻推移而变化，从深夜渐变至白昼再回归深夜。
+             * 太阳/月亮指示器在日环上移动，夜间浮现星空。
+             *
+             * 依赖：calendar.js —— 提供农历转换（calendar.solar2lunar）。
+             * ============================================================ */
+
+            /* ---------- 常量 ---------- */
+
+            const RING = {
+                day:   190, // 一日进度（C1，最外环）
+                month: 170, // 农历月进度（C2，中环）
+                year:  150, // 年进度（C3，内环）
+            };
+
+            const DAY_IN_HOURS       = 24;
+            const LUNAR_MONTH_DAYS   = 30;
+            const TROPICAL_YEAR_DAYS = 365.25;
+            const MONTHS_PER_YEAR    = 12;
+
+            const WEEK_NAMES = [
+                "星期天", "星期一", "星期二", "星期三",
+                "星期四", "星期五", "星期六",
             ];
-            var date = new Date();
-            function time() {
-                date = new Date();
-                year = set0(date.getFullYear(), 4);
-                month = set0(date.getMonth() + 1);
-                day = set0(date.getDate());
-                hours = set0(date.getHours());
-                minutes = set0(date.getMinutes());
-                seconds = set0(date.getSeconds());
-                vWeek_s = date.getDay();
-                c1 = 190 * pi * 2;
-                c2 = 170 * pi * 2;
-                c3 = 150 * pi * 2;
-                Y=365.25
-                k1 = (date.getHours() + date.getMinutes() / 60) / 24; // 一日
-                k2 = (L.lDay-1 + date.getHours()/24) / 30; // 一月
-                k3 = ((date.getMonth()-0)*(Y/12) + (date.getDate()-1) + 10) / Y; // 一年
-                // k1 = (2 * 30.5 + 4 - 35 -31) / 365.25; 
-                if(k3<0)k3+=1;
-                if(k3>1)k3-=1;
-                k9 = (date.getSeconds() + 1) / 60; // 一分
-                document.querySelector("#C1").setAttribute("stroke-dashoffset", c1 * (1 - k1));
-                document.querySelector("#C2").setAttribute("stroke-dashoffset", c2 * (1 - k2));
-                document.querySelector("#C3").setAttribute("stroke-dashoffset", c3 * (1 - k3));
 
-                document.getElementById("time").innerHTML = hours + ":" + minutes + ":" + seconds;
-                document.getElementById("date").innerHTML = month + "月" + day + "日 " + vWeek[vWeek_s];
-            }
-            function set0(num, p = 2) {
-                return("000000000" + num).slice(- p);
-            }
+            /* ---------- 天空色标：按一天中的时刻定义关键帧 ---------- */
+            /* 格式：[小时, 顶部色, 底部色] —— 顶部 ≈ 天顶，底部 ≈ 地平线 */
+            const SKY_KEYFRAMES = [
+                [ 0, '#0a0a2e', '#0f1030' ],  // 子夜
+                [ 4, '#0f0c2e', '#1a1038' ],  // 深夜
+                [ 5, '#1a1040', '#2d1540' ],  // 破晓前
+                [ 5.5, '#4a1e3a', '#6b2a3a' ], // 黎明
+                [ 6, '#c96b4a', '#e8a563' ],  // 日出
+                [ 6.5, '#d4916a', '#f0c878' ], // 日出后
+                [ 7, '#5ba3d9', '#a8d8f0' ],  // 早晨
+                [ 12, '#4a90d9', '#87ceeb' ], // 正午
+                [ 17, '#5ba3d9', '#a8d8f0' ], // 午后
+                [ 17.5, '#d4916a', '#f0c878' ], // 日落前
+                [ 18, '#c96b4a', '#e8a563' ], // 日落
+                [ 18.5, '#7a3b4a', '#9a5050' ], // 黄昏
+                [ 19, '#3d1e4a', '#5a3050' ], // 入夜
+                [ 20, '#1a1040', '#2d1540' ], // 夜晚
+                [ 24, '#0a0a2e', '#0f1030' ], // 子夜（次日）
+            ];
 
-            timer=setInterval(time, 1000);
-            time();
-            let timerContainer = null;
-            // let pipWindow = null;
-            bt.addEventListener("click", async () => {
-                const player = document.querySelector("#player1");
-                console.log(player)
-                // 打开一个画中画窗口。
-                const pipWindow = await documentPictureInPicture.requestWindow();
+            /* ---------- DOM 引用 ---------- */
+            const timeEl         = document.getElementById("time");
+            const dateEl         = document.getElementById("date");
+            const lunarEl        = document.getElementById("lunar");
+            const svgEl          = document.getElementById("player1");
+            const ringDayEl      = document.querySelector("#C1");
+            const ringMonthEl    = document.querySelector("#C2");
+            const ringYearEl     = document.querySelector("#C3");
+            const skyEl          = document.getElementById("sky");
+            const starsEl        = document.getElementById("stars");
+            const centerEl       = document.getElementById("WT");
+            const sunHalo        = document.getElementById("sun-halo");
+            const sunCore        = document.getElementById("sun-core");
+            const celestialBody  = document.getElementById("celestial-body");
 
-                // 将播放器移动到画中画窗口中。
-                pipWindow.document.body.append(player);
-            });
+            /** 加载时刻的农历信息（农历日每天只变一次，页面加载时取一次） */
+            const lunar = calendar.solar2lunar();
 
+            /* ---------- 星空生成（只执行一次） ---------- */
+            const STAR_COUNT = 80;
+            const starData = []; // { el, baseOpacity, twinklePhase }
 
+            (function initStars() {
+                const frag = document.createDocumentFragment();
+                for (let i = 0; i < STAR_COUNT; i++) {
+                    const star = document.createElement("span");
+                    star.className = "star";
+                    const size = Math.random() * 2.5 + 0.8;
+                    star.style.cssText = [
+                        `left:${Math.random() * 100}%`,
+                        `top:${Math.random() * 55}%`,  // 集中在天空上半部
+                        `width:${size}px`,
+                        `height:${size}px`,
+                        `--twinkle-delay:${Math.random() * 4}s`,
+                        `--twinkle-duration:${Math.random() * 2 + 1.5}s`,
+                    ].join(";");
+                    frag.appendChild(star);
+                    starData.push({
+                        el: star,
+                        baseOpacity: Math.random() * 0.5 + 0.3,
+                        twinklePhase: Math.random() * Math.PI * 2,
+                    });
+                }
+                starsEl.appendChild(frag);
+            })();
+
+            /* ---------- 工具函数 ---------- */
+
+            const pad = (num, width = 2) => String(num).padStart(width, "0").slice(-width);
+            const circumference = (radius) => 2 * Math.PI * radius;
+            const wrapToUnit = (value) => {
+                if (value < 0) value += 1;
+                if (value > 1) value -= 1;
+                return value;
+            };
+
+            /** 在 RGB 空间中线性插值两个颜色 */
+            const lerpColor = (c1, c2, t) => {
+                const r1 = parseInt(c1.slice(1,3), 16);
+                const g1 = parseInt(c1.slice(3,5), 16);
+                const b1 = parseInt(c1.slice(5,7), 16);
+                const r2 = parseInt(c2.slice(1,3), 16);
+                const g2 = parseInt(c2.slice(3,5), 16);
+                const b2 = parseInt(c2.slice(5,7), 16);
+                const r = Math.round(r1 + (r2 - r1) * t);
+                const g = Math.round(g1 + (g2 - g1) * t);
+                const b = Math.round(b1 + (b2 - b1) * t);
+                return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+            };
+
+            /** 根据当前时刻在天空色标关键帧之间插值，返回 [顶部色, 底部色, 夜间因子] */
+            const getSkyColors = (hour) => {
+                const kf = SKY_KEYFRAMES;
+                const t = ((hour % 24) + 24) % 24; // 归一化到 [0, 24)
+
+                // 找到 t 所在区间
+                let lo = kf[0], hi = kf[kf.length - 1];
+                for (let i = 0; i < kf.length - 1; i++) {
+                    if (t >= kf[i][0] && t <= kf[i + 1][0]) {
+                        lo = kf[i];
+                        hi = kf[i + 1];
+                        break;
+                    }
+                }
+
+                const range = hi[0] - lo[0];
+                const frac = range === 0 ? 0 : (t - lo[0]) / range;
+                const topColor = lerpColor(lo[1], hi[1], frac);
+                const bottomColor = lerpColor(lo[2], hi[2], frac);
+
+                // 夜间因子：0 = 完全白天，1 = 深夜
+                // 使用 SKY_KEYFRAMES 中夜间时段的色相亮度估算
+                let nightFactor;
+                if (t >= 20 || t < 4) {
+                    nightFactor = 1;
+                } else if (t >= 4 && t < 5.5) {
+                    nightFactor = 1 - (t - 4) / 1.5;
+                } else if (t >= 5.5 && t < 7) {
+                    nightFactor = 0;
+                } else if (t >= 7 && t < 17) {
+                    nightFactor = 0;
+                } else if (t >= 17 && t < 18.5) {
+                    nightFactor = (t - 17) / 1.5;
+                } else if (t >= 18.5 && t < 20) {
+                    nightFactor = 1;
+                } else {
+                    nightFactor = 1;
+                }
+
+                return { topColor, bottomColor, nightFactor };
+            };
+
+            /* ---------- 进度计算 ---------- */
+
+            const dayProgress = (now) =>
+                (now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600) / DAY_IN_HOURS;
+
+            const lunarMonthProgress = (now) =>
+                (lunar.lDay - 1 + now.getHours() / DAY_IN_HOURS) / LUNAR_MONTH_DAYS;
+
+            const yearProgress = (now) => {
+                const dayOfYear =
+                    now.getMonth() * (TROPICAL_YEAR_DAYS / MONTHS_PER_YEAR) +
+                    (now.getDate() - 1) +
+                    10;
+                return wrapToUnit(dayOfYear / TROPICAL_YEAR_DAYS);
+            };
+
+            /* ---------- 太阳位置计算 ---------- */
+            /**
+             * 返回 { x, y, visible } —— 太阳/月亮在日环(r=190)上的坐标。
+             * 角度定义：0° = 12 点钟（天顶），顺时针旋转。
+             *   - 正午(12:00) → 0°（天顶）
+             *   - 日出(06:00) → 90°（左侧 = 东方，北半球面南而望）
+             *   - 子夜(00:00) → 180°（底部 = 地下）
+             *   - 日落(18:00) → 270°（右侧 = 西方）
+             */
+            const getCelestialPosition = (progress) => {
+                // 将进度映射到角度：progress=0.5(正午) → 0°, progress=0(子夜) → 180°
+                const angleDeg = (progress - 0.5) * 360;
+                const angleRad = (angleDeg * Math.PI) / 180;
+                const cx = 200, cy = 200, r = RING.day;
+                const x = cx + r * Math.sin(angleRad);
+                const y = cy - r * Math.cos(angleRad);
+                // 天体可见：当地平线以上（y < 200 即上半圆）
+                const visible = angleDeg > -90 && angleDeg < 90; // 上半圆
+                return { x, y, visible, angleDeg };
+            };
+
+            /* ---------- 渲染 ---------- */
+
+            const renderRing = (ringEl, radius, progress) =>
+                ringEl.setAttribute("stroke-dashoffset", circumference(radius) * (1 - progress));
+
+            const render = () => {
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = now.getMinutes();
+                const seconds = now.getSeconds();
+                const hourDecimal = hours + minutes / 60 + seconds / 3600;
+
+                const dp = dayProgress(now);
+                const mp = lunarMonthProgress(now);
+                const yp = yearProgress(now);
+
+                /* ---- 天空背景 ---- */
+                const { topColor, bottomColor, nightFactor } = getSkyColors(hourDecimal);
+                skyEl.style.background = `linear-gradient(180deg, ${topColor} 0%, ${bottomColor} 100%)`;
+
+                /* ---- 中心圆：取天空渐变在 SVG 中心位置的颜色，完全不透明以遮挡十字线 ---- */
+                const svgRect = svgEl.getBoundingClientRect();
+                const skyRect = skyEl.getBoundingClientRect();
+                const svgCenterY = svgRect.top + svgRect.height / 2;
+                const centerRatio = Math.max(0, Math.min(1,
+                    (svgCenterY - skyRect.top) / skyRect.height));
+                const centerColor = lerpColor(topColor, bottomColor, centerRatio);
+                centerEl.setAttribute("fill", centerColor);
+
+                /* ---- 文本颜色：夜间亮白，白天偏深 ---- */
+                const textColor = nightFactor < 0.5
+                    ? `rgba(30,40,60,0.9)`   // 白天深色文字
+                    : `rgba(255,255,255,0.92)`; // 夜间亮白文字
+                timeEl.style.color = textColor;
+                dateEl.style.color = textColor;
+                lunarEl.style.color = nightFactor < 0.5
+                    ? `rgba(30,40,60,0.7)`
+                    : `rgba(255,255,255,0.65)`;
+                // 文字阴影：白天浅色光晕，夜间深色光晕
+                const textShadow = nightFactor < 0.5
+                    ? `0 0 12px rgba(255,255,255,0.5), 0 1px 2px rgba(0,0,0,0.1)`
+                    : `0 0 20px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.3)`;
+                timeEl.style.textShadow = textShadow;
+                dateEl.style.textShadow = textShadow;
+                lunarEl.style.textShadow = textShadow;
+
+                /* ---- 星空透明度 ---- */
+                starsEl.style.opacity = nightFactor;
+                // 星星闪烁
+                const nowSec = now.getTime() / 1000;
+                for (const s of starData) {
+                    const twinkle = 0.5 + 0.5 * Math.sin(nowSec * 1.8 + s.twinklePhase);
+                    const opacity = s.baseOpacity * twinkle * nightFactor;
+                    s.el.style.opacity = Math.max(0, Math.min(1, opacity));
+                }
+
+                /* ---- 进度圆环 ---- */
+                renderRing(ringDayEl,   RING.day,   dp);
+                renderRing(ringMonthEl, RING.month, mp);
+                renderRing(ringYearEl,  RING.year,  yp);
+
+                /* ---- 太阳/月亮指示器 ---- */
+                const { x, y, visible, angleDeg } = getCelestialPosition(dp);
+                /* transform 直接定位到当前太阳位置（不滑动）；opacity 由 CSS transition 原地淡入 */
+                celestialBody.style.transform = `translate(${x - 200}px, ${y - 10}px)`;
+
+                // 白天太阳色 / 夜间月亮色
+                const isDaytime = nightFactor < 0.5;
+                if (isDaytime) {
+                    sunHalo.setAttribute("fill", "#ffcc66");
+                    sunHalo.setAttribute("opacity", "0.6");
+                    sunCore.setAttribute("fill", "#fff8e0");
+                    sunCore.setAttribute("opacity", "1");
+                    celestialBody.setAttribute("filter", "url(#glow-sun)");
+                    // 地平线以下时降低不透明度
+                    const altOpacity = visible ? 1 : 0.15;
+                    celestialBody.style.opacity = altOpacity;
+                } else {
+                    sunHalo.setAttribute("fill", "#c8d8f0");
+                    sunHalo.setAttribute("opacity", "0.4");
+                    sunCore.setAttribute("fill", "#e8f0ff");
+                    sunCore.setAttribute("opacity", "0.9");
+                    celestialBody.setAttribute("filter", "url(#glow-moon)");
+                    const altOpacity = visible ? 1 : 0.2;
+                    celestialBody.style.opacity = altOpacity;
+                }
+
+                /* ---- 文本 ---- */
+                timeEl.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+                dateEl.textContent = `${pad(now.getMonth() + 1)}月${pad(now.getDate())}日 ${WEEK_NAMES[now.getDay()]}`;
+                lunarEl.textContent = `${lunar.IMonthCn}${lunar.IDayCn} · ${lunar.gzYear}年`;
+            };
+
+            /* ---------- 启动 ---------- */
+            render();
+            setInterval(render, 1000);
         </script>
     </body>
-
 </html>

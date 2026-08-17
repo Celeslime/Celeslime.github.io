@@ -1,90 +1,230 @@
-:root {
-	--num: 500;
-	--bg-color: #f1f1f1;
-}
-#C1 {
-	stroke: #DDD;
-	stroke-dasharray: 1194;
-	transition: 0.99s linear;
-	fill: none;
-}
+/* ============================================================
+ * 天相时钟样式表
+ *
+ * 进度圆环的 stroke-dasharray 即圆的周长，JS 再通过
+ * stroke-dashoffset 呈现进度（与 index.html 中 RING 的半径对应）：
+ *   C1 (r=190) → 周长 ≈ 1193.8
+ *   C2 (r=170) → 周长 ≈ 1068.1
+ *   C3 (r=150) → 周长 ≈ 942.5
+ *   CK_ID (r=170) → 周长/24 ≈ 44.5059（24 个刻度）
+ * ============================================================ */
 
-#C2 {
-	stroke: #CCC;
-	stroke-dasharray: 1069;
-	transition: 1s;
-	fill: none;
-}
-
-#C3 {
-	stroke: #BBB;
-	stroke-dasharray: 942.5;
-	transition: 1s;
-	fill: none;
-}
-
-#X {
-	stroke: #1116;
-	stroke-width: 8;
-	stroke-dasharray: 0 20;
-    stroke-dashoffset: 10;
-	stroke-linecap: round;
-}
-
-#WT {
-	fill: var(--bg-color);
-}
-
-#CK {
-	stroke: #666;
-	stroke-width: 5;
-	fill: none;
-	display: none;
-}
-circle.dynamic { 
-	stroke-width: 14px;
-	stroke-linecap: round;
-}
-#CK_ID {
-	stroke: #8886;
-	stroke-width: 8;
-	stroke-linecap: round;
-	/* stroke-dashoffset: 1068.142; */
-	stroke-dasharray: 0 44.506;
-	/* 	stroke-dasharray: 5 94.5; */
-	fill: none;
+/* ---------- 基础重置 ---------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 html {
-	background-color: var(--bg-color);
+    height: 100%;
+    overflow: hidden;
 }
+
 body {
-	display: flex;
-	min-height: 100vh;
-	justify-content: center;
-	align-items: center;
-	margin: -30px auto;
-	background-color: transparent;
+    display: flex;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background: #0a0a2e; /* 兜底色：深夜 */
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    overflow: hidden;
 }
+
+/* ---------- 天空渐变背景 ---------- */
+#sky {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(180deg, #0a0a2e 0%, #0f1030 100%);
+    transition: background 1.8s ease;
+}
+
+/* ---------- 星空 ---------- */
+#stars {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 2s ease;
+}
+
+.star {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    animation: twinkle var(--twinkle-duration, 2s) ease-in-out infinite;
+    animation-delay: var(--twinkle-delay, 0s);
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50%      { opacity: 1; }
+}
+
+/* ---------- SVG 时钟 ---------- */
+svg {
+    position: fixed;
+    z-index: 2;
+    margin: 0 auto;
+    filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.15));
+}
+
+/* ---------- 进度圆环：轨道（底层半透明）
+   注意：完整圆不能设 stroke-linecap: round！
+   round 会在闭合点（起点=终点）画出鼓包，与刻度点重叠 */
+.ring-track {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.12);
+    stroke-width: 14px;
+}
+
+/* ---------- 进度圆环：填充（上层） ---------- */
+.ring-fill {
+    fill: none;
+    stroke-width: 14px;
+    stroke-linecap: round;
+}
+
+/* 外环：一日进度 */
+#C1 {
+    stroke: rgba(255, 255, 255, 0.55);
+    stroke-dasharray: 1193.8;
+    transition: 0.99s linear;
+}
+
+/* 中环：农历月进度 */
+#C2 {
+    stroke: rgba(255, 255, 255, 0.40);
+    stroke-dasharray: 1068.1;
+    transition: 1s ease;
+}
+
+/* 内环：年进度 */
+#C3 {
+    stroke: rgba(255, 255, 255, 0.28);
+    stroke-dasharray: 942.5;
+    transition: 1s ease;
+}
+
+/* ---------- 表盘辅助线（十字 + 对角线） ---------- */
+.dial {
+    stroke: rgba(255, 255, 255, 0.18);
+    stroke-width: 8;
+    stroke-dasharray: 0 20;
+    stroke-dashoffset: 10;
+    stroke-linecap: round;
+}
+
+/* 中环点状刻度（24 等分）
+   周长 = 2π × 170 ≈ 1068.1415，÷24 ≈ 44.5059。
+   dashoffset 为 0：刻度精确对齐整点方向（3/4点半/6/7点半/9/10点半/12/1点半）。
+   注：这些方向会与 .dial 辅助线圆点重叠，这是设计遗留，暂不处理。 */
+#CK_ID {
+    stroke: rgba(255, 255, 255, 0.20);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 0 44.5059;
+    stroke-dashoffset: 0;
+    fill: none;
+}
+
+/* ---------- 中心底色圆 ---------- */
+#WT {
+    fill: #0a0a2e;
+    /* JS 会用天空背景中间色动态覆盖，完全不透明以遮挡十字线 */
+    transition: fill 2s ease;
+}
+
+/* ---------- 太阳/月亮指示器 ---------- */
+/* 原地淡入：仅过渡 opacity，transform 直接定位不滑动 */
+#celestial-body {
+    transition: opacity 1.5s ease;
+}
+
+#sun-halo {
+    transition: fill 2s ease, opacity 2s ease;
+}
+
+#sun-core {
+    transition: fill 2s ease, opacity 2s ease;
+}
+
+/* ---------- 文本（时间 / 日期 / 农历） ---------- */
 p {
-	position: fixed;
-	/* font-family: 'Times New Roman'; */
-	margin: 3px;
-	color: #5C5C5C;
+    position: fixed;
+    z-index: 3;
+    margin: 0;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.92);
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    transition: color 2s ease;
 }
 
 p#time {
-	font-size: 32px;
-	margin-bottom: 35px;
+    font-size: 36px;
+    margin-bottom: 42px;
+    font-weight: 200;
+    letter-spacing: 0.06em;
 }
 
 p#date {
-	font-size: 14px;
-	margin-top: 35px;
+    font-size: 14px;
+    margin-top: 42px;
+    opacity: 0.85;
 }
 
-svg {
-	position: fixed;
-	z-index: -1;
-	margin: 0 auto;
+p#lunar {
+    font-size: 12px;
+    margin-top: 68px;
+    opacity: 0.65;
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 480px) {
+    svg {
+        width: 320px;
+        height: 320px;
+    }
+
+    p#time {
+        font-size: 28px;
+        margin-bottom: 32px;
+    }
+
+    p#date {
+        font-size: 12px;
+        margin-top: 32px;
+    }
+
+    p#lunar {
+        font-size: 11px;
+        margin-top: 52px;
+    }
+}
+
+@media (max-width: 360px) {
+    svg {
+        width: 280px;
+        height: 280px;
+    }
+
+    p#time {
+        font-size: 24px;
+        margin-bottom: 26px;
+    }
+
+    p#date {
+        font-size: 11px;
+        margin-top: 26px;
+    }
+
+    p#lunar {
+        font-size: 10px;
+        margin-top: 42px;
+    }
 }

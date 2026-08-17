@@ -79,6 +79,50 @@
 		});
 	});
 
+	/* 上下键：在相邻分区之间跳转（分区矮、一屏可容多个，跳转粒度小不丢上下文）
+	   保护：焦点在输入元素时放行默认行为 */
+	function currentIndex() {
+		/* 视口顶部已滚过（top 在 mark 线上方）的最后一个分区；
+		   没有任何分区被滚过则返回 -1（页面处于顶部 hero 区） */
+		var mark = 100;
+		var idx = -1;
+		for (var i = 0; i < sections.length; i++) {
+			if (sections[i].getBoundingClientRect().top <= mark) idx = i;
+		}
+		return idx;
+	}
+
+	document.addEventListener("keydown", function (e) {
+		if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+		var t = e.target;
+		if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+		var i = currentIndex();
+
+		if (e.key === "ArrowDown") {
+			if (i < 0) {
+				/* 顶部 hero 区 -> 滚到第一个分区，不跳过 learning */
+				e.preventDefault();
+				sections[0].scrollIntoView({ behavior: "smooth", block: "start" });
+			} else if (i >= sections.length - 1) {
+				/* 已是最后一个分区 -> 滚到页面底部（露出 footer） */
+				e.preventDefault();
+				window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+			} else {
+				e.preventDefault();
+				sections[i + 1].scrollIntoView({ behavior: "smooth", block: "start" });
+			}
+		} else {
+			if (i <= 0) {
+				/* 顶部 hero 或第一个分区内 -> 回页面顶部 */
+				e.preventDefault();
+				window.scrollTo({ top: 0, behavior: "smooth" });
+			} else {
+				e.preventDefault();
+				sections[i - 1].scrollIntoView({ behavior: "smooth", block: "start" });
+			}
+		}
+	});
+
 	/* QQ：点击复制号码（无风险链接，永不失效） */
 	function showTip(text, face) {
 		var tip = document.createElement("div");
@@ -179,4 +223,21 @@
 		tip.style.opacity = "0";
 		setTimeout(function () { tip.remove(); }, 650);
 	}, 2600);
+})();
+
+/* 主题切换：点击导航按钮在深浅模式间切换，并持久化到 localStorage */
+(function () {
+	"use strict";
+
+	var btn = document.getElementById("theme-toggle");
+	if (!btn) return;
+
+	btn.addEventListener("click", function () {
+		var root = document.documentElement;
+		var dark = root.classList.toggle("dark");
+		/* 显式存 light/dark：用户手动选择后不再跟随系统偏好 */
+		try {
+			localStorage.setItem("theme", dark ? "dark" : "light");
+		} catch (e) {}
+	});
 })();

@@ -84,6 +84,10 @@ function frame(){
 	}
 }
 
-document.body.addEventListener("click",function(){
-    addPlanet();
-});
+// 只在画布内点击才添加星球（避免误触页面其它区域）
+var stage = document.getElementById("stage");
+if (stage) {
+	stage.addEventListener("click", function(){
+		addPlanet();
+	});
+}

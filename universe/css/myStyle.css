@@ -1,45 +1,140 @@
+/* ============================================================
+ * Universe 星球模拟 —— 覆盖父站 main.css 的局部样式
+ * 页面外壳（导航/hero/卡片/页脚）由 ../css/main.css 提供，
+ * 这里只负责深色模拟画布与星球的渲染细节。
+ * ============================================================ */
+
+/* ============================================================
+ * 通用紧凑 hero —— 轻量页头板块（可复制到其它子页面复用）
+ * 结构：.hero > .hero-inner > #name + #slogan
+ * 复用 main.css 的类名，仅覆盖为紧凑版：小 padding、无头像/动画。
+ * ============================================================ */
+.hero{
+	padding: 42px 20px 30px;
+	text-align: center;
+}
+
+html.dark .hero{
+	background: linear-gradient(180deg, var(--blue-soft), var(--bg));
+}
+
+.hero-inner{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	animation: none;
+}
+
+#name{
+	margin: 0;
+	font-size: 1.4rem;
+	letter-spacing: 1px;
+	color: var(--blue-deep);
+}
+
+#slogan{
+	margin: 0;
+	font-size: 0.86rem;
+	opacity: 0.75;
+}
+
+@media (max-width: 480px){
+	.hero{
+		padding: 30px 16px 22px;
+	}
+	#name{
+		font-size: 1.2rem;
+	}
+}
+
 :root {
 	--center_color: #fff;
 	--globle_color: #40a7ff;
-	--background_color: #222;
 	--planet_size: 8px;
 	--center_size: 16px;
 }
-body {
-	position: fixed;
-	margin: 0;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	background: var(--background_color);
+
+/* ---------- 模拟画布：深色圆角卡片 ---------- */
+#stage{
+	position: relative;
+	width: 100%;
+	height: min(66vh, 600px);
+	border-radius: 16px;
+	overflow: hidden;
+	cursor: crosshair;
+	background:
+		radial-gradient(circle at 50% 42%, #1d3346 0%, #13212f 58%, #0c1620 100%);
+	border: 1px solid var(--border);
+	box-shadow: var(--shadow-out);
+	user-select: none;
+	-webkit-user-select: none;
 }
+
+html.dark #stage{
+	border-color: #244055;
+}
+
+/* 提示浮层（画布顶部居中） */
 #toolbox{
-	padding: 10px;
+	position: absolute;
+	top: 12px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 10;
+	max-width: 90%;
+	pointer-events: none;
 }
+
+#mes{
+	margin: 0;
+	padding: 6px 16px;
+	border-radius: 999px;
+	background: rgba(10, 20, 30, 0.55);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: #d7e6f2;
+	font-size: 0.85rem;
+	text-align: center;
+	white-space: nowrap;
+}
+
+/* 坐标系原点：画布中心 */
 #universe{
-	position: fixed;
+	position: absolute;
 	top: 50%;
 	left: 50%;
 }
+
+/* 中心天体 */
 #center{
 	height: var(--center_size);
 	width: var(--center_size);
-	margin: calc(var(--center_size)/-2) calc(var(--center_size)/-2);
+	margin: calc(var(--center_size) / -2) calc(var(--center_size) / -2);
 	background-color: var(--center_color);
-	border-radius: calc(var(--center_size)/2);
+	border-radius: calc(var(--center_size) / 2);
 	box-shadow: var(--center_color) 0 0 5px;
 	z-index: 1;
 }
+
+/* 轨道上的星球（相对 #universe 中心定位，margin 由 js 写入） */
 .planet{
-	position: fixed;
+	position: absolute;
 	height: var(--planet_size);
 	width: var(--planet_size);
-	margin: calc(var(--planet_size)/-2) calc(var(--planet_size)/-2);
+	margin: calc(var(--planet_size) / -2) calc(var(--planet_size) / -2);
 	background-color: var(--globle_color);
-	border-radius: calc(var(--planet_size)/2);
+	border-radius: calc(var(--planet_size) / 2);
 	box-shadow: var(--globle_color) 0 0 5px;
 }
-button{
-	padding: 10px;
+
+/* ---------- 小屏适配 ---------- */
+@media (max-width: 480px){
+	#stage{
+		height: 56vh;
+	}
+	#mes{
+		white-space: normal;
+	}
 }
