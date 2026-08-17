@@ -2,11 +2,55 @@
 <html lang="zh-cn">
 <head>
 	<meta charset="utf-8">
-	<title>Cele的主页 - ヾ(≧▽≦*)o</title>
+	<title>Cele 的小站 - 随心情写的代码与小应用 | CeleSlime</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
-	<meta name="description" content="CeleSlime 的个人主页，收录了随心情写的各种小应用。"/>
+	<meta name="description" content="CeleSlime 的个人主页：考研/高考英语词汇查询、原神面板计算器、模拟城市计算器等随心情写的小应用与算法实验。"/>
+	<meta name="robots" content="index,follow">
+	<meta name="theme-color" content="#0e1a26">
+	<link rel="canonical" href="https://celeslime.github.io/">
 	<link rel="stylesheet" type="text/css" href="./css/main.css">
 	<link rel="icon" href="./images/flower.p.min.svg" type="image/svg+xml">
+
+	<!-- Open Graph（QQ、抖音、小红书等社交分享卡片） -->
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content="Cele 的小站">
+	<meta property="og:title" content="Cele 的小站 - 随心情写的代码与小应用">
+	<meta property="og:description" content="考研/高考英语词汇查询、原神面板计算器、模拟城市计算器等随心情写的小应用。">
+	<meta property="og:url" content="https://celeslime.github.io/">
+	<meta property="og:image" content="https://celeslime.github.io/images/og-cover.png">
+	<meta property="og:image:width" content="1200">
+	<meta property="og:image:height" content="630">
+	<meta property="og:locale" content="zh_CN">
+
+	<!-- Twitter / X Card -->
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="Cele 的小站 - 随心情写的代码与小应用">
+	<meta name="twitter:description" content="考研/高考英语词汇查询、原神面板计算器、模拟城市计算器等随心情写的小应用。">
+	<meta name="twitter:image" content="https://celeslime.github.io/images/og-cover.png">
+
+	<!-- 结构化数据：让搜索引擎把本站识别为个人主页 -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "Person",
+		"name": "CeleSlime",
+		"url": "https://celeslime.github.io/",
+		"image": "https://celeslime.github.io/images/og-cover.png",
+		"description": "CeleSlime 的个人主页：考研/高考英语词汇查询、原神面板计算器、模拟城市计算器、星球模拟等随心情写的小应用与算法实验。",
+		"sameAs": ["https://github.com/Celeslime"]
+	}
+	</script>
+
+	<!-- 字节跳动（头条/抖音搜索）自动收录 -->
+	<script>
+	(function(){
+	var el = document.createElement("script");
+	el.src = "https://lf1-cdn-tos.bytegoofy.com/goofy/ttzz/push.js?3aae1a9dbad448fedd207791d5c933307f45f0d6aaa349798314bcc148506360b3e414cba65c376eba389ba56d9ee0846cad2206506a6529fe6ee21a7373effb434c445cf6444b10ea9756ea44e128a6";
+	el.id = "ttzz";
+	var s = document.getElementsByTagName("script")[0];
+	s.parentNode.insertBefore(el, s);
+	})(window)
+	</script>
 	<script>
 		/* 暗色模式防闪烁 + js 可用标记 + 清除残留 hash（避免刷新自动滚到锚点） */
 		(function(){
@@ -89,7 +133,7 @@
 		<section class="card-section" id="games" data-nav="apps">
 			<div class="section-head">
 				<h2 class="section-title">🎮 游戏相关</h2>
-				<p class="section-sub">算面板、模拟经营，游戏也能玩出算法</p>
+				<p class="section-sub">算面板、规划经营，游戏也能玩出算法</p>
 			</div>
 			<div class="grid">
 				<a class="tile" href="https://celeslime.github.io/simcity/" target="_blank" rel="noopener">
@@ -200,6 +244,7 @@
 	</footer>
 
 	<nav class="side-dots" aria-label="分区导航">
+		<a href="#top" data-target="top" title="回到顶部"></a>
 		<a href="#learning" data-target="learning" title="词汇学习"></a>
 		<a href="#games" data-target="games" title="游戏相关"></a>
 		<a href="#toys" data-target="toys" title="玩具盒子"></a>

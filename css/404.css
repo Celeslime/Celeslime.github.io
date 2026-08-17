@@ -8,6 +8,17 @@
 	gap: 4px;
 }
 
+/* 全页遮罩：与主页 .container 相同的半透明背景，铺满视口，把 footer 及下方空白一起盖住 */
+.page-wrap{
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.page-wrap .error_box{
+	flex: 1;
+}
+
 .error_box h1{
 	font-size: 2.4rem;
 	margin: 0;
