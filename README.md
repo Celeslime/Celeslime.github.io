@@ -11,7 +11,7 @@
 ### 🎮 游戏相关
 
 - [原神面板计算器 · syw](https://celeslime.github.io/syw/) — 原神面板计算，早期算法探索（拉格朗日方程）
-- [城市模拟 · simcity](https://celeslime.github.io/simcity/) — 游戏模拟城市的辅助计算器，单纯形算法
+- [模拟城市计算器 · simcity](https://celeslime.github.io/simcity/) — 游戏模拟城市的辅助计算器，单纯形算法
 
 ### 🧸 玩具盒子
 
