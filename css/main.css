@@ -414,6 +414,168 @@ html.dark .badge.toy{
 	border-color: var(--blue);
 }
 
+/* ---------- 留言板 ---------- */
+.guestbook{
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	padding: 20px;
+	border-radius: 16px;
+	background: var(--card);
+	border: 1px solid var(--border);
+	box-shadow: var(--shadow-out);
+}
+
+.gb-stats{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 22px;
+	font-size: 0.86rem;
+	opacity: 0.9;
+}
+
+.gb-stats strong{
+	color: var(--blue-deep);
+	font-size: 1.06em;
+}
+
+.gb-list{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.gb-item{
+	padding: 12px 14px;
+	border-radius: 12px;
+	background: var(--blue-soft);
+	border: 1px solid var(--border);
+}
+
+.gb-item-head{
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 10px;
+	margin-bottom: 4px;
+	font-size: 0.85rem;
+}
+
+.gb-item-name{
+	font-weight: 600;
+	color: var(--blue-deep);
+}
+
+.gb-item-time{
+	font-size: 0.78rem;
+	opacity: 0.6;
+	flex-shrink: 0;
+}
+
+.gb-item-text{
+	margin: 0;
+	font-size: 0.92rem;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.gb-empty{
+	margin: 0;
+	padding: 18px;
+	text-align: center;
+	font-size: 0.9rem;
+	opacity: 0.65;
+	border: 1px dashed var(--border);
+	border-radius: 12px;
+}
+
+.gb-form{
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.gb-form input,
+.gb-form textarea{
+	font: inherit;
+	color: var(--text);
+	background: var(--blue-soft);
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	padding: 10px 12px;
+	width: 100%;
+	resize: vertical;
+	transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.gb-form input:focus,
+.gb-form textarea:focus{
+	outline: none;
+	border-color: var(--blue);
+	box-shadow: 0 0 0 3px rgba(70, 150, 210, 0.15);
+}
+
+.gb-btn{
+	align-self: flex-end;
+	font: inherit;
+	font-weight: 600;
+	font-size: 0.92rem;
+	padding: 9px 22px;
+	border-radius: 999px;
+	border: 1px solid var(--blue);
+	background: var(--blue);
+	color: #fff;
+	cursor: pointer;
+	transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.gb-btn:hover{
+	background: var(--blue-dark);
+	transform: translateY(-2px);
+}
+
+.gb-btn:disabled{
+	opacity: 0.55;
+	cursor: default;
+	transform: none;
+}
+
+/* AI 自动回复气泡（与访客留言区分开） */
+.gb-item-ai{
+	margin-top: 10px;
+	padding: 9px 12px;
+	border-radius: 12px;
+	background: var(--blue-light);
+	border-left: 3px solid var(--blue);
+}
+
+.gb-item-ai-head{
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: var(--blue-deep);
+	margin-bottom: 3px;
+}
+
+.gb-item-ai-text{
+	margin: 0;
+	font-size: 0.9rem;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+/* "思考中"占位：虚线弱化，等 AI 回复生成后由 JS 替换为真实内容 */
+.gb-item-ai-thinking{
+	opacity: 0.75;
+	border-left-style: dashed;
+}
+
+.gb-item-ai-thinking .gb-item-ai-text{
+	font-style: italic;
+}
+
 /* ---------- 右侧锚点目录 ---------- */
 .side-dots{
 	position: fixed;
