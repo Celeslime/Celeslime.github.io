@@ -724,19 +724,25 @@ html.dark .gb-form input#gb-name{
 	100%{ content: "..."; }
 }
 
-/* ---------- 右侧锚点目录 ---------- */
+/* ---------- 右侧锚点目录（折叠圆点 + hover 展开卡片） ---------- */
 .side-dots{
 	position: fixed;
-	right: 22px;
+	right: 18px;
 	top: 50%;
 	transform: translateY(-50%);
+	z-index: 40;
+	display: flex;
+	align-items: center;
+}
+
+/* 折叠态：圆点 minimap，一眼看出当前所在分区 */
+.side-dots-rail{
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
-	z-index: 40;
 }
 
-.side-dots a{
+.side-dots-rail a{
 	width: 10px;
 	height: 10px;
 	border-radius: 50%;
@@ -746,13 +752,65 @@ html.dark .gb-form input#gb-name{
 	transition: background 0.2s ease, transform 0.2s ease;
 }
 
-.side-dots a:hover{
+.side-dots-rail a:hover{
 	transform: scale(1.25);
 }
 
-.side-dots a.active{
+.side-dots-rail a.active{
 	background: var(--blue);
 	transform: scale(1.35);
+}
+
+/* DeepSeek 风格：hover / 键盘聚焦时，左侧浮出条目卡片 */
+.side-dots-card{
+	position: absolute;
+	right: 150%;
+	top: 50%;
+	transform: translateY(-50%) translateX(6px);
+	width: 190px;
+	max-height: 72vh;
+	overflow-y: auto;
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 14px;
+	box-shadow: var(--shadow-out);
+	padding: 8px;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+}
+
+.side-dots:hover .side-dots-card,
+.side-dots:focus-within .side-dots-card{
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(-50%) translateX(0);
+	pointer-events: auto;
+}
+
+.side-dots-card a{
+	display: block;
+	padding: 8px 12px;
+	border-radius: 10px;
+	font-size: 0.9rem;
+	color: var(--text);
+	text-decoration: none;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+
+.side-dots-card a:hover{
+	background: var(--blue-soft);
+	color: var(--blue-deep);
+}
+
+.side-dots-card a.active{
+	background: var(--blue-light);
+	color: var(--blue-deep);
+	font-weight: 600;
 }
 
 @media (max-width: 768px){

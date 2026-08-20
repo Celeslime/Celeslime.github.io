@@ -11,7 +11,8 @@
 	} catch (e) {}
 
 	var sections = Array.prototype.slice.call(document.querySelectorAll(".card-section"));
-	var dots = Array.prototype.slice.call(document.querySelectorAll(".side-dots a"));
+	var dots = Array.prototype.slice.call(document.querySelectorAll(".side-dots-rail a"));
+	var cardLinks = Array.prototype.slice.call(document.querySelectorAll(".side-dots-card a"));
 	var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
 
 	/* scrollspy：找视口顶部附近（100px 处）所在的分区，与锚点跳转的 scroll-margin 统一 */
@@ -35,6 +36,9 @@
 				dots.forEach(function (d) {
 					d.classList.toggle("active", d.getAttribute("data-target") === "top");
 				});
+				cardLinks.forEach(function (c) {
+					c.classList.toggle("active", c.getAttribute("data-target") === "top");
+				});
 				navLinks.forEach(function (l) {
 					l.classList.remove("active");
 				});
@@ -46,6 +50,9 @@
 		var id = current.id;
 		dots.forEach(function (d) {
 			d.classList.toggle("active", d.getAttribute("data-target") === id);
+		});
+		cardLinks.forEach(function (c) {
+			c.classList.toggle("active", c.getAttribute("data-target") === id);
 		});
 		var nav = current.getAttribute("data-nav");
 		navLinks.forEach(function (l) {

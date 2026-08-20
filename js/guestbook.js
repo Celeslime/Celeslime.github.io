@@ -150,8 +150,8 @@
 
 	function postStats() {
 		if (!visitsEl && !pageVisitsEl) return;
-		/* 记录本次访问，顺带返回全站与当前页计数 */
-		fetch(API + "/api/stats?path=" + encodeURIComponent(location.pathname), { method: "POST" })
+		/* 记录本次访问，顺带返回全站与当前页计数；credentials 让浏览器回传 cookie，10 分钟去重才生效 */
+		fetch(API + "/api/stats?path=" + encodeURIComponent(location.pathname), { method: "POST", credentials: "include" })
 			.then(function (r) { return r.json(); })
 			.then(function (d) {
 				if (!d || !d.ok) return;
