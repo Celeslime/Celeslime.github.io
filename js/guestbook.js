@@ -16,6 +16,11 @@
 	var formEl = document.getElementById("comment-form");
 	var nameEl = document.getElementById("gb-name");
 	var textEl = document.getElementById("gb-text");
+	var countEl = document.getElementById("gb-count");
+	var btnEl = formEl ? formEl.querySelector("button") : null;
+	var btnLabelEl = btnEl ? btnEl.querySelector(".gb-btn-label") : null;
+
+	var MAX_LEN = 500;
 
 	/* 等待 AI 回复的留言 id（仅对"我"刚提交的留言显示"思考中"占位） */
 	var thinkingId = null;
@@ -71,9 +76,23 @@
 		return "";
 	}
 
-	function renderComments(comments) {
+	/* 留言头像：按昵称复用 flower.js 的 generateAvatar 生成 SVG（无网格、透明、水印"鸿"）。
+	   渲染失败/无依赖时静默返回空，不影响留言内容。 */
+	function avatar(name) {
+		if (typeof FlowerGen === "undefined" || !FlowerGen.generateAvatar) return "";
+		try {
+			var svg = FlowerGen.generateAvatar(name || "", { size: 72, res: 90 });
+			return '<img class="gb-avatar" alt="" width="32" height="32" decoding="async" ' +
+				'src="data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg) + '">';
+		} catch (e) {
+			return "";
+		}
+	}
+
+	function renderComments(comments, animate) {
 		if (!listEl) return;
 		listEl.innerHTML = "";
+		listEl.classList.toggle("gb-settled", !animate);
 		if (!comments || !comments.length) {
 			if (emptyEl) emptyEl.style.display = "";
 			return;
@@ -84,7 +103,8 @@
 			li.className = "gb-item";
 			li.innerHTML =
 				'<div class="gb-item-head">' +
-				'<span class="gb-item-name">' + esc(c.name || "匿名") + "</span>" +
+				'<span class="gb-item-user">' + avatar(c.name) +
+				'<span class="gb-item-name">' + esc(c.name || "匿名") + "</span></span>" +
 				'<span class="gb-item-time">' + esc(fmtTime(c.time)) + "</span>" +
 				"</div>" +
 				'<p class="gb-item-text">' + esc(c.text) + "</p>" +
@@ -101,14 +121,14 @@
 		}
 	}
 
-	function loadComments() {
+	function loadComments(animate) {
 		if (!listEl || loading) return;
 		loading = true;
 		fetch(API + "/api/comments")
 			.then(function (r) { return r.json(); })
 			.then(function (d) {
 				if (d && d.ok) {
-					renderComments(d.comments);
+					renderComments(d.comments, animate);
 					/* 自己的留言已经收到 AI 回复：结束"思考中"占位 */
 					if (
 						thinkingId &&
@@ -144,7 +164,8 @@
 			var text = (textEl ? textEl.value : "").trim().slice(0, 500);
 			if (!text) return;
 			var btn = formEl.querySelector("button");
-			if (btn) { btn.disabled = true; btn.textContent = "发布中…"; }
+			if (btn) { btn.disabled = true; }
+			if (btnLabelEl) { btnLabelEl.textContent = "发布中…"; }
 			fetch(API + "/api/comments", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -160,14 +181,16 @@
 							if (thinkingTimer) clearTimeout(thinkingTimer);
 							thinkingTimer = setTimeout(clearThinking, THINKING_TIMEOUT);
 						}
-						loadComments();
+						loadComments(true);
 					} else {
 						alert(d && d.error ? d.error : "留言失败，请稍后再试");
 					}
 				})
 				.catch(function () { alert("留言失败，请检查网络或稍后再试"); })
 				.finally(function () {
-					if (btn) { btn.disabled = false; btn.textContent = "发布留言"; }
+					if (btn) { btn.disabled = false; }
+					if (btnLabelEl) { btnLabelEl.textContent = "发布留言"; }
+					if (textEl) updateCount();
 				});
 		});
 	}
@@ -178,6 +201,26 @@
 		loadComments();
 	}, POLL_MS);
 
+	/* 字符计数：随输入实时更新 "n / 500" */
+	function updateCount() {
+		if (!textEl || !countEl) return;
+		var n = textEl.value.length;
+		countEl.textContent = n + " / " + MAX_LEN;
+		countEl.style.opacity = n > MAX_LEN * 0.9 ? "1" : "0.5";
+	}
+
+	/* 空状态提示可点击：点击后聚焦输入框（帮助发现留言入口） */
+	if (emptyEl) {
+		emptyEl.addEventListener("click", function () {
+			if (textEl) textEl.focus();
+			if (formEl) formEl.scrollIntoView({ behavior: "smooth", block: "center" });
+		});
+	}
+
+	if (textEl) {
+		textEl.addEventListener("input", updateCount);
+	}
+
 	postStats();
-	loadComments();
+	loadComments(true);
 })();
