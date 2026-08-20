@@ -98,6 +98,10 @@
 			return;
 		}
 		if (emptyEl) emptyEl.style.display = "none";
+		/* 最新留言在最前面：按 time 降序，不依赖后端返回顺序 */
+		comments = comments.slice().sort(function (a, b) {
+			return (new Date(b.time).getTime() || 0) - (new Date(a.time).getTime() || 0);
+		});
 		comments.forEach(function (c) {
 			var li = document.createElement("li");
 			li.className = "gb-item";

@@ -592,6 +592,18 @@ html.dark .badge.toy{
 	border-color: var(--blue);
 }
 
+/* 占位符统一弱化，避免深浅模式下提示文字看不清或带浏览器默认灰 */
+.gb-form input#gb-name::placeholder,
+.gb-form textarea::placeholder{
+	color: var(--text);
+	opacity: 0.45;
+}
+
+/* 深色模式下表单背景与 --card 同色，输入框填充会"消失"，改用更亮的 --blue-light 作底色 */
+html.dark .gb-form input#gb-name{
+	background: var(--blue-light);
+}
+
 .gb-count{
 	margin-left: auto;
 	font-size: 0.74rem;

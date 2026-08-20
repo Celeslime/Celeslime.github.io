@@ -1,4 +1,4 @@
-/* 滚动位置感知：scrollspy（右侧目录 + 导航高亮）+ QQ 复制 */
+/* 滚动位置感知：scrollspy（右侧目录 + 导航高亮） */
 (function () {
 	"use strict";
 
@@ -13,7 +13,6 @@
 	var sections = Array.prototype.slice.call(document.querySelectorAll(".card-section"));
 	var dots = Array.prototype.slice.call(document.querySelectorAll(".side-dots a"));
 	var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-links a[href^="#"]'));
-	var qqBtn = document.getElementById("qq-btn");
 
 	/* scrollspy：找视口顶部附近（100px 处）所在的分区，与锚点跳转的 scroll-margin 统一 */
 	function spy() {
@@ -123,7 +122,7 @@
 		}
 	});
 
-	/* QQ：点击复制号码（无风险链接，永不失效） */
+	/* 顶部提示气泡（被"情感"彩蛋复用） */
 	function showTip(text, face) {
 		var tip = document.createElement("div");
 		tip.style.cssText =
@@ -146,33 +145,6 @@
 			tip.style.opacity = "0";
 			setTimeout(function () { tip.remove(); }, 600);
 		}, 2000);
-	}
-
-	function fallbackCopy(text) {
-		var ta = document.createElement("textarea");
-		ta.value = text;
-		ta.style.position = "fixed";
-		ta.style.opacity = "0";
-		document.body.appendChild(ta);
-		ta.select();
-		try { document.execCommand("copy"); } catch (e) {}
-		ta.remove();
-	}
-
-	if (qqBtn) {
-		qqBtn.addEventListener("click", function (e) {
-			e.preventDefault();
-			var qq = "1575989756";
-			if (navigator.clipboard && navigator.clipboard.writeText) {
-				navigator.clipboard.writeText(qq).then(
-					function () { showTip("QQ 号已复制：" + qq); },
-					function () { fallbackCopy(qq); showTip("QQ 号已复制：" + qq); }
-				);
-			} else {
-				fallbackCopy(qq);
-				showTip("QQ 号已复制：" + qq);
-			}
-		});
 	}
 
 	/* 彩蛋：只有"情感"标签可触发，随机弹一句告白 */
