@@ -69,7 +69,7 @@
 			return (
 				'<div class="gb-item-ai gb-item-ai-thinking">' +
 				'<div class="gb-item-ai-head">Cele 回复</div>' +
-				'<p class="gb-item-ai-text">思考中，请稍候…</p>' +
+				'<p class="gb-item-ai-text">思考中，请稍候</p>' +
 				"</div>"
 			);
 		}

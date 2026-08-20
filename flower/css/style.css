@@ -110,7 +110,7 @@ html.dark .theme-btn .icon-moon{ display: block; }
 	margin: 18px auto 60px;
 	padding: 0 20px;
 	display: grid;
-	grid-template-columns: 320px 1fr;
+	grid-template-columns: 1fr 320px;
 	gap: 20px;
 	align-items: start;
 }

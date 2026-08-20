@@ -33,9 +33,10 @@ default_inner = subprocess.run(
 
 TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
 <!--
-  站外头像接口：按昵称生成花头像 SVG（无网格/透明/水印"鸿"）。
+  站外头像接口：按昵称生成花头像 SVG（无网格/透明/固定水印"© 2026 鸿"）。
   用法：https://celeslime.github.io/flower/avatar.svg?name=Alice
-  可选参数：size=128  grid=1  color=%23ff0000  bg=  watermark=  petals=7  rotation=45  fillopacity=0.25  res=90
+  可选参数：size=128  grid=1  color=%23ff0000  bg=  petals=7  rotation=45  fillopacity=0.25  res=90
+  注意：水印固定为"© 2026 鸿"、射线固定为花瓣数的 2 倍，不接受参数覆盖。
   说明：SVG 内嵌脚本仅在作为文档直接访问 / iframe / object 时执行；
         若用 <img src> 引用，脚本不会执行，将显示内置默认花。
 -->

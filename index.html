@@ -166,6 +166,14 @@
 				<p class="section-sub">没什么用，但很好玩</p>
 			</div>
 			<div class="grid">
+				<a class="tile" href="flower" target="_blank" rel="noopener">
+					<div class="tile-top">
+						<span class="tile-icon">🌸</span>
+						<span class="badge toy">玩具</span>
+					</div>
+					<span class="tile_name">花生成器 · flower</span>
+					<p class="tile_desc">极坐标曲线花朵头像 · 在线导出头像</p>
+				</a>
 				<a class="tile" href="universe" target="_blank" rel="noopener">
 					<div class="tile-top">
 						<span class="tile-icon">🪐</span>
@@ -181,14 +189,6 @@
 					</div>
 					<span class="tile_name">时钟 · timer</span>
 					<p class="tile_desc">极简时钟 · 环形的时钟原型</p>
-				</a>
-				<a class="tile" href="flower" target="_blank" rel="noopener">
-					<div class="tile-top">
-						<span class="tile-icon">🌸</span>
-						<span class="badge toy">玩具</span>
-					</div>
-					<span class="tile_name">花生成器 · flower</span>
-					<p class="tile_desc">极坐标曲线生成七瓣花朵 · 在线导出头像</p>
 				</a>
 			</div>
 		</section>
@@ -242,20 +242,16 @@
 				<p class="section-sub">随便聊聊 · 留言由 AI 自动回复</p>
 			</div>
 			<div class="guestbook">
-				<div class="gb-welcome" aria-hidden="true">
-					<span class="gb-welcome-bubble">Hi，欢迎来聊～ 这里会有人认真看你的留言 ✨</span>
-				</div>
-
 				<form class="gb-form" id="comment-form">
 					<div class="gb-input-head">
-						<input type="text" id="gb-name" placeholder="昵称（可选，≤20 字）" maxlength="20" autocomplete="nickname">
+						<input type="text" id="gb-name" placeholder="昵称" maxlength="20" autocomplete="nickname">
 						<span class="gb-count" id="gb-count" aria-live="polite">0 / 500</span>
 					</div>
-					<textarea id="gb-text" rows="3" placeholder="说点什么吧…（≤500 字）" maxlength="500" required></textarea>
+					<textarea id="gb-text" rows="3" placeholder="Hi，欢迎来聊～ 这里会有人认真看你的留言 ✨" maxlength="500" required></textarea>
 					<div class="gb-btn-wrap">
 						<button type="submit" class="gb-btn">
-							<svg class="gb-btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg>
 							<span class="gb-btn-label">发布留言</span>
+							<svg class="gb-btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg>
 						</button>
 					</div>
 				</form>

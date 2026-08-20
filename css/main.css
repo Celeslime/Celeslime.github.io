@@ -435,22 +435,6 @@ html.dark .badge.toy{
 	font-size: 1em;
 }
 
-/* 开场提示：居中小标签，引导留言 */
-.gb-welcome{
-	display: flex;
-	justify-content: center;
-}
-
-.gb-welcome-bubble{
-	font-size: 0.84rem;
-	padding: 8px 18px;
-	border-radius: 999px;
-	background: var(--blue-soft);
-	border: 1px solid var(--border);
-	color: var(--blue-deep);
-	animation: rise-in 0.6s ease backwards;
-}
-
 /* 瀑布流：CSS columns 按内容高度自然铺列，卡片不跨列断开 */
 .gb-list{
 	list-style: none;
@@ -706,13 +690,10 @@ html.dark .badge.toy{
 	line-height: 1.6;
 	white-space: pre-wrap;
 	word-break: break-word;
+	opacity: 0.8;
 }
 
 /* "思考中"占位：虚线弱化 + 省略号闪烁，等 AI 回复生成后由 JS 替换为真实内容 */
-.gb-item-ai-thinking{
-	opacity: 0.8;
-	border-style: dashed;
-}
 
 .gb-item-ai-thinking .gb-item-ai-text{
 	font-style: italic;

@@ -26,9 +26,7 @@
 		fillOpacity: 0.25,
 		scale: 0.4,
 		grid: true,
-		rays: 14,
 		bg: "",
-		watermark: "",
 		rotation: 0,
 		animate: false
 	};
@@ -50,38 +48,30 @@
 			fillOpacity: state.fillOpacity,
 			scale: state.scale,
 			grid: state.grid,
-			rays: state.rays,
 			bg: state.bg,
-			watermark: state.watermark,
 			rotation: withRotation ? (state.animate ? spinAngle : state.rotation) : 0
 		};
 	}
 
-	/* 预览里单独拼背景与右下角水印（都放在旋转 <g> 之外，不随旋转） */
+	/* 预览里单独拼背景（前景由 FlowerGen.generate 生成，含水印与射线，均不随旋转） */
 	function buildBgRect() {
 		return state.bg ? '<rect width="100%" height="100%" fill="' + state.bg + '"/>' : "";
-	}
-	function buildWatermark() {
-		if (!state.watermark) return "";
-		var size = state.size;
-		return '<text x="' + (size * 0.95).toFixed(1) + '" y="' + (size * 0.95).toFixed(1) +
-			'" font-family="Arial, sans-serif" font-size="' + (size * 0.015).toFixed(1) +
-			'" fill="' + FlowerGen.hueToColor(state.hue) + '" fill-opacity="0.5" text-anchor="end" dominant-baseline="auto">' +
-			state.watermark + "</text>";
 	}
 
 	/* 生成静态内容（不带背景/水印，它们由上面单独拼），包进旋转 <g>，便于动画只改 transform 而不重建 DOM */
 	function render() {
 		var opts = currentOptions(false);
 		opts.bg = "";
-		opts.watermark = "";
 		var svg = FlowerGen.generate(opts);
 		var inner = svg.slice(svg.indexOf(">") + 1, svg.lastIndexOf("</svg>"));
 		var cx = state.size / 2, cy = state.size / 2;
+		/* 水印固定由 generate 生成（© 2026 鸿，末尾），放在旋转 <g> 之外不随旋转 */
+		var wmStart = inner.lastIndexOf("<text");
+		var wm = wmStart >= 0 ? inner.slice(wmStart) : "";
+		if (wmStart >= 0) inner = inner.slice(0, wmStart);
 		previewSvg.setAttribute("viewBox", "0 0 " + state.size + " " + state.size);
 		previewSvg.innerHTML = buildBgRect() +
-			'<g id="spin" transform="rotate(' + state.rotation + " " + cx + " " + cy + ')">' + inner + "</g>" +
-			buildWatermark();
+			'<g id="spin" transform="rotate(' + state.rotation + " " + cx + " " + cy + ')">' + inner + "</g>" + wm;
 		spinG = $("spin");
 		$("meta-size").textContent = state.size;
 		$("meta-petals").textContent = state.petals;
@@ -125,10 +115,8 @@
 		state.fillOpacity = parseFloat($("fillopacity").value);
 		state.scale = parseFloat($("scale").value);
 		state.grid = $("grid").checked;
-		state.rays = parseInt($("rays").value, 10);
 		state.rotation = parseFloat($("rotation").value);
 		state.animate = $("animate").checked;
-		state.watermark = $("watermark").value;
 
 		var bg = $("bg").value;
 		state.bg = bg === "transparent" ? "" : bg;
@@ -145,7 +133,6 @@
 	}
 
 	function syncDisabled() {
-		$("rays").disabled = !state.grid;
 		$("rotation").disabled = state.animate;
 		$("rotation-val").classList.toggle("dim", state.animate);
 		$("animate").checked = state.animate;
@@ -227,7 +214,6 @@
 			/* 恢复经典原图：7 瓣海盐蓝、经典网格、无旋转 */
 			state.scale = 0.4;
 			state.grid = true;
-			state.rays = 14;
 		}
 		/* 非 Cele：大小与网格保持用户当前设置，不随机 */
 
@@ -238,8 +224,6 @@
 		$("scale").value = state.scale;
 		$("scale-val").textContent = state.scale;
 		$("grid").checked = state.grid;
-		$("rays").value = state.rays;
-		$("rays-val").textContent = state.rays;
 		$("rotation").value = state.rotation;
 		$("rotation-val").textContent = Math.round(state.rotation) + "°";
 		$("animate").checked = false;
@@ -364,7 +348,6 @@
 		bindRange("petals", "petals", function (v) { return v; });
 		bindRange("fillopacity", "fillOpacity", function (v) { return Math.round(v * 100) + "%"; });
 		bindRange("scale", "scale", function (v) { return v; });
-		bindRange("rays", "rays", function (v) { return v; });
 		bindRange("rotation", "rotation", function (v) { return Math.round(v) + "°"; });
 
 		/* 色相滑块独立处理：更新 hex 与色板高亮 */
@@ -379,7 +362,6 @@
 		$("animate").addEventListener("change", readState);
 		$("bg").addEventListener("change", readState);
 		$("size-select").addEventListener("change", readState);
-		$("watermark").addEventListener("input", readState);
 
 		$("random-btn").addEventListener("click", randomize);
 		$("seed-btn").addEventListener("click", function () { applySeed($("seed-input").value); });

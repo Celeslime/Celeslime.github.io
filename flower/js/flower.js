@@ -22,10 +22,9 @@
 		strokeWidth: 0,    /* 0 = 自动取 size*0.003 */
 		scale: 0.4,        /* 花占画布比例（半径归一化系数） */
 		grid: true,        /* 是否绘制极坐标网格 */
-		rays: 14,          /* 网格射线数量 */
 		labels: true,      /* 网格射线末端的角度标尺编号（0、π/7…） */
 		bg: "",            /* 背景色，"" 表示透明 */
-		watermark: "",     /* 右下角水印文本，"" 表示不显示 */
+		watermark: "",     /* 占位：generate 内部固定为「© 2026 鸿」，无需传入 */
 		rotation: 0,       /* 整体旋转角度（度） */
 		res: 360           /* 每条曲线的采样点数 */
 	};
@@ -90,13 +89,15 @@
 	}
 
 	/* 由昵称确定的花参数（不含网格/尺寸，它们由调用方决定）：
+	 * 昵称一律先转小写再参与生成，保证大小写不同的同一昵称得到同一朵花；
 	 * "Cele"（不分大小写）固定为经典原图：7 瓣海盐蓝、填充 25%、不旋转。 */
 	function seedParams(name) {
 		var trimmed = (name || "").trim();
-		if (trimmed.toLowerCase() === "cele") {
+		var lower = trimmed.toLowerCase();
+		if (lower === "cele") {
 			return { petals: 7, hue: 206, fillOpacity: 0.25, rotation: 0 };
 		}
-		var rng = mulberry32(hashString(trimmed || "anonymous"));
+		var rng = mulberry32(hashString(lower || "anonymous"));
 		return {
 			petals: 4 + Math.floor(rng() * 7),                                     /* 4~10 */
 			hue: Math.floor(rng() * 360),
@@ -105,7 +106,7 @@
 		};
 	}
 
-	/* 按昵称生成头像 SVG：默认无网格、透明背景、右下角水印"鸿"（opts 可覆盖一切）。
+	/* 按昵称生成头像 SVG：默认无网格、透明背景、右下角固定水印"© 2026 鸿"。
 	 * 例：generateAvatar("Cele", { size: 128 })；接口用 generateAvatar("Alice", { grid:1 }) 等。 */
 	function generateAvatar(name, opts) {
 		var o = opts || {};
@@ -119,10 +120,8 @@
 			fillOpacity: o.fillOpacity != null ? o.fillOpacity : p.fillOpacity,
 			scale: o.scale != null ? o.scale : 0.4,
 			grid: o.grid != null ? !!o.grid : false,
-			rays: o.rays != null ? o.rays : 14,
 			labels: o.labels != null ? !!o.labels : false,
 			bg: o.bg != null ? o.bg : "",
-			watermark: o.watermark != null ? o.watermark : "鸿",
 			rotation: o.rotation != null ? o.rotation : p.rotation
 		});
 	}
@@ -247,6 +246,8 @@
 	/* 生成完整 SVG 字符串 */
 	function generate(opts) {
 		var o = resolve(opts);
+		/* 射线数量固定为 2×花瓣数，不允许配置（含外链 avatar.svg） */
+		o.rays = 2 * o.petals;
 		var cx = o.size / 2, cy = o.size / 2;
 		/* 花瓣描边随画布尺寸与花朵大小(scale)等比同步：scale 越大花越大，线也越粗。
 		   保留小数（不 round），小尺寸时按比例变细而非强制保底 */
@@ -282,14 +283,12 @@
 			parts.push('</g>');
 		}
 
-		/* 水印放最外层、不随旋转 */
-		if (o.watermark) {
-			parts.push('<text x="' + fmt(o.size * 0.95) + '" y="' + fmt(o.size * 0.95) +
-				'" font-family="Arial, sans-serif" font-size="' + fmt(o.size * 0.015) +
-				'" fill="' + o.color + '" fill-opacity="0.5" text-anchor="end" dominant-baseline="auto">' + o.watermark + '</text>');
-		}
+		/* 水印固定为「© 2026 鸿」，放最外层、不随旋转，且不允许配置覆盖 */
+		parts.push('<text x="' + fmt(o.size * 0.95) + '" y="' + fmt(o.size * 0.95) +
+			'" font-family="Arial, sans-serif" font-size="' + fmt(o.size * 0.015) +
+			'" fill="' + o.color + '" fill-opacity="0.5" text-anchor="end" dominant-baseline="auto">© 2026 鸿</text>');
 
-		parts.push('</svg>');
+		parts.push('<!-- 头像生成来源：https://celeslime.github.io/ --></svg>');
 		return parts.join("");
 	}
 

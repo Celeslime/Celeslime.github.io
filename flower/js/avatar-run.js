@@ -16,7 +16,6 @@
 	v = q("grid");        if (v !== undefined) opts.grid = (v === "1" || v === "true");
 	v = q("color");       if (v !== undefined) opts.color = v;
 	v = q("bg");          if (v !== undefined) opts.bg = v;
-	v = q("watermark");   if (v !== undefined) opts.watermark = v;
 	v = q("petals");      if (v !== undefined) opts.petals = parseInt(v, 10);
 	v = q("fillopacity"); if (v !== undefined) opts.fillOpacity = parseFloat(v);
 	v = q("rotation");    if (v !== undefined) opts.rotation = parseFloat(v);

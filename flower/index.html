@@ -53,6 +53,46 @@
 	</header>
 
 	<main class="container">
+		<!-- 预览与导出 -->
+		<section class="stage">
+			<div class="stage-top">
+				<span class="meta">画布 <b id="meta-size">1680</b>px · 花瓣 <b id="meta-petals">7</b> 片</span>
+				<span class="meta">实时预览 · 浅色网格为透明底参考</span>
+			</div>
+
+			<div id="preview-wrap">
+				<svg id="preview-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 1680"></svg>
+			</div>
+
+			<div class="export-box">
+				<p class="section-title">导出</p>
+				<div class="row">
+					<div>
+						<label for="export-size">PNG 尺寸</label>
+						<select id="export-size">
+							<option value="1680" selected>1680（原尺寸）</option>
+							<option value="1024">1024</option>
+							<option value="512">512</option>
+							<option value="256">256（头像）</option>
+						</select>
+					</div>
+					<button type="button" class="btn" id="svg-btn">下载 SVG</button>
+					<button type="button" class="btn" id="png-btn">下载 PNG</button>
+				</div>
+				<div class="btn-row">
+					<button type="button" class="btn ghost" id="copy-svg-btn">复制 SVG 代码</button>
+					<button type="button" class="btn ghost" id="copy-png-btn">复制 PNG 数据</button>
+				</div>
+				<p class="section-title">站外头像链接</p>
+				<div class="row">
+					<div style="flex:1; min-width:0;">
+						<label for="avatar-url">接口地址 avatar.svg?name=昵称</label>
+						<input type="text" id="avatar-url" readonly placeholder="填昵称后点复制，或直接复制右侧链接">
+					</div>
+					<button type="button" class="btn" id="avatar-url-btn">复制链接</button>
+				</div>
+			</div>
+		</section>
 
 		<!-- 控制面板 -->
 		<aside class="panel">
@@ -92,9 +132,7 @@
 
 			<div class="field">
 				<label>极坐标网格</label>
-				<label class="check-line"><input type="checkbox" id="grid" checked> 显示网格与射线</label>
-				<label for="rays">射线数量 <span class="val" id="rays-val">14</span></label>
-				<input type="range" id="rays" min="4" max="28" step="1" value="14">
+				<label class="check-line"><input type="checkbox" id="grid" checked> 显示网格（射线固定为花瓣数的 2 倍）</label>
 			</div>
 
 			<div class="field">
@@ -105,11 +143,6 @@
 					<option value="#f7fafc">浅蓝白</option>
 					<option value="#0e1a26">深蓝黑</option>
 				</select>
-			</div>
-
-			<div class="field">
-				<label for="watermark">右下角水印</label>
-				<input type="text" id="watermark" placeholder="如 © Cele（留空则不显示）" maxlength="40">
 			</div>
 
 			<div class="field">
@@ -130,48 +163,6 @@
 				<button type="button" class="btn" id="random-btn">🎲 随机灵感</button>
 			</div>
 		</aside>
-
-		<!-- 预览与导出 -->
-		<section class="stage">
-			<div class="stage-top">
-				<span class="meta">画布 <b id="meta-size">1680</b>px · 花瓣 <b id="meta-petals">7</b> 片</span>
-				<span class="meta">实时预览 · 浅色网格为透明底参考</span>
-			</div>
-
-			<div id="preview-wrap">
-				<svg id="preview-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 1680"></svg>
-			</div>
-
-			<div class="export-box">
-				<p class="section-title">导出</p>
-				<div class="row">
-					<div>
-						<label for="export-size">PNG 尺寸</label>
-						<select id="export-size">
-							<option value="1680" selected>1680（原尺寸）</option>
-							<option value="1024">1024</option>
-							<option value="512">512</option>
-							<option value="256">256（头像）</option>
-						</select>
-					</div>
-					<button type="button" class="btn" id="svg-btn">下载 SVG</button>
-					<button type="button" class="btn" id="png-btn">下载 PNG</button>
-				</div>
-				<div class="btn-row">
-					<button type="button" class="btn ghost" id="copy-svg-btn">复制 SVG 代码</button>
-					<button type="button" class="btn ghost" id="copy-png-btn">复制 PNG 数据</button>
-				</div>
-				<p class="section-title">站外头像链接</p>
-				<div class="row">
-					<div style="flex:1; min-width:0;">
-						<label for="avatar-url">接口地址 avatar.svg?name=昵称（有昵称按昵称生成，无昵称用当前参数）</label>
-						<input type="text" id="avatar-url" readonly placeholder="填昵称后点复制，或直接复制右侧链接">
-					</div>
-					<button type="button" class="btn" id="avatar-url-btn">复制链接</button>
-				</div>
-			</div>
-		</section>
-
 	</main>
 
 	<footer class="footer">
