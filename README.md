@@ -17,10 +17,10 @@
 
 - [星球模拟 · universe](https://celeslime.github.io/universe/) — 万有引力下的星球运动模拟
 - [计时器 · timer](https://celeslime.github.io/timer/) — 极简时钟，环形倒计时原型
+- [花生成器 · flower](https://celeslime.github.io/flower/) — 极坐标曲线生成七瓣花朵，在线导出 SVG/PNG 头像
 
 ### 💡 未上线
 
-- 头像生成 — Python 极坐标曲线生成的 Cele 头像
 - 3D char Render — 3D 字符渲染实验，整理旧 demo 中
 - 对话树 — wordcloud 升级版，对话任务分类树
 

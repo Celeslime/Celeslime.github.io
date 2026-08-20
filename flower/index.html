@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>Cele 的花 · 头像生成器 | CeleSlime</title>
+	<meta name="description" content="用极坐标曲线在浏览器里实时生成七瓣花朵：可调花瓣数、配色、网格与尺寸，一键导出 SVG / PNG 头像。纯前端，无依赖。"/>
+	<meta name="robots" content="index,follow">
+	<meta name="theme-color" content="#0e1a26">
+	<link rel="canonical" href="https://celeslime.github.io/flower/">
+	<link rel="stylesheet" type="text/css" href="./css/style.css">
+	<link rel="icon" href="../images/flower.p.min.svg" type="image/svg+xml">
+
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content="Cele 的小站">
+	<meta property="og:title" content="Cele 的花 · 头像生成器">
+	<meta property="og:description" content="用极坐标曲线实时生成七瓣花朵头像，可调花瓣数、配色、网格与尺寸，一键导出 SVG / PNG。">
+	<meta property="og:url" content="https://celeslime.github.io/flower/">
+	<meta property="og:image" content="https://celeslime.github.io/images/og-cover.png">
+	<meta property="og:locale" content="zh_CN">
+	<meta name="twitter:card" content="summary_large_image">
+
+	<script>
+		/* 暗色模式防闪烁 */
+		(function(){
+			try{
+				if(localStorage.getItem("theme")==="dark" || (!localStorage.getItem("theme") && matchMedia("(prefers-color-scheme: dark)").matches)){
+					document.documentElement.classList.add("dark");
+				}
+			}catch(e){}
+		})();
+	</script>
+</head>
+<body id="top">
+
+	<nav class="nav">
+		<a class="nav-logo" href="#top">
+			<img src="../images/flower.p.min.svg" alt="Cele 的花">
+			<span>Cele 的花</span>
+		</a>
+		<div class="nav-links">
+			<a class="home" href="../">← 回主页</a>
+			<button id="theme-toggle" class="theme-btn" aria-label="切换深浅色模式" title="切换深浅色模式">
+				<svg class="icon-sun" fill="currentColor" viewBox="0 0 24 24"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM13 1a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0V1zm0 20a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0v-2zm8.657-16.657a1 1 0 0 0-1.414 0l-1.414 1.414a1 1 0 0 0 1.414 1.414l1.414-1.414a1 1 0 0 0 0-1.414zM5.757 17.757a1 1 0 0 0-1.414 0l-1.414 1.414a1 1 0 1 0 1.414 1.414l1.414-1.414a1 1 0 0 0 0-1.414zm14.829 0a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414-1.414l-1.414-1.414a1 1 0 0 0-1.414 0zM6.243 6.243a1 1 0 0 0 0-1.414L4.829 3.414a1 1 0 0 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.414 0zM1 11a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H1zm20 0a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2z"/></svg>
+				<svg class="icon-moon" fill="currentColor" viewBox="0 0 24 24"><path d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75 9.75 9.75 0 0 1 8.25 6c0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25 9.75 9.75 0 0 0 12.75 21a9.753 9.753 0 0 0 9.002-5.998z"/></svg>
+			</button>
+		</div>
+	</nav>
+
+	<header class="hero">
+		<h1>花 · 头像生成器</h1>
+		<p>极坐标曲线 r = (2/π)·θ 旋转成花，调整参数即时预览，一键导出 SVG / PNG</p>
+	</header>
+
+	<main class="container">
+
+		<!-- 控制面板 -->
+		<aside class="panel">
+			<h2>参数 <span class="hint">实时生效</span></h2>
+
+			<div class="field">
+				<label for="size-select">画布尺寸</label>
+				<select id="size-select">
+					<option value="256">256 × 256（小图标）</option>
+					<option value="512">512 × 512</option>
+					<option value="1024">1024 × 1024</option>
+					<option value="1680" selected>1680 × 1680（经典）</option>
+					<option value="2048">2048 × 2048</option>
+				</select>
+			</div>
+
+			<div class="field">
+				<label for="petals">花瓣数 <span class="val" id="petals-val">7</span></label>
+				<input type="range" id="petals" min="2" max="12" step="1" value="7">
+			</div>
+
+			<div class="field">
+				<label for="fillopacity">填充透明度 <span class="val" id="fillopacity-val">25%</span></label>
+				<input type="range" id="fillopacity" min="0" max="0.5" step="0.01" value="0.25">
+			</div>
+
+			<div class="field">
+				<label for="scale">花朵大小 <span class="val" id="scale-val">0.4</span></label>
+				<input type="range" id="scale" min="0.2" max="0.6" step="0.01" value="0.4">
+			</div>
+
+			<div class="field">
+				<label>色相 <span class="val" id="hue-val">206°</span> · <span class="val" id="color-hex">#4696d2</span></label>
+				<input type="range" id="hue" min="0" max="360" step="1" value="206">
+				<span class="swatches" id="swatches"></span>
+			</div>
+
+			<div class="field">
+				<label>极坐标网格</label>
+				<label class="check-line"><input type="checkbox" id="grid" checked> 显示网格与射线</label>
+				<label for="rays">射线数量 <span class="val" id="rays-val">14</span></label>
+				<input type="range" id="rays" min="4" max="28" step="1" value="14">
+			</div>
+
+			<div class="field">
+				<label for="bg">背景</label>
+				<select id="bg">
+					<option value="transparent" selected>透明（推荐导出）</option>
+					<option value="#ffffff">白色</option>
+					<option value="#f7fafc">浅蓝白</option>
+					<option value="#0e1a26">深蓝黑</option>
+				</select>
+			</div>
+
+			<div class="field">
+				<label for="watermark">右下角水印</label>
+				<input type="text" id="watermark" placeholder="如 © Cele（留空则不显示）" maxlength="40">
+			</div>
+
+			<div class="field">
+				<label for="rotation">旋转角度 <span class="val" id="rotation-val">0°</span></label>
+				<input type="range" id="rotation" min="0" max="360" step="1" value="0">
+				<label class="check-line"><input type="checkbox" id="animate"> 缓慢旋转（仅预览）</label>
+			</div>
+
+			<div class="field">
+				<label for="seed-input">按昵称生成</label>
+				<div class="seed-row">
+					<input type="text" id="seed-input" placeholder="昵称 · Cele = 经典原图" maxlength="20" autocomplete="off">
+					<button type="button" class="btn small" id="seed-btn">生成</button>
+				</div>
+			</div>
+
+			<div class="btn-row">
+				<button type="button" class="btn" id="random-btn">🎲 随机灵感</button>
+			</div>
+		</aside>
+
+		<!-- 预览与导出 -->
+		<section class="stage">
+			<div class="stage-top">
+				<span class="meta">画布 <b id="meta-size">1680</b>px · 花瓣 <b id="meta-petals">7</b> 片</span>
+				<span class="meta">实时预览 · 浅色网格为透明底参考</span>
+			</div>
+
+			<div id="preview-wrap">
+				<svg id="preview-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 1680"></svg>
+			</div>
+
+			<div class="export-box">
+				<p class="section-title">导出</p>
+				<div class="row">
+					<div>
+						<label for="export-size">PNG 尺寸</label>
+						<select id="export-size">
+							<option value="1680" selected>1680（原尺寸）</option>
+							<option value="1024">1024</option>
+							<option value="512">512</option>
+							<option value="256">256（头像）</option>
+						</select>
+					</div>
+					<button type="button" class="btn" id="svg-btn">下载 SVG</button>
+					<button type="button" class="btn" id="png-btn">下载 PNG</button>
+				</div>
+				<div class="btn-row">
+					<button type="button" class="btn ghost" id="copy-svg-btn">复制 SVG 代码</button>
+					<button type="button" class="btn ghost" id="copy-png-btn">复制 PNG 数据</button>
+				</div>
+				<p class="section-title">站外头像链接</p>
+				<div class="row">
+					<div style="flex:1; min-width:0;">
+						<label for="avatar-url">接口地址 avatar.svg?name=昵称（有昵称按昵称生成，无昵称用当前参数）</label>
+						<input type="text" id="avatar-url" readonly placeholder="填昵称后点复制，或直接复制右侧链接">
+					</div>
+					<button type="button" class="btn" id="avatar-url-btn">复制链接</button>
+				</div>
+			</div>
+		</section>
+
+	</main>
+
+	<footer class="footer">
+		<p><a href="../">← 回到 Cele 的小站</a> · 极坐标曲线生成 · 纯前端无依赖</p>
+	</footer>
+
+	<script src="./js/flower.js"></script>
+	<script src="./js/app.js"></script>
+</body>
+</html>
