@@ -181,7 +181,7 @@
       if (state.useHue && state.plan) {
         const reconDataHue = ARCore.makeReconstructedRGBAWithHue(
           derived.fg, derived.ab, state.w, state.h,
-          state.imgData1, state.plan, 1.0
+          state.imgData1, state.plan
         );
         if (!state.fgCanvasHue) {
           state.fgCanvasHue = document.createElement('canvas');
@@ -352,7 +352,7 @@
       if (state.useHue && !state.fgCanvasHue) {
         const reconDataHue = ARCore.makeReconstructedRGBAWithHue(
           state.derived.fg, state.derived.ab, state.w, state.h,
-          state.imgData1, state.plan, 1.0
+          state.imgData1, state.plan
         );
         if (!state.fgCanvasHue) {
           state.fgCanvasHue = document.createElement('canvas');

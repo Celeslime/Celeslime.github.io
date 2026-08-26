@@ -225,7 +225,26 @@
     return h;
   }
 
-  // Hue [0, 360) + saturation + value -> RGB
+  // RGB (0-255) -> HSV {h:0-360, s:0-1, v:0-1}
+  function rgbToHsv(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+    let h = 0;
+    if (delta !== 0) {
+      if (max === r) h = ((g - b) / delta) % 6;
+      else if (max === g) h = (b - r) / delta + 2;
+      else h = (r - g) / delta + 4;
+      h = h * 60;
+      if (h < 0) h += 360;
+    }
+    const s = max === 0 ? 0 : delta / max;
+    const v = max;
+    return { h, s, v };
+  }
+
+  // HSV -> RGB (0-255)
   function hsvToRgb(h, s, v) {
     h = h / 60;
     const c = v * s;
@@ -285,6 +304,7 @@
     computeErrors,
     // 色相相关（浏览器环境）
     rgbToHue,        // RGB -> hue [0, 360)
+    rgbToHsv,        // RGB -> HSV
     hsvToRgb,        // HSV -> RGB
     applyHueToGray,  // 将灰度前景按色相着色
   };
@@ -306,12 +326,13 @@
       return new ImageData(data, w, h);
     };
 
-    // 生成带色相的重构 RGBA：从 img1（叠黑观察）提取色相，应用到前景灰度上
+    // 生成带色相的重构 RGBA：从 img1（叠黑观察）提取色相和饱和度，应用到前景灰度上
     // imgData1: 原始叠黑观察的 ImageData（统一尺寸前）
     // plan: planUnify 返回的 img1 参数（含 sx, sy, sw, sh, dw, dh）
     // fg, ab: 反推得到的灰度前景和 alpha
-    // saturation: 色相饱和度 0-1（默认 1.0，全饱和）
-    ARCore.makeReconstructedRGBAWithHue = function(fg, ab, w, h, imgData1, plan, saturation = 1.0) {
+    // 注意：黑底观察 = fg_color * alpha，其 HSV 中 H=fg_H, S=fg_S, V=fg_V*alpha
+    // 我们提取 H 和 S，用反推的 fg (即 fg_V) 作为 V 重构
+    ARCore.makeReconstructedRGBAWithHue = function(fg, ab, w, h, imgData1, plan) {
       const len = fg.length;
       const data = new Uint8ClampedArray(len * 4);
       
@@ -320,17 +341,14 @@
       canvas.width = w; canvas.height = h;
       const ctx = canvas.getContext('2d');
       
-      // 画 imgData1 到 canvas（与 unifyAndGrayBrowser 一致的逻辑）
       const tmp = document.createElement('canvas');
       tmp.width = imgData1.width; tmp.height = imgData1.height;
       const tctx = tmp.getContext('2d');
       tctx.putImageData(imgData1, 0, 0);
       ctx.drawImage(tmp, plan.img1.sx, plan.img1.sy, plan.img1.sw, plan.img1.sh, 0, 0, plan.img1.dw, plan.img1.dh);
       
-      // 从 canvas 读取统一尺寸后的 RGB 像素
       const unifiedRgb = ctx.getImageData(0, 0, w, h).data; // RGBA
       
-      // 对每个像素：从 RGB 提取色相，结合 fg(明度) 生成 RGB
       let di = 0;
       for (let i = 0; i < len; i++) {
         const r = unifiedRgb[di];
@@ -338,12 +356,20 @@
         const b = unifiedRgb[di + 2];
         di += 4;
         
-        // 提取色相（灰度像素 hue=0）
-        const hue = ARCore.rgbToHue(r, g, b);
+        // 从黑底观察提取 HSV：H 和 S 来自观察，V 由反推 fg 提供
+        const hsv = ARCore.rgbToHsv(r, g, b);
+        // 低饱和度（<0.05）视为中性色，退回灰度
+        const useHue = hsv.s >= 0.05;
         
-        // 用 fg 作为明度，应用色相
-        const v = fg[i] / 255;
-        const [fr, fg_c, fb] = ARCore.hsvToRgb(hue, saturation, v);
+        const v = fg[i] / 255; // 反推的前景明度
+        let fr, fg_c, fb;
+        if (useHue) {
+          const [rr, gg, bb] = ARCore.hsvToRgb(hsv.h, hsv.s, v);
+          fr = rr; fg_c = gg; fb = bb;
+        } else {
+          const gv = roundHalfEven(v * 255);
+          fr = fg_c = fb = gv;
+        }
         
         data[i * 4] = fr;
         data[i * 4 + 1] = fg_c;
