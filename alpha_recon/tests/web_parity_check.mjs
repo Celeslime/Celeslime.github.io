@@ -8,15 +8,31 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// 加载 core.js（UMD 导出）——相对于此脚本位置
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const corePath = path.resolve(__dirname, '../js/core.js');
-const coreCode = fs.readFileSync(corePath, 'utf-8');
-// 创建一个隔离的 global 对象来执行 core.js
-const vm = { ARCore: null };
-eval(coreCode.replace('typeof self !== \'undefined\' ? self : this', 'vm'));
-const AR = vm.ARCore;
+const jsDir = path.resolve(__dirname, '../js');
+
+// 共享同一个 vm 对象，模拟浏览器全局环境
+const vm = { ARMath: null, ARColor: null, ARBrowser: null, ARCore: null };
+
+function loadModule(relPath) {
+  const code = fs.readFileSync(path.resolve(jsDir, relPath), 'utf-8');
+  eval(code.replace('typeof self !== \'undefined\' ? self : this', 'vm'));
+}
+
+// 按依赖顺序加载
+loadModule('math.js');
+loadModule('color.js');
+loadModule('browser.js');
+loadModule('core.js');
+
+// 合并到 AR（math + color + browser 覆盖 core 中的占位符）
+const AR = {
+  ...vm.ARMath,
+  ...vm.ARColor,
+  ...vm.ARBrowser,
+  ...vm.ARCore
+};
 
 if (!AR) {
     console.error('❌ 无法加载 ARCore');

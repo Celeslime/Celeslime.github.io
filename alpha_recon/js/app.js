@@ -180,15 +180,6 @@
       state.fgCanvas.width = state.w; state.fgCanvas.height = state.h;
       state.fgCtx.putImageData(reconData, 0, 0);
 
-      // 5) 生成重构 RGBA（离屏 canvas 缓存，用于预览合成）
-      const reconData = ARCore.makeReconstructedRGBA(derived.fg, derived.ab, state.w, state.h);
-      if (!state.fgCanvas) {
-        state.fgCanvas = document.createElement('canvas');
-        state.fgCtx = state.fgCanvas.getContext('2d');
-      }
-      state.fgCanvas.width = state.w; state.fgCanvas.height = state.h;
-      state.fgCtx.putImageData(reconData, 0, 0);
-
       // 5b) 生成带色相的重构 RGBA（根据勾选情况）
       if ((state.useHue1 || state.useHue2) && state.plan) {
         let source;
