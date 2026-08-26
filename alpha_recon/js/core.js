@@ -209,6 +209,56 @@
     return out;
   }
 
+  // ---------- 色相相关 ----------
+  // RGB (0-255) -> Hue [0, 360)
+  function rgbToHue(r, g, b) {
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+    if (delta === 0) return 0; // 灰度无色相
+    let h;
+    if (max === r) h = ((g - b) / delta) % 6;
+    else if (max === g) h = (b - r) / delta + 2;
+    else h = (r - g) / delta + 4;
+    h = h * 60;
+    if (h < 0) h += 360;
+    return h;
+  }
+
+  // Hue [0, 360) + saturation + value -> RGB
+  function hsvToRgb(h, s, v) {
+    h = h / 60;
+    const c = v * s;
+    const x = c * (1 - Math.abs((h % 2) - 1));
+    const m = v - c;
+    let r, g, b;
+    if (h < 1) { r = c; g = x; b = 0; }
+    else if (h < 2) { r = x; g = c; b = 0; }
+    else if (h < 3) { r = 0; g = c; b = x; }
+    else if (h < 4) { r = 0; g = x; b = c; }
+    else if (h < 5) { r = x; g = 0; b = c; }
+    else { r = c; g = 0; b = x; }
+    return [
+      roundHalfEven((r + m) * 255),
+      roundHalfEven((g + m) * 255),
+      roundHalfEven((b + m) * 255)
+    ];
+  }
+
+  // 将灰度前景按色相着色（保留明度 fg/255，饱和度可配置）
+  function applyHueToGray(fg, ab, hue, saturation = 1.0) {
+    const len = fg.length;
+    const rgb = new Uint8ClampedArray(len * 3);
+    for (let i = 0; i < len; i++) {
+      const v = fg[i] / 255; // 明度 = 前景灰度归一化
+      const [r, g, b] = hsvToRgb(hue, saturation, v);
+      rgb[i * 3] = r;
+      rgb[i * 3 + 1] = g;
+      rgb[i * 3 + 2] = b;
+    }
+    return rgb;
+  }
+
   // ---------- 误差统计 ----------
   function computeErrors(dark, light, fg, ab) {
     const { black, white } = simulate(fg, ab);
@@ -233,6 +283,10 @@
     simulate,
     composite,
     computeErrors,
+    // 色相相关（浏览器环境）
+    rgbToHue,        // RGB -> hue [0, 360)
+    hsvToRgb,        // HSV -> RGB
+    applyHueToGray,  // 将灰度前景按色相着色
   };
 
   // ---------- 浏览器专用扩展（Canvas / ImageData） ----------
@@ -248,6 +302,53 @@
         data[di++] = v;
         data[di++] = v;
         data[di++] = ab[i];
+      }
+      return new ImageData(data, w, h);
+    };
+
+    // 生成带色相的重构 RGBA：从 img1（叠黑观察）提取色相，应用到前景灰度上
+    // imgData1: 原始叠黑观察的 ImageData（统一尺寸前）
+    // plan: planUnify 返回的 img1 参数（含 sx, sy, sw, sh, dw, dh）
+    // fg, ab: 反推得到的灰度前景和 alpha
+    // saturation: 色相饱和度 0-1（默认 1.0，全饱和）
+    ARCore.makeReconstructedRGBAWithHue = function(fg, ab, w, h, imgData1, plan, saturation = 1.0) {
+      const len = fg.length;
+      const data = new Uint8ClampedArray(len * 4);
+      
+      // 先把 imgData1 按 plan 画到统一尺寸
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      
+      // 画 imgData1 到 canvas（与 unifyAndGrayBrowser 一致的逻辑）
+      const tmp = document.createElement('canvas');
+      tmp.width = imgData1.width; tmp.height = imgData1.height;
+      const tctx = tmp.getContext('2d');
+      tctx.putImageData(imgData1, 0, 0);
+      ctx.drawImage(tmp, plan.img1.sx, plan.img1.sy, plan.img1.sw, plan.img1.sh, 0, 0, plan.img1.dw, plan.img1.dh);
+      
+      // 从 canvas 读取统一尺寸后的 RGB 像素
+      const unifiedRgb = ctx.getImageData(0, 0, w, h).data; // RGBA
+      
+      // 对每个像素：从 RGB 提取色相，结合 fg(明度) 生成 RGB
+      let di = 0;
+      for (let i = 0; i < len; i++) {
+        const r = unifiedRgb[di];
+        const g = unifiedRgb[di + 1];
+        const b = unifiedRgb[di + 2];
+        di += 4;
+        
+        // 提取色相（灰度像素 hue=0）
+        const hue = ARCore.rgbToHue(r, g, b);
+        
+        // 用 fg 作为明度，应用色相
+        const v = fg[i] / 255;
+        const [fr, fg_c, fb] = ARCore.hsvToRgb(hue, saturation, v);
+        
+        data[i * 4] = fr;
+        data[i * 4 + 1] = fg_c;
+        data[i * 4 + 2] = fb;
+        data[i * 4 + 3] = ab[i];
       }
       return new ImageData(data, w, h);
     };

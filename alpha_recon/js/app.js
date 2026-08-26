@@ -18,12 +18,16 @@
     dark: null,
     light: null,
     derived: null,    // {fg, ab, valid, ...}
+    plan: null,       // 统一尺寸的 plan（用于色相提取）
     previewBg: 'checker', // 'checker' | 'black' | 'white'
+    useHue: false,    // 是否启用色相还原
     checkerPattern: null,
     previewCanvas: null,
     previewCtx: null,
     fgCanvas: null,
     fgCtx: null,
+    fgCanvasHue: null, // 色相版本的离屏 canvas
+    fgCtxHue: null,
   };
 
   // ---------- DOM ----------
@@ -43,6 +47,7 @@
   const dlHint = document.getElementById('dl-hint');
   const metaSize = document.getElementById('meta-size');
   const metaXY = document.getElementById('meta-xy');
+  const hueCheckbox = document.getElementById('hue-checkbox');
 
   // 报告字段
   const rRaw = document.getElementById('r-raw');
@@ -149,6 +154,7 @@
       state.gray2 = unified.gray2;
       state.w = unified.w;
       state.h = unified.h;
+      state.plan = unified.plan;
 
       // 2) auto_xy
       const [x, y] = ARCore.autoXY(state.gray1, state.gray2);
@@ -170,6 +176,20 @@
       }
       state.fgCanvas.width = state.w; state.fgCanvas.height = state.h;
       state.fgCtx.putImageData(reconData, 0, 0);
+
+      // 5b) 生成带色相的重构 RGBA（如果启用）
+      if (state.useHue && state.plan) {
+        const reconDataHue = ARCore.makeReconstructedRGBAWithHue(
+          derived.fg, derived.ab, state.w, state.h,
+          state.imgData1, state.plan, 1.0
+        );
+        if (!state.fgCanvasHue) {
+          state.fgCanvasHue = document.createElement('canvas');
+          state.fgCtxHue = state.fgCanvasHue.getContext('2d');
+        }
+        state.fgCanvasHue.width = state.w; state.fgCanvasHue.height = state.h;
+        state.fgCtxHue.putImageData(reconDataHue, 0, 0);
+      }
 
       // 6) 生成棋盘格 pattern
       if (!state.checkerPattern) {
@@ -223,8 +243,9 @@
       previewCtx.fillRect(0, 0, w, h);
     }
 
-    // 叠加重构图（带透明）
-    previewCtx.drawImage(state.fgCanvas, 0, 0);
+    // 叠加重构图（带透明）-- 根据 hue 选择 canvas
+    const srcCanvas = (state.useHue && state.fgCanvasHue) ? state.fgCanvasHue : state.fgCanvas;
+    previewCtx.drawImage(srcCanvas, 0, 0);
   }
 
   function enableExport() {
@@ -234,8 +255,10 @@
   }
 
   function downloadReconstructed() {
-    if (!state.fgCanvas) return;
-    state.fgCanvas.toBlob(blob => {
+    // 根据 hue 设置选择导出的 canvas
+    const exportCanvas = (state.useHue && state.fgCanvasHue) ? state.fgCanvasHue : state.fgCanvas;
+    if (!exportCanvas) return;
+    exportCanvas.toBlob(blob => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -320,6 +343,27 @@
   setupDropZone(1);
   setupDropZone(2);
   setupBgButtons();
+
+  // 色相还原 checkbox
+  hueCheckbox?.addEventListener('change', () => {
+    state.useHue = hueCheckbox.checked;
+    if (state.derived && state.plan) {
+      // 实时重新生成色相版本（不需要重新跑完整流程）
+      if (state.useHue && !state.fgCanvasHue) {
+        const reconDataHue = ARCore.makeReconstructedRGBAWithHue(
+          state.derived.fg, state.derived.ab, state.w, state.h,
+          state.imgData1, state.plan, 1.0
+        );
+        if (!state.fgCanvasHue) {
+          state.fgCanvasHue = document.createElement('canvas');
+          state.fgCtxHue = state.fgCanvasHue.getContext('2d');
+        }
+        state.fgCanvasHue.width = state.w; state.fgCanvasHue.height = state.h;
+        state.fgCtxHue.putImageData(reconDataHue, 0, 0);
+      }
+      renderPreview();
+    }
+  });
 
   dlBtn.addEventListener('click', downloadReconstructed);
   swapBtn.addEventListener('click', swapAndReprocess);
