@@ -2,3 +2,12 @@
 .DS_Store
 Thumbs.db
 todo.txt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# alpha_recon 输出产物
+alpha_recon/images/
