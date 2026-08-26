@@ -83,19 +83,63 @@
     return rgb;
   }
 
-  // 圆均值：两个色相取平均（处理 0/360 边界）
-  function averageHue(h1, h2) {
+  // 圆均值（加权）：两个色相取平均，返回 {h, r} 其中 r 是合成向量长度（0-2，越小越不稳定）
+  function averageHue(h1, h2, w1 = 1, w2 = 1) {
     const rad1 = h1 * Math.PI / 180;
     const rad2 = h2 * Math.PI / 180;
-    const x = Math.cos(rad1) + Math.cos(rad2);
-    const y = Math.sin(rad1) + Math.sin(rad2);
-    let avg = Math.atan2(y, x) * 180 / Math.PI;
-    if (avg < 0) avg += 360;
-    return avg;
+    const x = w1 * Math.cos(rad1) + w2 * Math.cos(rad2);
+    const y = w1 * Math.sin(rad1) + w2 * Math.sin(rad2);
+    const r = Math.hypot(x, y); // 合成向量长度，0-2
+    let h = Math.atan2(y, x) * 180 / Math.PI;
+    if (h < 0) h += 360;
+    return { h, r }; // r 接近 0 表示反向色，结果不可靠
+  }
+
+  // 平滑阶跃函数
+  function smoothstep(edge0, edge1, x) {
+    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+    return t * t * (3 - 2 * t);
+  }
+
+  // 计算最短色相差（0-180）
+  function hueDiff(h1, h2) {
+    let d = Math.abs(h1 - h2) % 360;
+    return d > 180 ? 360 - d : d;
+  }
+
+  // 自适应色相平均：根据色相差自动选择混合空间
+  // h1, h2: 色相 [0,360)
+  // s1, s2: 饱和度 [0,1] (用作权重)
+  // 返回 {h, s} 最终色相和饱和度
+  function adaptiveHueAverage(h1, h2, s1 = 1, s2 = 1) {
+    const diff = hueDiff(h1, h2);
+    
+    // 简单加权圆均值（用于 diff < 90）
+    const circ = averageHue(h1, h2, s1, s2);
+    
+    if (diff <= 90) {
+      // 近似色相：直接用饱和度加权圆均值
+      return { h: circ.h, s: (s1 + s2) / 2 };
+    }
+    
+    if (diff >= 150) {
+      // 反向色相：用 RGB 空间线性混合（避免绕色相圆）
+      // 这里用 HSV 插值近似：取饱和度更高的色相，饱和度取平均
+      const h = s1 >= s2 ? h1 : h2;
+      return { h, s: (s1 + s2) / 2 };
+    }
+    
+    // 过渡区 90~150：平滑混合 圆均值 和 取主导色相
+    const t = smoothstep(90, 150, diff);
+    const domH = s1 >= s2 ? h1 : h2; // 主导色相
+    const h = circ.h * (1 - t) + domH * t;
+    const s = (s1 + s2) / 2;
+    return { h, s };
   }
 
   const ARColor = {
-    roundHalfEven, rgbToHue, rgbToHsv, hsvToRgb, applyHueToGray, averageHue
+    roundHalfEven, rgbToHue, rgbToHsv, hsvToRgb, applyHueToGray, averageHue,
+    smoothstep, hueDiff, adaptiveHueAverage
   };
 
   if (typeof module !== 'undefined' && module.exports) {

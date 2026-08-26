@@ -180,15 +180,18 @@
       state.fgCanvas.width = state.w; state.fgCanvas.height = state.h;
       state.fgCtx.putImageData(reconData, 0, 0);
 
-      // 5b) 生成带色相的重构 RGBA（根据勾选情况）
+// 5b) 生成带色相的重构 RGBA（根据勾选情况）
       if ((state.useHue1 || state.useHue2) && state.plan) {
         let source;
         if (state.useHue1 && state.useHue2) source = 'average';
         else if (state.useHue1) source = 'img1';
         else source = 'img2';
         
+        console.log('[Hue Debug] Source:', source, 'useHue1:', state.useHue1, 'useHue2:', state.useHue2);
+        console.log('[Hue Debug] Plan img1:', state.plan.img1, 'Plan img2:', state.plan.img2);
+        
         const reconDataHue = ARCore.makeReconstructedRGBAWithHueFrom(
-          derived.fg, derived.ab, state.w, state.h,
+          state.derived.fg, state.derived.ab, state.w, state.h,
           state.imgData1, state.imgData2, state.plan, source
         );
         if (!state.fgCanvasHue) {
@@ -255,7 +258,7 @@
     }
 
     // 叠加重构图（带透明）-- 根据 hue 选择 canvas
-    const srcCanvas = (state.useHue && state.fgCanvasHue) ? state.fgCanvasHue : state.fgCanvas;
+    const srcCanvas = ((state.useHue1 || state.useHue2) && state.fgCanvasHue) ? state.fgCanvasHue : state.fgCanvas;
     previewCtx.drawImage(srcCanvas, 0, 0);
   }
 
@@ -267,7 +270,7 @@
 
   function downloadReconstructed() {
     // 根据 hue 设置选择导出的 canvas
-    const exportCanvas = (state.useHue && state.fgCanvasHue) ? state.fgCanvasHue : state.fgCanvas;
+    const exportCanvas = ((state.useHue1 || state.useHue2) && state.fgCanvasHue) ? state.fgCanvasHue : state.fgCanvas;
     if (!exportCanvas) return;
     exportCanvas.toBlob(blob => {
       const url = URL.createObjectURL(blob);

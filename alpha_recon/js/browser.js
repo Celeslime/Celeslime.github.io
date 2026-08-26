@@ -30,6 +30,8 @@
     const srcImgData = source === 'img1' ? imgData1 : imgData2;
     const planSrc = source === 'img1' ? plan.img1 : plan.img2;
 
+    console.log('[Hue Debug] reconstructWithHueFromSource:', { source, srcImgData: srcImgData.width+'x'+srcImgData.height, planSrc });
+
     tmp.width = srcImgData.width; tmp.height = srcImgData.height;
     const tctx = tmp.getContext('2d');
     tctx.putImageData(srcImgData, 0, 0);
@@ -105,9 +107,11 @@
       let fr, fg_c, fb;
 
       if (useHue1 && useHue2) {
-        const avgH = ARColor.averageHue(hsv1.h, hsv2.h);
-        const avgS = (hsv1.s + hsv2.s) / 2;
-        const [rr, gg, bb] = ARColor.hsvToRgb(avgH, avgS, v);
+        // 自适应色相平均：根据色相差自动选择混合空间
+        const { h: finalH, s: finalS } = ARColor.adaptiveHueAverage(
+          hsv1.h, hsv2.h, hsv1.s, hsv2.s
+        );
+        const [rr, gg, bb] = ARColor.hsvToRgb(finalH, finalS, v);
         fr = rr; fg_c = gg; fb = bb;
       } else if (useHue1) {
         const [rr, gg, bb] = ARColor.hsvToRgb(hsv1.h, hsv1.s, v);
