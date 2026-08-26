@@ -307,6 +307,11 @@
     rgbToHsv,        // RGB -> HSV
     hsvToRgb,        // HSV -> RGB
     applyHueToGray,  // 将灰度前景按色相着色
+    // 浏览器专用扩展也在这里导出（Node 下为 undefined）
+    makeReconstructedRGBA: null,
+    makeReconstructedRGBAWithHue: null,
+    makeReconstructedRGBAWithHueFrom: null,
+    makeCheckerPattern: null,
   };
 
   // ---------- 浏览器专用扩展（Canvas / ImageData） ----------
@@ -326,28 +331,26 @@
       return new ImageData(data, w, h);
     };
 
-    // 生成带色相的重构 RGBA：从 img1（叠黑观察）提取色相和饱和度，应用到前景灰度上
-    // imgData1: 原始叠黑观察的 ImageData（统一尺寸前）
-    // plan: planUnify 返回的 img1 参数（含 sx, sy, sw, sh, dw, dh）
-    // fg, ab: 反推得到的灰度前景和 alpha
-    // 注意：黑底观察 = fg_color * alpha，其 HSV 中 H=fg_H, S=fg_S, V=fg_V*alpha
-    // 我们提取 H 和 S，用反推的 fg (即 fg_V) 作为 V 重构
-    ARCore.makeReconstructedRGBAWithHue = function(fg, ab, w, h, imgData1, plan) {
+    // ---------- 通用：从观察图提取 HSV 并应用到前景 ----------
+    // source: 'img1' (黑底) 或 'img2' (白底)
+    function reconstructWithHueFromSource(fg, ab, w, h, imgData1, imgData2, plan, source) {
       const len = fg.length;
       const data = new Uint8ClampedArray(len * 4);
       
-      // 先把 imgData1 按 plan 画到统一尺寸
       const canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       const ctx = canvas.getContext('2d');
       
       const tmp = document.createElement('canvas');
-      tmp.width = imgData1.width; tmp.height = imgData1.height;
-      const tctx = tmp.getContext('2d');
-      tctx.putImageData(imgData1, 0, 0);
-      ctx.drawImage(tmp, plan.img1.sx, plan.img1.sy, plan.img1.sw, plan.img1.sh, 0, 0, plan.img1.dw, plan.img1.dh);
+      const srcImgData = source === 'img1' ? imgData1 : imgData2;
+      const planSrc = source === 'img1' ? plan.img1 : plan.img2;
       
-      const unifiedRgb = ctx.getImageData(0, 0, w, h).data; // RGBA
+      tmp.width = srcImgData.width; tmp.height = srcImgData.height;
+      const tctx = tmp.getContext('2d');
+      tctx.putImageData(srcImgData, 0, 0);
+      ctx.drawImage(tmp, planSrc.sx, planSrc.sy, planSrc.sw, planSrc.sh, 0, 0, planSrc.dw, planSrc.dh);
+      
+      const unifiedRgb = ctx.getImageData(0, 0, w, h).data;
       
       let di = 0;
       for (let i = 0; i < len; i++) {
@@ -356,12 +359,10 @@
         const b = unifiedRgb[di + 2];
         di += 4;
         
-        // 从黑底观察提取 HSV：H 和 S 来自观察，V 由反推 fg 提供
         const hsv = ARCore.rgbToHsv(r, g, b);
-        // 低饱和度（<0.05）视为中性色，退回灰度
         const useHue = hsv.s >= 0.05;
         
-        const v = fg[i] / 255; // 反推的前景明度
+        const v = fg[i] / 255;
         let fr, fg_c, fb;
         if (useHue) {
           const [rr, gg, bb] = ARCore.hsvToRgb(hsv.h, hsv.s, v);
@@ -377,6 +378,97 @@
         data[i * 4 + 3] = ab[i];
       }
       return new ImageData(data, w, h);
+    }
+
+    // 圆均值：两个色相取平均（处理 0/360 边界）
+    function averageHue(h1, h2) {
+      // 转为单位向量求和
+      const rad1 = h1 * Math.PI / 180;
+      const rad2 = h2 * Math.PI / 180;
+      const x = Math.cos(rad1) + Math.cos(rad2);
+      const y = Math.sin(rad1) + Math.sin(rad2);
+      let avg = Math.atan2(y, x) * 180 / Math.PI;
+      if (avg < 0) avg += 360;
+      return avg;
+    }
+
+    // 从两个源提取 HSV 并圆均值合成
+    function reconstructWithHueAverage(fg, ab, w, h, imgData1, imgData2, plan) {
+      const len = fg.length;
+      const data = new Uint8ClampedArray(len * 4);
+      
+      // 先把两个观察图都画到统一尺寸
+      const canvases = [];
+      for (const srcName of ['img1', 'img2']) {
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        const srcImgData = srcName === 'img1' ? imgData1 : imgData2;
+        const planSrc = srcName === 'img1' ? plan.img1 : plan.img2;
+        
+        const tmp = document.createElement('canvas');
+        tmp.width = srcImgData.width; tmp.height = srcImgData.height;
+        const tctx = tmp.getContext('2d');
+        tctx.putImageData(srcImgData, 0, 0);
+        ctx.drawImage(tmp, planSrc.sx, planSrc.sy, planSrc.sw, planSrc.sh, 0, 0, planSrc.dw, planSrc.dh);
+        
+        canvases.push(ctx.getImageData(0, 0, w, h).data);
+      }
+      
+      const rgb1 = canvases[0];
+      const rgb2 = canvases[1];
+      
+      let d1 = 0, d2 = 0;
+      for (let i = 0; i < len; i++) {
+        const r1 = rgb1[d1], g1 = rgb1[d1 + 1], b1 = rgb1[d1 + 2]; d1 += 4;
+        const r2 = rgb2[d2], g2 = rgb2[d2 + 1], b2 = rgb2[d2 + 2]; d2 += 4;
+        
+        const hsv1 = ARCore.rgbToHsv(r1, g1, b1);
+        const hsv2 = ARCore.rgbToHsv(r2, g2, b2);
+        
+        const useHue1 = hsv1.s >= 0.05;
+        const useHue2 = hsv2.s >= 0.05;
+        
+        const v = fg[i] / 255;
+        let fr, fg_c, fb;
+        
+        if (useHue1 && useHue2) {
+          // 两者都有色相 -> 圆均值
+          const avgH = averageHue(hsv1.h, hsv2.h);
+          // 饱和度取平均
+          const avgS = (hsv1.s + hsv2.s) / 2;
+          const [rr, gg, bb] = ARCore.hsvToRgb(avgH, avgS, v);
+          fr = rr; fg_c = gg; fb = bb;
+        } else if (useHue1) {
+          const [rr, gg, bb] = ARCore.hsvToRgb(hsv1.h, hsv1.s, v);
+          fr = rr; fg_c = gg; fb = bb;
+        } else if (useHue2) {
+          const [rr, gg, bb] = ARCore.hsvToRgb(hsv2.h, hsv2.s, v);
+          fr = rr; fg_c = gg; fb = bb;
+        } else {
+          const gv = roundHalfEven(v * 255);
+          fr = fg_c = fb = gv;
+        }
+        
+        data[i * 4] = fr;
+        data[i * 4 + 1] = fg_c;
+        data[i * 4 + 2] = fb;
+        data[i * 4 + 3] = ab[i];
+      }
+      return new ImageData(data, w, h);
+    }
+
+    // 兼容旧 API：单源（默认 img1）
+    ARCore.makeReconstructedRGBAWithHue = function(fg, ab, w, h, imgData1, plan) {
+      return reconstructWithHueFromSource(fg, ab, w, h, imgData1, null, plan, 'img1');
+    };
+
+    // 新 API：指定源
+    ARCore.makeReconstructedRGBAWithHueFrom = function(fg, ab, w, h, imgData1, imgData2, plan, source) {
+      if (source === 'average') {
+        return reconstructWithHueAverage(fg, ab, w, h, imgData1, imgData2, plan);
+      }
+      return reconstructWithHueFromSource(fg, ab, w, h, imgData1, imgData2, plan, source);
     };
 
     // 棋盘格 pattern canvas

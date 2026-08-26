@@ -69,9 +69,14 @@
 
 			<div class="hue-control" style="margin-top:10px;">
 				<label class="check-line" style="cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);">
-					<input type="checkbox" id="hue-checkbox" style="accent-color:var(--blue);width:16px;height:16px;">
+					<input type="checkbox" id="hue-checkbox-1" style="accent-color:var(--blue);width:16px;height:16px;">
 					<span>还原色相（从图1提取色相着色前景）</span>
 				</label>
+				<label class="check-line" style="cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);margin-top:6px;">
+					<input type="checkbox" id="hue-checkbox-2" style="accent-color:var(--blue);width:16px;height:16px;">
+					<span>还原色相（从图2提取色相着色前景）</span>
+				</label>
+				<p id="hue-hint" class="hint" style="display:none;margin-top:6px;font-size:12px;">两者均选时取色相平均（圆均值）</p>
 			</div>
 
 			<div class="export-box">

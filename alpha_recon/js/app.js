@@ -6,7 +6,7 @@
 (() => {
   'use strict';
 
-  // ---------- 状态 ----------
+// ---------- 状态 ----------
   const state = {
     imgData1: null,   // 原始 ImageData
     imgData2: null,
@@ -20,7 +20,8 @@
     derived: null,    // {fg, ab, valid, ...}
     plan: null,       // 统一尺寸的 plan（用于色相提取）
     previewBg: 'checker', // 'checker' | 'black' | 'white'
-    useHue: false,    // 是否启用色相还原
+    useHue1: false,   // 从图1提取色相
+    useHue2: false,   // 从图2提取色相
     checkerPattern: null,
     previewCanvas: null,
     previewCtx: null,
@@ -47,7 +48,9 @@
   const dlHint = document.getElementById('dl-hint');
   const metaSize = document.getElementById('meta-size');
   const metaXY = document.getElementById('meta-xy');
-  const hueCheckbox = document.getElementById('hue-checkbox');
+  const hueCheckbox1 = document.getElementById('hue-checkbox-1');
+  const hueCheckbox2 = document.getElementById('hue-checkbox-2');
+  const hueHint = document.getElementById('hue-hint');
 
   // 报告字段
   const rRaw = document.getElementById('r-raw');
@@ -177,11 +180,25 @@
       state.fgCanvas.width = state.w; state.fgCanvas.height = state.h;
       state.fgCtx.putImageData(reconData, 0, 0);
 
-      // 5b) 生成带色相的重构 RGBA（如果启用）
-      if (state.useHue && state.plan) {
-        const reconDataHue = ARCore.makeReconstructedRGBAWithHue(
+      // 5) 生成重构 RGBA（离屏 canvas 缓存，用于预览合成）
+      const reconData = ARCore.makeReconstructedRGBA(derived.fg, derived.ab, state.w, state.h);
+      if (!state.fgCanvas) {
+        state.fgCanvas = document.createElement('canvas');
+        state.fgCtx = state.fgCanvas.getContext('2d');
+      }
+      state.fgCanvas.width = state.w; state.fgCanvas.height = state.h;
+      state.fgCtx.putImageData(reconData, 0, 0);
+
+      // 5b) 生成带色相的重构 RGBA（根据勾选情况）
+      if ((state.useHue1 || state.useHue2) && state.plan) {
+        let source;
+        if (state.useHue1 && state.useHue2) source = 'average';
+        else if (state.useHue1) source = 'img1';
+        else source = 'img2';
+        
+        const reconDataHue = ARCore.makeReconstructedRGBAWithHueFrom(
           derived.fg, derived.ab, state.w, state.h,
-          state.imgData1, state.plan
+          state.imgData1, state.imgData2, state.plan, source
         );
         if (!state.fgCanvasHue) {
           state.fgCanvasHue = document.createElement('canvas');
@@ -190,7 +207,6 @@
         state.fgCanvasHue.width = state.w; state.fgCanvasHue.height = state.h;
         state.fgCtxHue.putImageData(reconDataHue, 0, 0);
       } else {
-        // 不使用色相时清空 hue canvas，避免残留
         state.fgCanvasHue = null;
         state.fgCtxHue = null;
       }
@@ -348,15 +364,18 @@
   setupDropZone(2);
   setupBgButtons();
 
-  // 色相还原 checkbox
-  hueCheckbox?.addEventListener('change', () => {
-    state.useHue = hueCheckbox.checked;
+  // 色相还原 checkboxes
+  function rebuildHueCanvas() {
     if (state.derived && state.plan) {
-      // 实时重新生成色相版本（不需要重新跑完整流程）
-      if (state.useHue) {
-        const reconDataHue = ARCore.makeReconstructedRGBAWithHue(
+      if (state.useHue1 || state.useHue2) {
+        let source;
+        if (state.useHue1 && state.useHue2) source = 'average';
+        else if (state.useHue1) source = 'img1';
+        else source = 'img2';
+        
+        const reconDataHue = ARCore.makeReconstructedRGBAWithHueFrom(
           state.derived.fg, state.derived.ab, state.w, state.h,
-          state.imgData1, state.plan
+          state.imgData1, state.imgData2, state.plan, source
         );
         if (!state.fgCanvasHue) {
           state.fgCanvasHue = document.createElement('canvas');
@@ -369,7 +388,22 @@
         state.fgCtxHue = null;
       }
       renderPreview();
+      // 显示/隐藏提示
+      if (state.useHue1 && state.useHue2) {
+        hueHint.style.display = 'block';
+      } else {
+        hueHint.style.display = 'none';
+      }
     }
+  }
+
+  hueCheckbox1?.addEventListener('change', () => {
+    state.useHue1 = hueCheckbox1.checked;
+    rebuildHueCanvas();
+  });
+  hueCheckbox2?.addEventListener('change', () => {
+    state.useHue2 = hueCheckbox2.checked;
+    rebuildHueCanvas();
   });
 
   dlBtn.addEventListener('click', downloadReconstructed);
