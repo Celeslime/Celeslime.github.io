@@ -83,6 +83,14 @@
   // 返回 [x, y] 其中 x+y=255，满足自洽的最大 x
   function autoXY(g1, g2) {
     const len = g1.length;
+
+    // 快速路径：完全相同的图片直接返回最大映射
+    let identical = true;
+    for (let i = 0; i < len; i++) {
+      if (g1[i] !== g2[i]) { identical = false; break; }
+    }
+    if (identical) return [255, 0];
+
     const f1 = new Float64Array(len);
     const f2 = new Float64Array(len);
     let g1max = 0, g2min = 255;
@@ -109,8 +117,14 @@
 
     while (x > 0 && !check(x)) x--;
 
-    // Phase 2: 从可行解出发，尝试递增 x 以达到真正最大值
-    while (x < 255 && check(x + 1)) x++;
+    // Phase 2: 二分搜索 [x, 255] 寻找真正最大值
+    let lo = x, hi = 255;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1; // 上中位
+      if (check(mid)) lo = mid;
+      else hi = mid - 1;
+    }
+    x = lo;
 
     return [x, 255 - x];
   }
