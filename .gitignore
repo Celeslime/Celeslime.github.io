@@ -11,3 +11,4 @@ __pycache__/
 
 # alpha_recon 输出产物
 alpha_recon/images/
+.vscode

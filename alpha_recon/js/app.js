@@ -189,6 +189,10 @@
         }
         state.fgCanvasHue.width = state.w; state.fgCanvasHue.height = state.h;
         state.fgCtxHue.putImageData(reconDataHue, 0, 0);
+      } else {
+        // 不使用色相时清空 hue canvas，避免残留
+        state.fgCanvasHue = null;
+        state.fgCtxHue = null;
       }
 
       // 6) 生成棋盘格 pattern
@@ -349,7 +353,7 @@
     state.useHue = hueCheckbox.checked;
     if (state.derived && state.plan) {
       // 实时重新生成色相版本（不需要重新跑完整流程）
-      if (state.useHue && !state.fgCanvasHue) {
+      if (state.useHue) {
         const reconDataHue = ARCore.makeReconstructedRGBAWithHue(
           state.derived.fg, state.derived.ab, state.w, state.h,
           state.imgData1, state.plan
@@ -360,6 +364,9 @@
         }
         state.fgCanvasHue.width = state.w; state.fgCanvasHue.height = state.h;
         state.fgCtxHue.putImageData(reconDataHue, 0, 0);
+      } else {
+        state.fgCanvasHue = null;
+        state.fgCtxHue = null;
       }
       renderPreview();
     }
