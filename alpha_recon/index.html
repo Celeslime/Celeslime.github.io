@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>Alpha 反推 · 灰度叠色还原 | CeleSlime</title>
+	<meta name="description" content="上传两张图（分别叠黑、叠白观察），自动统一尺寸、计算映射区间，反推前景灰度与 Alpha，输出带透明通道的重构图。纯前端，无依赖。"/>
+	<meta name="robots" content="index,follow">
+	<link rel="canonical" href="https://celeslime.github.io/alpha_recon/">
+	<link rel="stylesheet" type="text/css" href="./css/style.css">
+	<link rel="icon" href="../images/flower.p.min.svg" type="image/svg+xml">
+
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content="Cele 的小站">
+	<meta property="og:title" content="Alpha 反推 · 灰度叠色还原">
+	<meta property="og:description" content="上传两张图（分别叠黑、叠白观察），自动反推前景色与 Alpha，输出重构 RGBA 图。">
+	<meta property="og:url" content="https://celeslime.github.io/alpha_recon/">
+	<meta property="og:image" content="https://celeslime.github.io/images/og-cover.png">
+	<meta property="og:locale" content="zh_CN">
+	<meta name="twitter:card" content="summary_large_image">
+
+	<script>
+		(function(){
+			try{
+				if(localStorage.getItem("theme")==="dark" || (!localStorage.getItem("theme") && matchMedia("(prefers-color-scheme: dark)").matches)){
+					document.documentElement.classList.add("dark");
+				}
+			}catch(e){}
+		})();
+	</script>
+</head>
+<body id="top">
+
+	<nav class="nav">
+		<a class="nav-logo" href="#top">
+			<img src="../images/flower.p.min.svg" alt="Alpha 反推">
+			<span>Alpha 反推</span>
+		</a>
+		<div class="nav-links">
+			<a class="home" href="../">← 回主页</a>
+			<button id="theme-toggle" class="theme-btn" aria-label="切换深浅色模式" title="切换深浅色模式">
+				<svg class="icon-sun" fill="currentColor" viewBox="0 0 24 24"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM13 1a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0V1zm0 20a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0v-2zm8.657-16.657a1 1 0 0 0-1.414 0l-1.414 1.414a1 1 0 0 0 1.414 1.414l1.414-1.414a1 1 0 0 0 0-1.414zM5.757 17.757a1 1 0 0 0-1.414 0l-1.414 1.414a1 1 0 1 0 1.414 1.414l1.414-1.414a1 1 0 0 0 0-1.414zm14.829 0a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414-1.414l-1.414-1.414a1 1 0 0 0-1.414 0zM6.243 6.243a1 1 0 0 0 0-1.414L4.829 3.414a1 1 0 0 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.414 0zM1 11a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H1zm20 0a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2z"/></svg>
+				<svg class="icon-moon" fill="currentColor" viewBox="0 0 24 24"><path d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75 9.75 9.75 0 0 1 8.25 6c0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25 9.75 9.75 0 0 0 12.75 21a9.753 9.753 0 0 0 9.002-5.998z"/></svg>
+			</button>
+		</div>
+	</nav>
+
+	<header class="hero">
+		<h1>灰度叠色 Alpha 反推</h1>
+		<p>上传两张图（图1=叠黑观察、图2=叠白观察），自动统一尺寸、计算映射区间 x/y，反推前景灰度与 Alpha，输出重构 RGBA。背景可在黑 / 白 / 棋盘格间切换预览。</p>
+	</header>
+
+	<main class="container">
+		<section class="stage" aria-label="预览与导出">
+			<div class="stage-top">
+				<span class="meta">重构尺寸 <b id="meta-size">–</b></span>
+				<span class="meta">映射区间 <b id="meta-xy">–</b></span>
+			</div>
+
+			<div id="preview-wrap" class="preview-wrap">
+				<canvas id="preview-canvas"></canvas>
+			</div>
+
+			<div class="bg-controls" role="group" aria-label="背景选择">
+				<button type="button" class="bg-btn" data-bg="checker" aria-pressed="true" title="棋盘格（透明可见）">🏁 棋盘格</button>
+				<button type="button" class="bg-btn" data-bg="black" aria-pressed="false" title="纯黑背景">⬛ 黑底</button>
+				<button type="button" class="bg-btn" data-bg="white" aria-pressed="false" title="纯白背景">⬜ 白底</button>
+			</div>
+
+			<div class="export-box">
+				<p class="section-title">导出</p>
+				<div class="row">
+					<button type="button" class="btn" id="dl-btn" disabled>下载 reconstructed.png</button>
+					<button type="button" class="btn ghost" id="swap-btn" disabled title="交换图1/图2（叠黑↔叠白）">⇄ 交换顺序</button>
+				</div>
+				<p id="dl-hint" class="hint" style="display:none;margin-top:8px;color:var(--text-dim);font-size:12px;">已就绪，点击下载</p>
+			</div>
+		</section>
+
+		<aside class="panel" aria-label="输入与报告">
+			<h2>输入 <span class="hint">拖入或点击选择</span></h2>
+
+			<div class="drop-zone" id="drop1" data-slot="1" role="button" tabindex="0" aria-label="图1：叠黑观察">
+				<input type="file" id="file1" accept="image/*" hidden aria-hidden="true">
+				<div class="dz-inner">
+					<svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 10l-5 5-5-5M12 15V3"/></svg>
+					<p class="dz-text">图1 · 叠黑观察</p>
+					<p class="dz-hint">点击或拖入 PNG/JPG</p>
+				</div>
+				<canvas class="dz-preview" aria-hidden="true"></canvas>
+			</div>
+
+			<div class="drop-zone" id="drop2" data-slot="2" role="button" tabindex="0" aria-label="图2：叠白观察">
+				<input type="file" id="file2" accept="image/*" hidden aria-hidden="true">
+				<div class="dz-inner">
+					<svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 10l-5 5-5-5M12 15V3"/></svg>
+					<p class="dz-text">图2 · 叠白观察</p>
+					<p class="dz-hint">点击或拖入 PNG/JPG</p>
+				</div>
+				<canvas class="dz-preview" aria-hidden="true"></canvas>
+			</div>
+
+			<div class="section-title">处理报告</div>
+			<dl class="report" id="report">
+				<dt>原始尺寸</dt> <dd id="r-raw">–</dd>
+				<dt>统一后</dt> <dd id="r-unified">–</dd>
+				<dt>映射区间</dt> <dd id="r-xy">–</dd>
+				<dt>半透明像素</dt> <dd id="r-semi">–</dd>
+				<dt>无效像素</dt> <dd id="r-invalid">–</dd>
+				<dt>模拟最大误差</dt> <dd id="r-err">–</dd>
+			</dl>
+
+			<div class="section-title">说明</div>
+			<ul class="notes">
+				<li>图1 应为同一前景<strong>叠纯黑（RGB=0）</strong>合成的结果；图2 为<strong>叠纯白（RGB=255）</strong>的结果。</li>
+				<li>程序自动统一尺寸（高的缩高、宽的裁中）、转灰度、计算满足 <code>x+y=255</code> 且最大的 <code>x</code>，映射到 <code>dark∈[0,x]</code> / <code>light∈[y,255]</code>，再直接反推。</li>
+				<li>两张图内容不一致时仍可跑通，但反推出的前景灰度为两图内容的混合，无单一物理含义。</li>
+				<li>导出的 <code>reconstructed.png</code> 为 RGBA（RGB=前景灰度，A=Alpha），可直接用于合成。</li>
+			</ul>
+		</aside>
+	</main>
+
+	<footer class="footer">
+		<div class="footer-line">
+		<svg class="footicon" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+		<span class="footname">@CeleSlime</span>
+		<svg class="footicon" fill="currentColor" viewBox="0 0 24 24"><path d="M21.395 15.035a40 40 0 0 0-.803-2.264l-1.079-2.695c.001-.032.014-.562.014-.836C19.526 4.632 17.351 0 12 0S4.474 4.632 4.474 9.241c0 .274.013.804.014.836l-1.08 2.695a39 39 0 0 0-.802 2.264c-1.021 3.283-.69 4.643-.438 4.673.54.065 2.103-2.472 2.103-2.472 0 1.469.756 3.387 2.394 4.771-.612.188-1.363.479-1.845.835-.434.32-.379.646-.301.778.343.578 5.883.369 7.482.189 1.6.18 7.14.389 7.483-.189.078-.132.132-.458-.301-.778-.483-.356-1.233-.646-1.846-.836 1.637-1.384 2.393-3.302 2.393-4.771 0 0 1.563 2.537 2.103 2.472.251-.03.581-1.39-.438-4.673"/></svg>
+		<span class="footname">@1575989756</span>
+		</div>
+	</footer>
+
+	<script src="./js/core.js"></script>
+	<script src="./js/app.js"></script>
+</body>
+</html>
