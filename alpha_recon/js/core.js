@@ -96,18 +96,23 @@
     const denom = 255 - g2min + g1max;
     let x = (denom > 0) ? Math.min(255, Math.floor(65025 / denom)) : 255;
 
-    while (x > 0) {
-      const y = 255 - x;
-      let ok = true;
+    // Phase 1: 递减直到找到可行解
+    function check(xVal) {
+      const yVal = 255 - xVal;
       for (let i = 0; i < len; i++) {
-        const c0 = roundHalfEven(f1[i] * x / 255);
-        const c1 = roundHalfEven(y + f2[i] * (255 - y) / 255);
-        if (c1 < c0) { ok = false; break; }
+        const c0 = roundHalfEven(f1[i] * xVal / 255);
+        const c1 = roundHalfEven(yVal + f2[i] * (255 - yVal) / 255);
+        if (c1 < c0) return false;
       }
-      if (ok) return [x, y];
-      x--;
+      return true;
     }
-    return [0, 255];
+
+    while (x > 0 && !check(x)) x--;
+
+    // Phase 2: 从可行解出发，尝试递增 x 以达到真正最大值
+    while (x < 255 && check(x + 1)) x++;
+
+    return [x, 255 - x];
   }
 
   // ---------- 映射：把 g1->[0,x], g2->[y,255] ----------

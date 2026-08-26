@@ -126,20 +126,34 @@ def auto_xy(g1: np.ndarray, g2: np.ndarray) -> tuple[int, int]:
       (255-x)*(255-g2_min) + 255*g2_min >= x*g1_max
       => 255^2 >= x*(255 - g2_min + g1_max)
       => x <= 255^2 / (255 - g2_min + g1_max)
-    返回满足该界且取整后全图仍自洽的最大 x，以及 y=255-x。
+    该界为充分条件，非必要条件（相同图片时真正最大 x 可达 255）。
+    返回满足该界且取整后全图仍自洽的**最大** x，以及 y=255-x。
     """
     g1_max = int(g1.max())
     g2_min = int(g2.min())
     denom = 255 - g2_min + g1_max
     x = min(255, (255 * 255) // denom) if denom > 0 else 255
-    while x > 0:                        # 取整边界兜底：逐减直到全像素自洽
+
+    # Phase 1: 递减直到找到可行解
+    while x > 0:
         y = 255 - x
         c0 = np.round(g1.astype(np.float64) * x / 255.0).astype(np.int64)
         c1 = np.round(y + g2.astype(np.float64) * (255 - y) / 255.0).astype(np.int64)
         if (c1 >= c0).all():
-            return x, y
+            break
         x -= 1
-    return 0, 255
+
+    # Phase 2: 从可行解出发，尝试递增 x 以达到真正最大值
+    while x < 255:
+        y = 255 - (x + 1)
+        c0 = np.round(g1.astype(np.float64) * (x + 1) / 255.0).astype(np.int64)
+        c1 = np.round(y + g2.astype(np.float64) * (255 - y) / 255.0).astype(np.int64)
+        if (c1 >= c0).all():
+            x += 1
+        else:
+            break
+
+    return x, 255 - x
 
 
 # ---------------------------------------------------------------------------
