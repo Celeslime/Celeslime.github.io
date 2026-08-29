@@ -1,0 +1,68 @@
+:root{
+	/* 主色取自头像 flower #4696d2，蓝白基调参考 zotero-chinese */
+	--blue: #4696d2;
+	--blue-dark: #2c6f9e;
+	--blue-deep: #1f5b8a;
+	--blue-light: #eaf4fb;
+	--blue-soft: #f4f9fd;
+
+	--bg: #f7fafc;
+	--card: #ffffff;
+	--border: #d6e8f5;
+	--text: #3d5a73;
+	--text-strong: #1f3a52;
+	--shadow-out: 0 3px 12px rgba(70, 150, 210, 0.12);
+	--shadow-hover: 0 10px 24px rgba(70, 150, 210, 0.2);
+	--nav-bg: rgba(247, 250, 252, 0.8);
+}
+
+html.dark{
+	--blue: #63aadd;
+	--blue-dark: #7db9e4;
+	--blue-deep: #9cc7e8;
+	--blue-light: #1d3346;
+	--blue-soft: #16242f;
+
+	--bg: #0e1a26;
+	--card: #16242f;
+	--border: #244055;
+	--text: #a8c1d6;
+	--text-strong: #d7e6f2;
+	--shadow-out: 0 3px 14px rgba(0, 0, 0, 0.5);
+	--shadow-hover: 0 10px 26px rgba(0, 0, 0, 0.6);
+	--nav-bg: rgba(14, 26, 38, 0.8);
+}
+
+*{
+	box-sizing: border-box;
+}
+
+html{
+	background: var(--bg);
+}
+
+body{
+	margin: 0;
+	font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+	color: var(--text);
+	min-height: 100vh;
+	/* 纯色背景；flower 纹理与内容区遮罩为主页专属，见 page.css */
+	background: var(--bg);
+}
+
+a{
+	color: inherit;
+	text-decoration: none;
+}
+
+:focus{
+	outline: 2px solid var(--blue);
+	outline-offset: 2px;
+}
+
+.container{
+	width: 100%;
+	margin: 0 auto;
+	/* 左右 padding 撑出 900px 内容区（主页另有遮罩背景，见 page.css） */
+	padding: 40px max(20px, calc((100% - 900px) / 2)) 20px;
+}

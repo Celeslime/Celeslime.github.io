@@ -1,0 +1,309 @@
+/* ---------- 留言板：留言-回复卡片，瀑布流铺展 ---------- */
+.guestbook{
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.gb-stats{
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 6px 22px;
+	font-size: 0.78rem;
+	opacity: 0.55;
+}
+
+.gb-stats strong{
+	color: var(--blue-deep);
+	font-size: 1em;
+}
+
+/* 瀑布流：CSS columns 按内容高度自然铺列，卡片不跨列断开 */
+.gb-list{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	columns: 3 230px;
+	column-gap: 14px;
+}
+
+/* 留言卡片：一条留言 + 其 AI 回复作为一个整体卡片 */
+.gb-item{
+	break-inside: avoid;
+	-webkit-column-break-inside: avoid;
+	margin: 0 0 14px;
+	padding: 14px 16px;
+	border-radius: 16px;
+	background: var(--card);
+	border: 1px solid var(--border);
+	box-shadow: var(--shadow-out);
+	transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+	animation: rise-in 0.45s ease backwards;
+}
+
+.gb-item:hover{
+	transform: translateY(-3px);
+	box-shadow: var(--shadow-hover);
+	border-color: var(--blue);
+}
+
+/* 轮询刷新时静默更新，避免整屏重播动画（见 guestbook.js） */
+.gb-list.gb-settled .gb-item{
+	animation: none;
+}
+
+/* 首屏入场逐条错开 */
+.gb-list .gb-item:nth-child(2){ animation-delay: 0.05s; }
+.gb-list .gb-item:nth-child(3){ animation-delay: 0.1s; }
+.gb-list .gb-item:nth-child(4){ animation-delay: 0.15s; }
+.gb-list .gb-item:nth-child(5){ animation-delay: 0.2s; }
+
+.gb-item-head{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 8px;
+	font-size: 0.85rem;
+}
+
+.gb-item-user{
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+}
+
+/* 留言头像：按昵称生成的透明花 SVG，圆形展示 */
+.gb-avatar{
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	flex-shrink: 0;
+	background: transparent;
+	box-shadow: 0 0 0 1px var(--border);
+}
+
+.gb-item-name{
+	font-weight: 600;
+	color: var(--blue-deep);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.gb-item-time{
+	font-size: 0.74rem;
+	opacity: 0.5;
+	flex-shrink: 0;
+}
+
+/* 留言正文 */
+.gb-item-text{
+	margin: 0;
+	font-size: 0.93rem;
+	line-height: 1.6;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+/* 空状态：可点击跳转输入框 */
+.gb-empty{
+	margin: 4px 0 2px;
+	padding: 26px 18px;
+	text-align: center;
+	font-size: 0.9rem;
+	color: var(--text);
+	opacity: 0.85;
+	background: var(--blue-soft);
+	border: 1.5px dashed var(--blue);
+	border-radius: 14px;
+	cursor: pointer;
+	transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+}
+
+.gb-empty:hover{
+	background: var(--blue-light);
+	border-color: var(--blue-deep);
+	transform: translateY(-1px);
+}
+
+.gb-empty-icon{
+	display: block;
+	font-size: 1.7rem;
+	line-height: 1;
+	margin-bottom: 7px;
+}
+
+/* 输入栏：聊天式，聚焦时整栏高亮 */
+.gb-form{
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 12px 14px 10px;
+	border-radius: 16px;
+	background: var(--blue-soft);
+	border: 1px solid var(--border);
+	transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.gb-form:focus-within{
+	border-color: var(--blue);
+	box-shadow: 0 0 0 3px rgba(70, 150, 210, 0.14);
+}
+
+.gb-input-head{
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.gb-form input#gb-name{
+	flex: 0 0 170px;
+	font: inherit;
+	font-size: 0.9rem;
+	color: var(--text);
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 12px;
+	padding: 8px 12px;
+	transition: border-color 0.18s ease;
+}
+
+.gb-form input#gb-name:focus{
+	outline: none;
+	border-color: var(--blue);
+}
+
+/* 占位符统一弱化，避免深浅模式下提示文字看不清或带浏览器默认灰 */
+.gb-form input#gb-name::placeholder,
+.gb-form textarea::placeholder{
+	color: var(--text);
+	opacity: 0.45;
+}
+
+/* 深色模式下表单背景与 --card 同色，输入框填充会"消失"，改用更亮的 --blue-light 作底色 */
+html.dark .gb-form input#gb-name{
+	background: var(--blue-light);
+}
+
+.gb-count{
+	margin-left: auto;
+	font-size: 0.74rem;
+	opacity: 0.5;
+	flex-shrink: 0;
+}
+
+.gb-form textarea{
+	font: inherit;
+	font-size: 0.95rem;
+	line-height: 1.6;
+	color: var(--text);
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	padding: 6px 2px;
+	width: 100%;
+	min-height: 84px;
+	resize: vertical;
+}
+
+.gb-form textarea:focus{
+	outline: none;
+}
+
+.gb-btn-wrap{
+	display: flex;
+	justify-content: flex-end;
+}
+
+.gb-btn{
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	font: inherit;
+	font-weight: 600;
+	font-size: 0.9rem;
+	padding: 9px 18px;
+	border-radius: 999px;
+	border: 1px solid var(--blue);
+	background: var(--blue);
+	color: #fff;
+	cursor: pointer;
+	box-shadow: 0 3px 9px rgba(70, 150, 210, 0.35);
+	transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.gb-btn-icon{
+	width: 15px;
+	height: 15px;
+	flex-shrink: 0;
+}
+
+.gb-btn:hover{
+	background: var(--blue-dark);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 14px rgba(70, 150, 210, 0.45);
+}
+
+.gb-btn:disabled{
+	opacity: 0.6;
+	cursor: default;
+	transform: none;
+	box-shadow: none;
+}
+
+/* AI 自动回复块：卡片内嵌，左侧蓝边 + 浅蓝底，与访客留言清晰区分 */
+.gb-item-ai{
+	margin-top: 10px;
+	padding: 9px 12px;
+	border-radius: 12px;
+	background: var(--blue-light);
+	border-left: 3px solid var(--blue);
+}
+
+.gb-item-ai-head{
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 0.76rem;
+	font-weight: 700;
+	color: var(--blue-deep);
+	margin-bottom: 3px;
+	letter-spacing: 0.3px;
+}
+
+.gb-item-ai-head::before{
+	content: "✦";
+	color: var(--blue);
+}
+
+.gb-item-ai-text{
+	margin: 0;
+	font-size: 0.9rem;
+	line-height: 1.6;
+	white-space: pre-wrap;
+	word-break: break-word;
+	opacity: 0.8;
+}
+
+/* "思考中"占位：虚线弱化 + 省略号闪烁，等 AI 回复生成后由 JS 替换为真实内容 */
+
+.gb-item-ai-thinking .gb-item-ai-text{
+	font-style: italic;
+}
+
+.gb-item-ai-thinking .gb-item-ai-text::after{
+	content: "…";
+	display: inline-block;
+	animation: gb-dots 1.2s steps(3, end) infinite;
+}
+
+@keyframes gb-dots{
+	0%{ content: ""; }
+	33%{ content: "."; }
+	66%{ content: ".."; }
+	100%{ content: "..."; }
+}
+

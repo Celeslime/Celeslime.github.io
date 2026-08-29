@@ -1,0 +1,60 @@
+/* ---------- 顶部导航 ---------- */
+.nav{
+	position: sticky;
+	top: 0;
+	z-index: 50;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 56px;
+	padding: 0 max(20px, calc((100vw - 900px) / 2));
+	background: var(--nav-bg);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border-bottom: 1px solid var(--border);
+}
+
+.nav-logo{
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 700;
+	font-size: 1.05rem;
+	color: var(--blue-deep);
+}
+
+.nav-logo img{
+	height: 26px;
+	width: 26px;
+	border-radius: 50%;
+	background: #fff;
+	padding: 2px;
+	border: 1px solid var(--border);
+}
+
+html.dark .nav-logo img{
+	background: var(--card);
+}
+
+.nav-links{
+	display: flex;
+	align-items: center;
+	gap: 22px;
+}
+
+.nav-links a{
+	font-size: 0.92rem;
+	color: var(--text);
+	font-weight: 500;
+	transition: color 0.18s ease;
+}
+
+.nav-links a:hover{
+	color: var(--blue);
+}
+
+.nav-links a.active{
+	color: var(--blue);
+	font-weight: 600;
+}
+

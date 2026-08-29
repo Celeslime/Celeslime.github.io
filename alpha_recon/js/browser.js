@@ -54,10 +54,9 @@ const hsv = ARColor.rgbToHsv(r, g, b);
       if (source === 'img1') {
         useHue = hsv.s >= 0.08; // 黑底：低阈值即可
       } else {
-        // 白底：用反推的 alpha 判断是否可信
-        // alpha 接近 1(不透明)时，观察色相≈真实色相
-        // alpha 低时，观察被白底主导，色相不可信
-        useHue = hsv.s >= 0.15 && ab[i] >= 100; // alpha >= 100/255 ≈ 0.39
+        // 白底：观察色相受白底干扰，仅当观察像素足够亮(高V)且 alpha 足够高时可信
+        // 暗部被白底漂白，色相全不可信
+        useHue = hsv.s >= 0.15 && hsv.v >= 0.5 && ab[i] >= 100;
       }
 
       const v = fg[i] / 255;
@@ -112,8 +111,8 @@ const hsv = ARColor.rgbToHsv(r, g, b);
       const hsv2 = ARColor.rgbToHsv(r2, g2, b2);
 
       const useHue1 = hsv1.s >= 0.08;
-      // 白底观察更严格：需高饱和度且 alpha 接近 1
-      const useHue2 = hsv2.s >= 0.15 && ab[i] >= 100;
+      // 白底观察更严格：需高饱和度、观察亮度高(被白底漂白的暗部不可信)、alpha足够
+      const useHue2 = hsv2.s >= 0.15 && hsv2.v >= 0.5 && ab[i] >= 100;
 
       const v = fg[i] / 255;
       let fr, fg_c, fb;

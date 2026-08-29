@@ -402,10 +402,4 @@
 
   dlBtn.addEventListener('click', downloadReconstructed);
   swapBtn.addEventListener('click', swapAndReprocess);
-
-  // theme toggle（复用主站逻辑，页面已内联）
-  document.getElementById('theme-toggle')?.addEventListener('click', () => {
-    document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-  });
 })();

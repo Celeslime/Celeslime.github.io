@@ -1,4 +1,8 @@
+# 环境
 .reasonix/
+.vscode/
+.workbuddy/
+reasonix.toml
 .DS_Store
 Thumbs.db
 todo.txt
@@ -11,4 +15,3 @@ __pycache__/
 
 # alpha_recon 输出产物
 alpha_recon/images/
-.vscode

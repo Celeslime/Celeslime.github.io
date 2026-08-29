@@ -8,6 +8,12 @@
 	"use strict";
 
 	var API = "https://cele-api.pages.dev";
+	/* cele-api 的 CORS 只放行 https://celeslime.github.io。
+	   其它环境（本地 127.0.0.1 / localhost / file 等）一旦发请求必被拦截并在控制台刷 CORS / 网络错误，
+	   因此非正式域名一律静默跳过，不发起任何 cele-api 请求。 */
+	function apiEnabled() {
+		try { return location.hostname === "celeslime.github.io"; } catch (e) { return false; }
+	}
 
 	var listEl = document.getElementById("comment-list");
 	var emptyEl = document.getElementById("comment-empty");
@@ -126,7 +132,7 @@
 	}
 
 	function loadComments(animate) {
-		if (!listEl || loading) return;
+		if (!apiEnabled() || !listEl || loading) return;
 		loading = true;
 		fetch(API + "/api/comments")
 			.then(function (r) { return r.json(); })
@@ -149,7 +155,7 @@
 	}
 
 	function postStats() {
-		if (!visitsEl && !pageVisitsEl) return;
+		if (!apiEnabled() || (!visitsEl && !pageVisitsEl)) return;
 		/* 记录本次访问，顺带返回全站与当前页计数；credentials 让浏览器回传 cookie，10 分钟去重才生效 */
 		fetch(API + "/api/stats?path=" + encodeURIComponent(location.pathname), { method: "POST", credentials: "include" })
 			.then(function (r) { return r.json(); })
@@ -164,6 +170,11 @@
 	if (formEl) {
 		formEl.addEventListener("submit", function (e) {
 			e.preventDefault();
+			/* 本地环境发请求必被 CORS 拦截，直接提示而不是触发一串网络报错 */
+			if (!apiEnabled()) {
+				alert("留言功能仅在正式站点 celeslime.github.io 可用。");
+				return;
+			}
 			var name = (nameEl ? nameEl.value : "").trim().slice(0, 20);
 			var text = (textEl ? textEl.value : "").trim().slice(0, 500);
 			if (!text) return;

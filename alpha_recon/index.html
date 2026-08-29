@@ -7,6 +7,11 @@
 	<meta name="description" content="上传两张图（分别叠黑、叠白观察），自动统一尺寸、计算映射区间，反推前景灰度与 Alpha，输出带透明通道的重构图。纯前端，无依赖。"/>
 	<meta name="robots" content="index,follow">
 	<link rel="canonical" href="https://celeslime.github.io/alpha_recon/">
+	<link rel="stylesheet" type="text/css" href="../css/base.css">
+	<link rel="stylesheet" type="text/css" href="../css/nav.css">
+	<link rel="stylesheet" type="text/css" href="../css/hero.css">
+	<link rel="stylesheet" type="text/css" href="../css/responsive.css">
+	<link rel="stylesheet" type="text/css" href="../css/footer.css">
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
 	<link rel="icon" href="../images/flower.p.min.svg" type="image/svg+xml">
 
@@ -22,7 +27,8 @@
 	<script>
 		(function(){
 			try{
-				if(localStorage.getItem("theme")==="dark" || (!localStorage.getItem("theme") && matchMedia("(prefers-color-scheme: dark)").matches)){
+				var t = localStorage.getItem("theme");
+				if(t === "dark" || (t !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)){
 					document.documentElement.classList.add("dark");
 				}
 			}catch(e){}
@@ -37,11 +43,7 @@
 			<span>Alpha 反推</span>
 		</a>
 		<div class="nav-links">
-			<a class="home" href="../">← 回主页</a>
-			<button id="theme-toggle" class="theme-btn" aria-label="切换深浅色模式" title="切换深浅色模式">
-				<svg class="icon-sun" fill="currentColor" viewBox="0 0 24 24"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM13 1a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0V1zm0 20a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0v-2zm8.657-16.657a1 1 0 0 0-1.414 0l-1.414 1.414a1 1 0 0 0 1.414 1.414l1.414-1.414a1 1 0 0 0 0-1.414zM5.757 17.757a1 1 0 0 0-1.414 0l-1.414 1.414a1 1 0 1 0 1.414 1.414l1.414-1.414a1 1 0 0 0 0-1.414zm14.829 0a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414-1.414l-1.414-1.414a1 1 0 0 0-1.414 0zM6.243 6.243a1 1 0 0 0 0-1.414L4.829 3.414a1 1 0 0 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.414 0zM1 11a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H1zm20 0a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2z"/></svg>
-				<svg class="icon-moon" fill="currentColor" viewBox="0 0 24 24"><path d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75 9.75 9.75 0 0 1 8.25 6c0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25 9.75 9.75 0 0 0 12.75 21a9.753 9.753 0 0 0 9.002-5.998z"/></svg>
-			</button>
+			<a class="home" href="../">主页</a>
 		</div>
 	</nav>
 

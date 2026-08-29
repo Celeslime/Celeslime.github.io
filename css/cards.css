@@ -1,0 +1,138 @@
+/* ---------- 分区 ---------- */
+.card-section{
+	margin: 0 0 52px;
+	/* 锚点跳转时给 sticky 导航让位 */
+	scroll-margin-top: 72px;
+}
+
+.anchor{
+	display: block;
+	scroll-margin-top: 72px;
+}
+
+.section-head{
+	margin-bottom: 20px;
+}
+
+.section-title{
+	margin: 0 0 6px;
+	font-size: 1.2rem;
+	color: var(--blue-deep);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	letter-spacing: 1px;
+}
+
+.section-sub{
+	margin: 0;
+	font-size: 0.86rem;
+	opacity: 0.7;
+}
+
+/* ---------- 卡片网格 ---------- */
+.grid{
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+	gap: 16px;
+}
+
+/* 分区只有一张卡时限制宽度，避免横向拉满 */
+.grid:has(.tile:only-child) .tile{
+	max-width: 420px;
+}
+
+.tile{
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 18px 15px 10px 15px;
+	border-radius: 16px;
+	background: var(--card);
+	border: 1px solid var(--border);
+	box-shadow: var(--shadow-out);
+	transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.tile:hover{
+	transform: translateY(-4px);
+	box-shadow: var(--shadow-hover);
+	border-color: var(--blue);
+}
+
+.tile-top{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 4px;
+}
+
+.tile-icon{
+	font-size: 1.5rem;
+	line-height: 1;
+}
+
+.tile_name{
+	font-weight: 600;
+	color: var(--text-strong);
+	font-size: 1.02rem;
+}
+
+.badge{
+	flex-shrink: 0;
+	font-size: 0.72rem;
+	padding: 2px 9px;
+	border-radius: 999px;
+	font-weight: 600;
+}
+
+.badge.ok{
+	background: var(--blue-light);
+	color: var(--blue-dark);
+	border: 1px solid var(--border);
+}
+
+.badge.old{
+	background: #f1f5f9;
+	color: #94a3b8;
+	border: 1px solid var(--border);
+}
+
+html.dark .badge.old{
+	background: #243447;
+	color: #94b0c6;
+}
+
+.badge.toy{
+	background: #f1f5f9;
+	color: #94a3b8;
+	border: 1px solid var(--border);
+}
+
+html.dark .badge.toy{
+	background: #243447;
+	color: #94b0c6;
+}
+
+.tile_desc{
+	margin: 0;
+	font-size: 0.88rem;
+	opacity: 0.82;
+}
+
+/* 每张卡后面的"为什么做"小字：故事感的来源 */
+.tile_story{
+	margin: auto 0 0;
+	padding-top: 8px;
+	border-top: 1px dashed var(--border);
+	font-size: 0.78rem;
+	line-height: 1.6;
+	opacity: 0.62;
+}
+
+.tile_story::before{
+	content: "✦ ";
+	opacity: 0.8;
+}
+

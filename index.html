@@ -65,7 +65,8 @@
 				}
 			}catch(e){}
 			try{
-				if(localStorage.getItem("theme")==="dark" || (!localStorage.getItem("theme") && matchMedia("(prefers-color-scheme: dark)").matches)){
+				var t = localStorage.getItem("theme");
+				if(t === "dark" || (t !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)){
 					document.documentElement.classList.add("dark");
 				}
 			}catch(e){}
@@ -82,11 +83,20 @@
 		<div class="nav-links">
 			<a href="#apps">小应用</a>
 			<a href="#domains">领域</a>
-			<a href="https://github.com/Celeslime" target="_blank" rel="noopener">GitHub</a>
-			<button id="theme-toggle" class="nav-theme-btn" aria-label="切换深浅色模式" title="切换深浅色模式">
-				<svg class="theme-icon theme-sun" fill="currentColor" viewBox="0 0 24 24"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM13 1a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0V1zm0 20a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0v-2zm8.657-16.657a1 1 0 0 0-1.414 0l-1.414 1.414a1 1 0 0 0 1.414 1.414l1.414-1.414a1 1 0 0 0 0-1.414zM5.757 17.757a1 1 0 0 0-1.414 0l-1.414 1.414a1 1 0 1 0 1.414 1.414l1.414-1.414a1 1 0 0 0 0-1.414zm14.829 0a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414-1.414l-1.414-1.414a1 1 0 0 0-1.414 0zM6.243 6.243a1 1 0 0 0 0-1.414L4.829 3.414a1 1 0 0 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.414 0zM1 11a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H1zm20 0a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2z"/></svg>
-				<svg class="theme-icon theme-moon" fill="currentColor" viewBox="0 0 24 24"><path d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75 9.75 9.75 0 0 1 8.25 6c0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25 9.75 9.75 0 0 0 12.75 21a9.753 9.753 0 0 0 9.002-5.998z"/></svg>
-			</button>
+			<a href="#guestbook">留言</a>
+			<div class="theme-menu" id="theme-menu">
+				<button id="theme-trigger" class="nav-theme-btn" aria-label="选择主题模式" aria-haspopup="menu" aria-expanded="false">
+					<svg class="theme-icon theme-sun" fill="currentColor" viewBox="0 0 24 24"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM13 1a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0V1zm0 20a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0v-2zm8.657-16.657a1 1 0 0 0-1.414 0l-1.414 1.414a1 1 0 0 0 1.414 1.414l1.414-1.414a1 1 0 0 0 0-1.414zM5.757 17.757a1 1 0 0 0-1.414 0l-1.414 1.414a1 1 0 1 0 1.414 1.414l1.414-1.414a1 1 0 0 0 0-1.414zm14.829 0a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414-1.414l-1.414-1.414a1 1 0 0 0-1.414 0zM6.243 6.243a1 1 0 0 0 0-1.414L4.829 3.414a1 1 0 0 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.414 0zM1 11a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2H1zm20 0a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2h-2z"/></svg>
+					<svg class="theme-icon theme-moon" fill="currentColor" viewBox="0 0 24 24"><path d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75 9.75 9.75 0 0 1 8.25 6c0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25 9.75 9.75 0 0 0 12.75 21a9.753 9.753 0 0 0 9.002-5.998z"/></svg>
+				</button>
+				<div class="theme-menu-dropdown" role="menu" aria-label="主题模式">
+					<div class="theme-segmented" role="radiogroup" aria-label="主题模式">
+						<button type="button" class="theme-seg" data-theme="light" role="radio" aria-checked="false">浅色</button>
+						<button type="button" class="theme-seg" data-theme="dark" role="radio" aria-checked="false">深色</button>
+						<button type="button" class="theme-seg" data-theme="system" role="radio" aria-checked="false">跟随系统</button>
+					</div>
+				</div>
+			</div>
 		</div>
 	</nav>
 
@@ -122,6 +132,7 @@
 					</div>
 					<span class="tile_name">考研英语词汇 · 5500</span>
 					<p class="tile_desc">考研 5500 词的查询、联想与朗读</p>
+					<p class="tile_story">3500词汇升级，给自己做的查询工具</p>
 				</a>
 				<a class="tile" href="3500" target="_blank" rel="noopener">
 					<div class="tile-top">
@@ -130,6 +141,7 @@
 					</div>
 					<span class="tile_name">高考英语词汇 · 3500</span>
 					<p class="tile_desc">5500 的旧版 · 未同步更新</p>
+					<p class="tile_story">词表从它这里开始攒起来的</p>
 				</a>
 				
 			</div>
@@ -148,6 +160,7 @@
 					</div>
 					<span class="tile_name">模拟城市计算器 · simcity</span>
 					<p class="tile_desc">单纯形算法 · 游戏模拟城市工具</p>
+					<p class="tile_story">想看看数学能不能帮我把城市经营得更好</p>
 				</a>
 				<a class="tile" href="syw" target="_blank" rel="noopener">
 					<div class="tile-top">
@@ -156,6 +169,7 @@
 					</div>
 					<span class="tile_name">原神面板计算器 · syw</span>
 					<p class="tile_desc">拉格朗日方程 · 早期算法探索</p>
+					<p class="tile_story">算法入门时的第一块试验田</p>
 				</a>
 			</div>
 		</section>
@@ -173,6 +187,16 @@
 					</div>
 					<span class="tile_name">花生成器 · flower</span>
 					<p class="tile_desc">极坐标曲线花朵头像 · 在线导出头像</p>
+					<p class="tile_story">主页的头像和蓝白配色，都是它画出来的</p>
+				</a>
+				<a class="tile" href="alpha_recon" target="_blank" rel="noopener">
+					<div class="tile-top">
+						<span class="tile-icon">🧪</span>
+						<span class="badge toy">玩具</span>
+					</div>
+					<span class="tile_name">Alpha 反推 · alpha_recon</span>
+					<p class="tile_desc">灰度叠色反推前景灰度与透明通道</p>
+					<p class="tile_story">从两张叠黑 / 叠白图里，把透明通道找回来</p>
 				</a>
 				<a class="tile" href="universe" target="_blank" rel="noopener">
 					<div class="tile-top">
@@ -181,6 +205,7 @@
 					</div>
 					<span class="tile_name">星球模拟 · universe</span>
 					<p class="tile_desc">万有引力下的星球运动模拟</p>
+					<p class="tile_story">想看看万有引力会不会自己跑出秩序</p>
 				</a>
 				<a class="tile" href="timer" target="_blank" rel="noopener">
 					<div class="tile-top">
@@ -189,6 +214,7 @@
 					</div>
 					<span class="tile_name">时钟 · timer</span>
 					<p class="tile_desc">极简时钟 · 环形的时钟原型</p>
+					<p class="tile_story">想做一只不像钟表的钟</p>
 				</a>
 			</div>
 		</section>
@@ -206,6 +232,7 @@
 					</div>
 					<span class="tile_name">对话树</span>
 					<p class="tile_desc">对话记录词云 · 对话任务分类树</p>
+					<p class="tile_story">想把聊过的天，整理成一棵会生长的树</p>
 				</div>
 				<div class="tile">
 					<div class="tile-top">
@@ -214,6 +241,7 @@
 					</div>
 					<span class="tile_name">3D char Render</span>
 					<p class="tile_desc">3D 字符渲染实验 · 整理旧 demo 中</p>
+					<p class="tile_story">从旧 demo 里捡回来的字符渲染</p>
 				</div>
 			</div>
 		</section>
@@ -236,6 +264,76 @@
 			</div>
 		</section>
 
+		<section class="card-section" id="story" data-nav="story">
+			<div class="section-head">
+				<h2 class="section-title">📖 关于 · 来路</h2>
+				<p class="section-sub">为什么存在，又长成了什么样</p>
+			</div>
+			<ol class="timeline-list">
+							<li>
+								<div class="tl-body tl-about">
+									<p>这里的东西大多不是规划出来的——先是一行背单词时顺手写的代码，再是一个睡不着时冒出来的念头。它们不解决什么大事，只是把「我最近在想什么」如实放出来。</p>
+									<p>如果你只是路过，欢迎慢慢逛；留言板会认真听你说。</p>
+								</div>
+							</li>
+							<li>
+								<div class="tl-body"><span class="tl-date">2020-03</span>
+								<div class="tl-title">站落成</div>
+								<p class="tl-text">第一版主页只是一张静态页：把文件传上 GitHub Pages，剩下的交给时间。</p>
+							</div></li>
+							<li>
+								<div class="tl-body"><span class="tl-date">2020-04</span>
+								<div class="tl-title">高考词汇 · 3500</div>
+								<p class="tl-text">第一个认真做的 web 效率应用。</p>
+							</div></li>
+							<li>
+								<div class="tl-body"><span class="tl-date">2020-05</span>
+								<div class="tl-title">网易云音乐优化</div>
+								<p class="tl-text">随手折腾的浏览器脚本，算是 2020 年留下的一点痕迹。</p>
+							</div></li>
+							<li>
+								<div class="tl-body"><span class="tl-date">2021-07</span>
+								<div class="tl-title">毕业蹭饭地图 · class-tri</div>
+								<p class="tl-text">给山师附中 2018 级 3 班做的毕业地图。信息保护，已停止公开展示。</p>
+							</div></li>
+							<li>
+								<div class="tl-body"><span class="tl-date">2022-01</span>
+								<div class="tl-title">原神面板 · syw</div>
+								<p class="tl-text">开始把算法搬进游戏里，拉格朗日方程是第一课。</p>
+							</div></li>
+							<li>
+								<div class="tl-body"><span class="tl-date">2024-02</span>
+								<div class="tl-title">星球模拟 · universe</div>
+								<p class="tl-text">想看看万有引力自己能不能跑出秩序。</p>
+							</div></li>
+							<li>
+								<div class="tl-body"><span class="tl-date">2024-03</span>
+								<div class="tl-title">考研词汇 · 5500</div>
+								<p class="tl-text">3500词汇升级，添加了更多功能。</p>
+							</div></li>
+							<li>
+								<div class="tl-body"><span class="tl-date">2024-04</span>
+								<div class="tl-title">环形时钟 · timer</div>
+								<p class="tl-text">想做一只不像钟表的钟。</p>
+							</div></li>
+							<li>
+								<div class="tl-body"><span class="tl-date">2024-05</span>
+								<div class="tl-title">模拟城市计算器 · simcity</div>
+								<p class="tl-text">想看看数学能不能帮我把城市经营得更好。</p>
+							</div></li>
+							<li>
+								<div class="tl-body"><span class="tl-date">2026-08</span>
+								<div class="tl-title">花生成器 · flower</div>
+								<p class="tl-text">主页的头像、蓝白配色，都是它画出来的——站点开始长出它自己的样子。</p>
+							</div></li>
+							<li>
+								<div class="tl-body"><span class="tl-date">最近</span>
+								<div class="tl-title">主页翻新</div>
+								<p class="tl-text">有了留言板，也藏了一些只有点开才知道的小心思。</p>
+							</div></li>
+						</ol>
+		</section>
+
 		<section class="card-section" id="guestbook" data-nav="guestbook">
 			<div class="section-head">
 				<h2 class="section-title">💬 留言板</h2>
@@ -247,7 +345,7 @@
 						<input type="text" id="gb-name" placeholder="昵称" maxlength="20" autocomplete="nickname">
 						<span class="gb-count" id="gb-count" aria-live="polite">0 / 500</span>
 					</div>
-					<textarea id="gb-text" rows="3" placeholder="Hi，欢迎来聊～ 这里会有人认真看你的留言 ✨" maxlength="500" required></textarea>
+					<textarea id="gb-text" rows="3" placeholder="Hi，欢迎来聊～ 这里会有人认真看你的留言 ✨ AI生成，请注意甄别。" maxlength="500" required></textarea>
 					<div class="gb-btn-wrap">
 						<button type="submit" class="gb-btn">
 							<span class="gb-btn-label">发布留言</span>
@@ -287,6 +385,7 @@
 			<a href="#toys" data-target="toys" data-icon="🧸" aria-label="玩具盒子"></a>
 			<a href="#wip" data-target="wip" data-icon="💡" aria-label="未上线"></a>
 			<a href="#domains" data-target="domains" data-icon="🧭" aria-label="领域与兴趣"></a>
+			<a href="#story" data-target="story" data-icon="📖" aria-label="关于 · 来路"></a>
 			<a href="#guestbook" data-target="guestbook" data-icon="💬" aria-label="留言板"></a>
 		</div>
 	</nav>

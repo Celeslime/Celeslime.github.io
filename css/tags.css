@@ -1,0 +1,28 @@
+/* ---------- 领域标签 ---------- */
+.tags{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.tag{
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 16px;
+	border-radius: 999px;
+	background: var(--card);
+	border: 1px solid var(--border);
+	box-shadow: var(--shadow-out);
+	color: var(--blue-dark);
+	font-size: 0.88rem;
+	font-weight: 500;
+	transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.tag:hover{
+	transform: translateY(-2px);
+	background: var(--blue-light);
+	border-color: var(--blue);
+}
+

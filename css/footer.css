@@ -1,0 +1,25 @@
+/* ---------- 页脚 ---------- */
+.footer{
+	margin: 48px 0 52px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	color: var(--text);
+	opacity: 0.75;
+}
+
+.footer-line{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.footicon{
+	height: 16px;
+}
+
+.footname{
+	margin: 0 15px 0 5px;
+}
+

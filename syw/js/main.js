@@ -3,6 +3,9 @@ var atkBase,atkAdd,critRate,critDmg,elemMastery;
 var exp=new Array(),expEM=new Array(),healthy=new Array();
 var expBase,expEMBase;
 var maxA=0,maxB=0,RATIO=2.00;
+// 输出容器显式获取：window.ex 是 IE 遗留属性，命名元素暴露在部分浏览器失效
+var sc = document.getElementById('sc'),
+	ex = document.getElementById('ex');
 
 //以下数据由副词套保留两位小数后取平均值获得
 // var A=0.0496, //攻击力百分比

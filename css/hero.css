@@ -1,0 +1,96 @@
+/* ---------- 顶部欢迎区（浅蓝白清爽风） ---------- */
+.hero{
+	/* 半透明渐变，露出 body 的 flower 纹理（中心在页面左上角） */
+	background: linear-gradient(180deg, rgba(236, 247, 255, 0.7), rgba(247, 250, 252, 0.7));
+	/* border-bottom: 1px solid var(--border); */
+	padding: 135px 20px 84px;
+	text-align: center;
+}
+
+html.dark .hero{
+	background: linear-gradient(180deg, rgba(20, 34, 47, 0.7), rgba(14, 26, 38, 0.7));
+}
+
+.hero-inner{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	animation: rise-in 0.7s ease forwards;
+}
+
+#profile{
+	height: 112px;
+	width: 112px;
+	border-radius: 50%;
+	background: #fff;
+	padding: 6px;
+	border: 2px solid var(--blue-light);
+	box-shadow: var(--shadow-out);
+	animation: float 4.5s ease-in-out infinite;
+}
+
+html.dark #profile{
+	background: var(--card);
+	border-color: var(--border);
+}
+
+@keyframes float{
+	0%, 100%{ transform: translateY(0); }
+	50%{ transform: translateY(-7px); }
+}
+
+#name{
+	margin: 22px 0 8px;
+	color: var(--blue-deep);
+	font-size: 1.75rem;
+	letter-spacing: 1px;
+}
+
+#slogan{
+	margin: 0;
+	color: var(--text);
+	font-size: 0.98rem;
+}
+
+#social{
+	display: flex;
+	gap: 14px;
+	margin-top: 20px;
+}
+
+#social a{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 42px;
+	height: 42px;
+	border-radius: 50%;
+	background: var(--card);
+	border: 1px solid var(--border);
+	box-shadow: var(--shadow-out);
+	color: var(--blue-dark);
+	transition: background 0.18s ease, transform 0.18s ease, color 0.18s ease;
+}
+
+#social a:hover{
+	background: var(--blue-light);
+	color: var(--blue-deep);
+	transform: translateY(-3px);
+}
+
+#social svg{
+	width: 20px;
+	height: 20px;
+}
+
+@keyframes rise-in{
+	from{
+		opacity: 0;
+		transform: translateY(14px);
+	}
+	to{
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+

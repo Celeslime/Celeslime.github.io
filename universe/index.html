@@ -8,7 +8,12 @@
 	<meta name="robots" content="index,follow">
 	<meta name="theme-color" content="#0e1a26">
 	<link rel="canonical" href="https://celeslime.github.io/universe/">
-	<link rel="stylesheet" type="text/css" href="../css/main.css">
+	<link rel="stylesheet" type="text/css" href="../css/base.css">
+	<link rel="stylesheet" type="text/css" href="../css/nav.css">
+	<link rel="stylesheet" type="text/css" href="../css/hero.css">
+	<link rel="stylesheet" type="text/css" href="../css/cards.css">
+	<link rel="stylesheet" type="text/css" href="../css/footer.css">
+	<link rel="stylesheet" type="text/css" href="../css/responsive.css">
 	<link rel="stylesheet" type="text/css" href="css/myStyle.css">
 	<link rel="icon" href="../images/flower.p.min.svg" type="image/svg+xml">
 
@@ -42,7 +47,8 @@
 				}
 			}catch(e){}
 			try{
-				if(localStorage.getItem("theme")==="dark" || (!localStorage.getItem("theme") && matchMedia("(prefers-color-scheme: dark)").matches)){
+				var t = localStorage.getItem("theme");
+				if(t === "dark" || (t !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)){
 					document.documentElement.classList.add("dark");
 				}
 			}catch(e){}
@@ -52,7 +58,7 @@
 <body id="top">
 
 	<nav class="nav">
-		<a class="nav-logo" href="../" title="返回主页">
+		<a class="nav-logo" href="../" title="主页">
 			<img src="../images/flower.p.min.svg" alt="Cele 的小站">
 			<span>Universe</span>
 		</a>

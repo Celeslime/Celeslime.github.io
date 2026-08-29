@@ -156,34 +156,7 @@
 
 	/* 彩蛋：只有"情感"标签可触发，随机弹一句告白 */
 	var loveTips = [
-		{ t: "我喜欢你", f: "(♡˙︶˙♡)" },
-		{ t: "遇见你，是这里最棒的事", f: "٩(♡ε♡)۶" },
-		{ t: "你值得被认真对待", f: "(˶ᵕ ᵕ˶)" },
-		{ t: "想把世界上的温柔都给你", f: "(´,,•ω•,,)♡" },
-		{ t: "谢谢你点开这里，也谢谢你存在", f: "(˶‾᷄ ⁻̫ ‾᷅˵)" },
-		{ t: "今天也在偷偷喜欢你", f: "(⁄ ⁄•⁄ω⁄•⁄ ⁄)" },
-		{ t: "爱意藏在每一行代码里", f: "♡(>ᴗ•)" },
-		{ t: "无论何时看到你，都会心动", f: "(๑˃ᴗ˂)ﻭ" },
-		{ t: "你是我藏在心里最温柔的秘密", f: "(•ө•)♡" },
-		{ t: "我的未来，希望每个日出日落都有你", f: "✧(≖ ◡ ≖✿)" },
-		{ t: "我可以错过很多，但不想错过你", f: "(´｡• ᵕ •｡`)" },
-		{ t: "喜欢你，是我做过最勇敢的事", f: "(๑•̀ㅂ•́)و✧" },
-		{ t: "心里的她替你完成了所有期待，现实中的她却在教你学会接纳。", f: "(´-ω-`)" },
-		{ t: "爱一个人，有时不是爱她本身，而是爱她刚好接住了你的想象。", f: "(｡•́︿•̀｡)" },
-		{ t: "理想化不是深情，是还没准备好面对真实。", f: "(⇀‸↼‶)" },
-		{ t: "我们常常不是被对方困住，而是被自己投射出的影子困住。", f: "(´･_･`)" },
-		{ t: "现实中的她不需要完美，只需要被完整地看见。", f: "(˶ᵕ ᵕ˶)" },
-		{ t: "情绪价值不是谁哄谁，而是两个人的感受都被允许存在。", f: "(´｡• ᵕ •｡`)" },
-		{ t: "男生不是不需要情绪价值，只是很少被允许表达需要。", f: "(￣～￣;)" },
-		{ t: "很多情绪需求的性别差异，不是天生如此，而是被期待如此。", f: "(´-ι_-｀)" },
-		{ t: "把照顾情绪默认交给某一方，是关系里最隐蔽的不公平。", f: "( •̥́ ˍ •̀ू )" },
-		{ t: "社会对女性情绪表达的宽容，有时也变成一种变相的情绪劳动期待。", f: "(´-ω-`)" },
-		{ t: "一个人越早识别自己的感受，就越少要求别人替他承担感受。", f: "(•ө•)♡" },
-		{ t: "我们谈论情绪价值，有时只是在谈如何被满足，而不是如何共处。", f: "(⇀‸↼‶)" },
-		{ t: "真正的亲密不是没有差异，而是不把差异变成谁更高明的证明。", f: "(｡•̀ᴗ-)✧" },
-		{ t: "心里的她如果太完美，现实里的她就会太辛苦。", f: "(˶‾᷄ ⁻̫ ‾᷅˵)" },
-		{ t: "别让被爱变成一场考试，对方不是出题人，你也不是。", f: "✧(≖ ◡ ≖✿)" },
-		{ t: "你渴望被接住的情绪，也许正是别人也曾不被允许表达的部分。", f: "(⁄ ⁄•⁄ω⁄•⁄ ⁄)" }
+		{ t: "loveTips内容优化中...过几天再试吧", f: "(♡˙︶˙♡)" },
 	];
 	var tags = Array.prototype.slice.call(document.querySelectorAll(".tag"));
 	tags.forEach(function (t) {
@@ -220,19 +193,79 @@
 	}, 2600);
 })();
 
-/* 主题切换：点击导航按钮在深浅模式间切换，并持久化到 localStorage */
+/* 主题模式：浅色 / 深色 / 跟随系统（hover 下拉分段按钮选择），持久化到 localStorage */
 (function () {
 	"use strict";
 
-	var btn = document.getElementById("theme-toggle");
-	if (!btn) return;
+	var root = document.documentElement;
+	var media = window.matchMedia("(prefers-color-scheme: dark)");
+	var menu = document.getElementById("theme-menu");
+	if (!menu) return;
+	var trigger = document.getElementById("theme-trigger");
+	var segs = menu.querySelectorAll(".theme-seg");
 
-	btn.addEventListener("click", function () {
-		var root = document.documentElement;
-		var dark = root.classList.toggle("dark");
-		/* 显式存 light/dark：用户手动选择后不再跟随系统偏好 */
+	/* 当前模式："light" | "dark" | "system"（未存过默认 system） */
+	function getMode() {
 		try {
-			localStorage.setItem("theme", dark ? "dark" : "light");
+			var m = localStorage.getItem("theme");
+			if (m === "light" || m === "dark" || m === "system") return m;
 		} catch (e) {}
+		return "system";
+	}
+
+	function applyMode(mode) {
+		var dark = mode === "dark" || (mode === "system" && media.matches);
+		root.classList.toggle("dark", dark);
+		for (var i = 0; i < segs.length; i++) {
+			var on = segs[i].getAttribute("data-theme") === mode;
+			segs[i].classList.toggle("active", on);
+			segs[i].setAttribute("aria-checked", on ? "true" : "false");
+		}
+		try {
+			localStorage.setItem("theme", mode);
+		} catch (e) {}
+	}
+
+	function openMenu() {
+		menu.classList.add("open");
+		trigger.setAttribute("aria-expanded", "true");
+	}
+
+	function closeMenu() {
+		menu.classList.remove("open");
+		trigger.setAttribute("aria-expanded", "false");
+	}
+
+	segs.forEach(function (seg) {
+		seg.addEventListener("click", function () {
+			applyMode(seg.getAttribute("data-theme"));
+			closeMenu();
+		});
 	});
+
+	/* hover 之外，点击触发按钮用于触屏/键盘开关 */
+	trigger.addEventListener("click", function (e) {
+		e.stopPropagation();
+		menu.classList.contains("open") ? closeMenu() : openMenu();
+	});
+
+	/* 点击其它处或按 Esc 关闭下拉 */
+	document.addEventListener("click", function (e) {
+		if (!menu.contains(e.target)) closeMenu();
+	});
+	document.addEventListener("keydown", function (e) {
+		if (e.key === "Escape") closeMenu();
+	});
+
+	/* 跟随系统模式下，系统偏好变化实时生效 */
+	function onMediaChange() {
+		if (getMode() === "system") applyMode("system");
+	}
+	if (media.addEventListener) {
+		media.addEventListener("change", onMediaChange);
+	} else if (media.addListener) {
+		media.addListener(onMediaChange);
+	}
+
+	applyMode(getMode());
 })();

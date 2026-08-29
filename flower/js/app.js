@@ -318,32 +318,12 @@
 	}
 
 	/* ---------- 主题 ---------- */
-
-	function applyTheme() {
-		var dark = false;
-		try {
-			dark = localStorage.getItem("theme") === "dark" ||
-				(!localStorage.getItem("theme") && matchMedia("(prefers-color-scheme: dark)").matches);
-		} catch (e) {}
-		document.documentElement.classList.toggle("dark", dark);
-		$("theme-toggle").setAttribute("aria-pressed", dark ? "true" : "false");
-	}
-
-	function bindTheme() {
-		var btn = $("theme-toggle");
-		btn.addEventListener("click", function () {
-			var dark = document.documentElement.classList.toggle("dark");
-			try { localStorage.setItem("theme", dark ? "dark" : "light"); } catch (e) {}
-			btn.setAttribute("aria-pressed", dark ? "true" : "false");
-		});
-	}
+	/* 主题由主页 head 脚本继承（读取 localStorage theme），子页不再自带切换按钮 */
 
 	/* ---------- 初始化 ---------- */
 
 	function init() {
 		buildSwatches();
-		bindTheme();
-		applyTheme();
 
 		bindRange("petals", "petals", function (v) { return v; });
 		bindRange("fillopacity", "fillOpacity", function (v) { return Math.round(v * 100) + "%"; });

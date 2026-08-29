@@ -1,0 +1,25 @@
+/* ---------- 响应式 ---------- */
+@media (max-width: 768px){
+	.side-dots{
+		display: none;
+	}
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 480px){
+	.hero{
+		padding: 52px 16px 64px;
+	}
+	#name{
+		font-size: 1.4rem;
+	}
+	.container{
+		padding: 28px 14px 16px;
+	}
+	.grid{
+		grid-template-columns: 1fr;
+	}
+	.nav-links{
+		gap: 14px;
+	}
+}

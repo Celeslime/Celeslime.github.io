@@ -1,0 +1,102 @@
+/* ---------- 右侧锚点目录（折叠圆点 + hover 展开卡片） ---------- */
+.side-dots{
+	position: fixed;
+	right: 5px;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 40;
+	display: flex;
+	align-items: center;
+}
+
+/* 整块 rail 面板：圆点列贴右缘 + 左侧文字区；hover/聚焦时整块毛玻璃渐显，文字固定位置渐显渐隐 */
+/* 整块 rail 面板：固定宽度（布局确定），a 行 = 文本区(左) + 圆点区(右)，hover 时毛玻璃渐显 */
+.side-dots-rail{
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;      /* a 行靠右 → 圆点贴面板右内缘 */
+	gap: 18px;                  /* dot 上下间距 */
+	padding: 20px 10px 20px 0;  /* 右 10px 内边距；左侧文字区由 a 提供 */
+	width: 174px;               /* 固定面板宽（border-box），消除循环宽度导致圆点/文本越界 */
+	border: 1px solid transparent;
+	border-radius: 14px;
+	transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, backdrop-filter 0.25s ease;
+}
+
+.side-dots-rail:hover,
+.side-dots-rail:focus-within{
+	background: var(--nav-bg);          /* nav 毛玻璃 */
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border-color: var(--border);
+	box-shadow: var(--shadow-out);
+}
+
+/* a：整行（文本左对齐 + 圆点靠右），整行可 hover/点击，行高=圆点盒 → 圆点间距稳定 */
+.side-dots-rail a{
+	display: flex;
+	align-items: center;
+	flex-direction: row-reverse;    /* 圆点(::before)在右，文本(::after)在左 */
+	gap: 12px;
+	width: 162px;                   /* = rail content 宽（174 - 边框2 - padding右10），圆点落回 padding 内 */
+	height: 10px;                   /* = 圆点盒 */
+	padding-left: 14px;             /* 文本左缘留白 */
+	box-sizing: border-box;
+	outline: none;                  /* 禁止焦点 */
+}
+
+/* 圆点 */
+.side-dots-rail a::before{
+	content: "";
+	flex-shrink: 0;
+	width: 10px;
+	height: 10px;
+	box-sizing: border-box;   /* 10px 含边框 → 外径严格 10px，不再溢出 10px 框 */
+	border-radius: 50%;
+	background: var(--card);
+	border: 2px solid var(--blue);
+	box-shadow: 0 2px 6px rgba(70, 150, 210, 0.18);   /* 轻阴影，避免光晕让圆点显大 */
+	transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.side-dots-rail a:hover::before{
+	transform: scale(1.25);
+}
+
+.side-dots-rail a.active::before{
+	background: var(--blue);
+	transform: scale(1.35);
+}
+
+/* 文本：左对齐（a 左缘 + 留白），固定字号，opacity 渐显渐隐 */
+.side-dots-rail a::after{
+	content: attr(data-icon) " " attr(aria-label);
+	flex: 1;
+	white-space: nowrap;
+	text-align: left;
+	font-size: 0.85rem;
+	color: var(--text);
+	opacity: 0;
+	font-weight: 500;
+	transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.side-dots-rail:hover a::after,
+.side-dots-rail:focus-within a::after{
+	opacity: 0.6;     /* 展开后默认半透明 */
+}
+
+/* 悬停整行：圆点放大 + 文本不透明度增加（变清晰），不加粗 */
+.side-dots-rail a:hover::after{
+	opacity: 1;
+	color: var(--blue-deep);
+}
+
+/* 当前分区：仅展开态下保持清晰（折叠态与其他条目一起隐藏） */
+.side-dots-rail:hover a.active::after,
+.side-dots-rail:focus-within a.active::after{
+	opacity: 1;
+	color: var(--blue-deep);
+	font-weight: 600;
+}
+
