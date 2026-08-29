@@ -18,6 +18,7 @@
 - [星球模拟 · universe](https://celeslime.github.io/universe/) — 万有引力下的星球运动模拟
 - [计时器 · timer](https://celeslime.github.io/timer/) — 极简时钟，环形倒计时原型
 - [花生成器 · flower](https://celeslime.github.io/flower/) — 极坐标曲线生成七瓣花朵，在线导出 SVG/PNG 头像
+- [Alpha 反推 · alpha_recon](https://celeslime.github.io/alpha_recon/) — 灰度叠色反推前景灰度与透明通道
 
 ### 💡 未上线
 
@@ -26,5 +27,8 @@
 
 ### 仓库结构
 
-各应用均为独立仓库，通过 GitHub Actions 自动部署到本仓库对应的子路径；
-`index.html` 为聚合主页，纯静态 HTML/CSS/JS，无构建依赖。
+- 各应用均为独立仓库，通过 GitHub Actions 自动部署到本仓库对应的子路径；
+  `index.html` 为聚合主页，纯静态 HTML/CSS/JS，无构建依赖。
+- 样式按组件拆分为 `css/` 下的模块（`base/nav/hero/cards/story/...`），`css/main.css` 为 `@import` 聚合入口；
+  子页（syw / flower / alpha_recon / universe）复用主页外壳模块，主题由主页的 `localStorage` 设置继承。
+- 主页「📖 关于 · 来路」板块以时间线展示站点从 2020 年至今的来路。
