@@ -15,6 +15,7 @@ __pycache__/
 
 # alpha_recon 输出产物
 alpha_recon/images/
+alpha_recon/.reasonix-tmp/
 
 # 密钥/凭据（防御规则；真实凭据存放在工作区外的 ~/.ncm-keys/）
 *.env
