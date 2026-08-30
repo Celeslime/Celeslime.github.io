@@ -48,8 +48,7 @@ let di = 0;
 
       const hsv = ARColor.rgbToHsv(r, g, b);
       const v = fg[i] / 255;
-      const [rr, gg, bb] = ARColor.hsvToRgb(hsv.h, hsv.s, v);
-      fr = rr; fg_c = gg; fb = bb;
+      const [fr, fg_c, fb] = ARColor.hsvToRgb(hsv.h, hsv.s, v);
 
       data[i * 4] = fr;
       data[i * 4 + 1] = fg_c;
@@ -59,7 +58,7 @@ let di = 0;
     return new ImageData(data, w, h);
   }
 
-  // 从两个源提取 HSV 并圆均值合成
+  // 从两个源提取 RGB 做矢量平均，再应用到前景
   function reconstructWithHueAverage(fg, ab, w, h, imgData1, imgData2, plan) {
     const len = fg.length;
     const data = new Uint8ClampedArray(len * 4);
@@ -86,35 +85,14 @@ let di = 0;
 
     let d1 = 0, d2 = 0;
     for (let i = 0; i < len; i++) {
-      const r1 = rgb1[d1], g1 = rgb1[d1 + 1], b1 = rgb1[d1 + 2]; d1 += 4;
-      const r2 = rgb2[d2], g2 = rgb2[d2 + 1], b2 = rgb2[d2 + 2]; d2 += 4;
+      const r = (rgb1[d1] + rgb2[d2]) >> 1;
+      const g = (rgb1[d1 + 1] + rgb2[d2 + 1]) >> 1;
+      const b = (rgb1[d1 + 2] + rgb2[d2 + 2]) >> 1;
+      d1 += 4; d2 += 4;
 
-      const hsv1 = ARColor.rgbToHsv(r1, g1, b1);
-      const hsv2 = ARColor.rgbToHsv(r2, g2, b2);
-
-      const useHue1 = true;
-      const useHue2 = true;
-
+      const hsv = ARColor.rgbToHsv(r, g, b);
       const v = fg[i] / 255;
-      let fr, fg_c, fb;
-
-      if (useHue1 && useHue2) {
-        // 自适应色相平均：根据色相差自动选择混合空间
-        const { h: finalH, s: finalS } = ARColor.adaptiveHueAverage(
-          hsv1.h, hsv2.h, hsv1.s, hsv2.s
-        );
-        const [rr, gg, bb] = ARColor.hsvToRgb(finalH, finalS, v);
-        fr = rr; fg_c = gg; fb = bb;
-      } else if (useHue1) {
-        const [rr, gg, bb] = ARColor.hsvToRgb(hsv1.h, hsv1.s, v);
-        fr = rr; fg_c = gg; fb = bb;
-      } else if (useHue2) {
-        const [rr, gg, bb] = ARColor.hsvToRgb(hsv2.h, hsv2.s, v);
-        fr = rr; fg_c = gg; fb = bb;
-      } else {
-        const gv = roundHalfEven(v * 255);
-        fr = fg_c = fb = gv;
-      }
+      const [fr, fg_c, fb] = ARColor.hsvToRgb(hsv.h, hsv.s, v);
 
       data[i * 4] = fr;
       data[i * 4 + 1] = fg_c;
