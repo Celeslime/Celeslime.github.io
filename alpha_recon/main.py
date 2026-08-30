@@ -44,6 +44,17 @@ def labeled_tile(img: Image.Image, label: str, bg: int):
 def main():
     args = sys.argv[1:]
     _base = os.path.dirname(os.path.abspath(__file__))
+    tolerance = 0.0
+
+    # 解析 --tolerance=N
+    positional = []
+    for a in args:
+        if a.startswith('--tolerance='):
+            tolerance = float(a.split('=', 1)[1])
+        else:
+            positional.append(a)
+    args = positional
+
     if len(args) >= 2:
         p1, p2 = args[0], args[1]
     else:
@@ -64,9 +75,15 @@ def main():
     print(f"  转灰度 -> 1_grey.png / 2_grey.png")
 
     # ---- 2) 自动计算 x,y 并映射（真正的 repair） ----
-    x, y = auto_xy(g1, g2)
-    g1d = np.round(g1.astype(np.float64) * x / 255.0).astype(np.uint8)          # [0,x]
-    g2l = np.round(y + g2.astype(np.float64) * (255 - y) / 255.0).astype(np.uint8)  # [y,255]
+    x, y, violating = auto_xy(g1, g2, tolerance=tolerance)
+    is_violating = np.zeros(g1.shape, dtype=bool)
+    if len(violating) > 0:
+        is_violating.ravel()[violating] = True
+    avg = np.round((g1.astype(np.float64) + g2.astype(np.float64)) / 2).astype(np.uint8)
+    g1d = np.where(is_violating, avg,
+                   np.round(g1.astype(np.float64) * x / 255.0).astype(np.uint8))
+    g2l = np.where(is_violating, avg,
+                   np.round(y + g2.astype(np.float64) * (255 - y) / 255.0).astype(np.uint8))
     Image.fromarray(g1d).save(os.path.join(out_dir, "1_grey_dark.png"))
     Image.fromarray(g2l).save(os.path.join(out_dir, "2_grey_light.png"))
     print(f"== 2/3 自动 repair: g1_max={int(g1.max())}, g2_min={int(g2.min())} ==")

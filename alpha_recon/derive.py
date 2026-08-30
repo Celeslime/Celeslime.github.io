@@ -69,7 +69,8 @@ def derive(gray_black: np.ndarray, gray_white: np.ndarray):
     alpha_float = np.where(valid, alpha_byte / 255.0, 1.0)  # 无效处置 1 避免除零
 
     fg = np.where(valid, gb / alpha_float, 0.0)
-    valid &= fg <= 255.0 + 1e-9      # fg 越界判无效（含浮点容差，见 derive_scalar）
+    # 容差放宽：fg 略超 255 时 clamp 到 255，不判无效
+    fg = np.clip(fg, 0.0, 255.0)
     fg = np.clip(np.round(fg), 0, 255).astype(np.uint8)
     alpha_byte = np.clip(np.round(alpha_byte), 0, 255).astype(np.uint8)
     return fg, alpha_byte, valid
@@ -118,52 +119,48 @@ def unify_size(im1: Image.Image, im2: Image.Image):
     return center_crop(im1, w, h), center_crop(im2, w, h)
 
 
-def auto_xy(g1: np.ndarray, g2: np.ndarray) -> tuple[int, int]:
+def auto_xy(g1: np.ndarray, g2: np.ndarray, tolerance: float = 0.0):
     """自动计算映射区间边界 x,y（x+y=255，满足自洽的最大 x / 最小 y）。
 
-    推导：dark=g1*x/255, light=y+g2*(255-y)/255。自洽要求所有像素 c1>=c0，
-    最坏情形 g1=g1_max、g2=g2_min。令 y=255-x 得：
-      (255-x)*(255-g2_min) + 255*g2_min >= x*g1_max
-      => 255^2 >= x*(255 - g2_min + g1_max)
-      => x <= 255^2 / (255 - g2_min + g1_max)
-    该界为充分条件，非必要条件（相同图片时真正最大 x 可达 255）。
-    返回满足该界且取整后全图仍自洽的**最大** x，以及 y=255-x。
+    tolerance: 允许违规的像素比例 (0~100)，默认 0（严格）
+    返回 (x, y, violating_indices)
     """
     # 快速路径：完全相同的图片直接返回最大映射
     if np.array_equal(g1, g2):
-        return 255, 0
+        return 255, 0, np.array([], dtype=np.int64)
 
-    g1_max = int(g1.max())
-    g2_min = int(g2.min())
-    denom = 255 - g2_min + g1_max
-    x = min(255, (255 * 255) // denom) if denom > 0 else 255
+    # 违规像素 = g1 < g0 的像素（数量与 x 无关，x<255 时恒定）
+    diffs = g1.astype(np.int64) - g2.astype(np.int64)
+    violating_mask = diffs < 0
+    violating_count = int(violating_mask.sum())
+    max_violations = int(g1.size * tolerance / 100)
 
-    # Phase 1: 递减直到找到可行解
-    while x > 0:
-        y = 255 - x
-        c0 = np.round(g1.astype(np.float64) * x / 255.0).astype(np.int64)
-        c1 = np.round(y + g2.astype(np.float64) * (255 - y) / 255.0).astype(np.int64)
-        if (c1 >= c0).all():
-            break
-        x -= 1
+    if violating_count <= max_violations:
+        return 255, 0, np.flatnonzero(violating_mask)
 
-    # Phase 2: 二分搜索 [x, 255] 寻找真正最大值
-    def check(x_val):
+    # 二分搜索最大 x，使违规数 <= max_violations
+    def count_violations(x_val):
         y_val = 255 - x_val
         c0 = np.round(g1.astype(np.float64) * x_val / 255.0).astype(np.int64)
         c1 = np.round(y_val + g2.astype(np.float64) * (255 - y_val) / 255.0).astype(np.int64)
-        return (c1 >= c0).all()
+        return int(np.sum(c1 < c0))
 
-    lo, hi = x, 255
+    lo, hi = 0, 255
     while lo < hi:
         mid = (lo + hi + 1) // 2
-        if check(mid):
+        if count_violations(mid) <= max_violations:
             lo = mid
         else:
             hi = mid - 1
     x = lo
 
-    return x, 255 - x
+    # 收集最终违规像素
+    y_val = 255 - x
+    c0 = np.round(g1.astype(np.float64) * x / 255.0).astype(np.int64)
+    c1 = np.round(y_val + g2.astype(np.float64) * (255 - y_val) / 255.0).astype(np.int64)
+    final_violating = np.flatnonzero(c1 < c0)
+
+    return x, 255 - x, final_violating
 
 
 # ---------------------------------------------------------------------------

@@ -65,7 +65,9 @@
   }
 
   // auto_xy：自动计算映射区间边界 x,y（x+y=255，满足自洽的最大 x / 最小 y）
-  function autoXY(g1, g2) {
+  // tolerance: 允许违规的像素比例 (0~100)，默认 0
+  // 返回 [x, y, violatingIndices]
+  function autoXY(g1, g2, tolerance = 0) {
     const len = g1.length;
 
     // 快速路径：完全相同的图片直接返回最大映射
@@ -73,53 +75,93 @@
     for (let i = 0; i < len; i++) {
       if (g1[i] !== g2[i]) { identical = false; break; }
     }
-    if (identical) return [255, 0];
+    if (identical) return [255, 0, new Uint32Array(0)];
 
-    const f1 = new Float64Array(len);
-    const f2 = new Float64Array(len);
-    let g1max = 0, g2min = 255;
+    // 关键推导：c1-c0 = (g1-g0)*(255-x)/255
+    // 当 x<255 时，c1>=c0 的充分必要条件是 g1>=g0
+    // 违规像素 = g1<g0 的像素，数量与 x 无关（x<255 时恒定）
+    // x=255 时 c1=c0=0，无违规
+
+    const diffs = new Int16Array(len);
+    const violating = [];
     for (let i = 0; i < len; i++) {
-      const v1 = g1[i], v2 = g2[i];
-      f1[i] = v1; f2[i] = v2;
-      if (v1 > g1max) g1max = v1;
-      if (v2 < g2min) g2min = v2;
+      diffs[i] = g1[i] - g2[i];
+      if (g1[i] < g2[i]) violating.push(i);
     }
 
-    const denom = 255 - g2min + g1max;
-    let x = (denom > 0) ? Math.min(255, Math.floor(65025 / denom)) : 255;
+    const maxViolations = Math.floor(len * tolerance / 100);
 
-    function check(xVal) {
+    if (violating.length <= maxViolations) {
+      return [255, 0, new Uint32Array(violating)];
+    }
+
+    // 容差不足，用排序找最优 x
+    // 排序所有像素的 (g1-g0) 值，按从小到大
+    const sorted = Array.from(diffs);
+    sorted.sort((a, b) => a - b);
+
+    // 取第 maxViolations 个分位数作为阈值 threshold
+    // 对于 x < 255，违规像素数 = diffs 中 < 0 的数量（恒定）
+    // 但 x 影响 c0/c1 的计算精度（roundHalfEven），所以仍需二分
+    const threshold = sorted[maxViolations] || -1;
+
+    function countViolations(xVal) {
       const yVal = 255 - xVal;
+      let count = 0;
       for (let i = 0; i < len; i++) {
-        const c0 = roundHalfEven(f1[i] * xVal / 255);
-        const c1 = roundHalfEven(yVal + f2[i] * (255 - yVal) / 255);
-        if (c1 < c0) return false;
+        const c0 = roundHalfEven(g1[i] * xVal / 255);
+        const c1 = roundHalfEven(yVal + g2[i] * (255 - yVal) / 255);
+        if (c1 < c0) count++;
       }
-      return true;
+      return count;
     }
 
-    while (x > 0 && !check(x)) x--;
-
-    let lo = x, hi = 255;
+    // 二分搜索最大 x，使违规数 <= maxViolations
+    let lo = 0, hi = 255;
     while (lo < hi) {
       const mid = (lo + hi + 1) >> 1;
-      if (check(mid)) lo = mid;
+      if (countViolations(mid) <= maxViolations) lo = mid;
       else hi = mid - 1;
     }
-    x = lo;
+    const x = lo;
 
-    return [x, 255 - x];
+    // 收集最终违规像素
+    const finalViolating = [];
+    const yVal = 255 - x;
+    for (let i = 0; i < len; i++) {
+      const c0 = roundHalfEven(g1[i] * x / 255);
+      const c1 = roundHalfEven(yVal + g2[i] * (255 - yVal) / 255);
+      if (c1 < c0) finalViolating.push(i);
+    }
+
+    return [x, 255 - x, new Uint32Array(finalViolating)];
   }
 
   // 映射：把 g1->[0,x], g2->[y,255]
-  function applyMapping(g1, g2, x, y) {
+  // violatingSet: 违规像素索引集合（用 (g0+g1)/2 代替）
+  function applyMapping(g1, g2, x, y, violatingSet) {
     const len = g1.length;
     const dark = new Uint8Array(len);
     const light = new Uint8Array(len);
     const inv255 = 1 / 255;
+
+    // 构建违规查找表
+    const isViolating = violatingSet ? new Uint8Array(len) : null;
+    if (violatingSet) {
+      for (let k = 0; k < violatingSet.length; k++) {
+        isViolating[violatingSet[k]] = 1;
+      }
+    }
+
     for (let i = 0; i < len; i++) {
-      dark[i]  = roundHalfEven(g1[i] * x * inv255);
-      light[i] = roundHalfEven(y + g2[i] * (255 - y) * inv255);
+      if (isViolating && isViolating[i]) {
+        const avg = roundHalfEven((g1[i] + g2[i]) / 2);
+        dark[i] = avg;
+        light[i] = avg;
+      } else {
+        dark[i]  = roundHalfEven(g1[i] * x * inv255);
+        light[i] = roundHalfEven(y + g2[i] * (255 - y) * inv255);
+      }
     }
     return { dark, light };
   }
@@ -140,7 +182,11 @@
       let aFloat = isValid ? alphaByte / 255 : 1.0;
       let fgFloat = isValid ? dark[i] / aFloat : 0.0;
 
-      if (isValid && fgFloat > 255.0 + 1e-9) isValid = false;
+      // 容差放宽：fg 略超 255（如 256）时 clamp 到 255，不判无效
+      // 这是 auto_xy 容差让 x 增大后的正常边界效应
+      if (isValid && fgFloat > 255.0 + 1e-9) {
+        fgFloat = 255.0;
+      }
 
       if (isValid) {
         validCount++;

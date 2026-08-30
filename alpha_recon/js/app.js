@@ -22,6 +22,7 @@
     previewBg: 'checker', // 'checker' | 'black' | 'white'
     useHue1: false,   // 从图1提取色相
     useHue2: false,   // 从图2提取色相
+    tolerance: 0,     // auto_xy 容差百分比
     checkerPattern: null,
     previewCanvas: null,
     previewCtx: null,
@@ -160,11 +161,12 @@
       state.plan = unified.plan;
 
       // 2) auto_xy
-      const [x, y] = ARCore.autoXY(state.gray1, state.gray2);
-      state.x = x; state.y = y;
+      const tolerance = parseFloat(state.tolerance || '0');
+      const [x, y, violating] = ARCore.autoXY(state.gray1, state.gray2, tolerance);
+      state.x = x; state.y = y; state.violating = violating;
 
       // 3) 映射
-      const { dark, light } = ARCore.applyMapping(state.gray1, state.gray2, x, y);
+      const { dark, light } = ARCore.applyMapping(state.gray1, state.gray2, x, y, violating);
       state.dark = dark; state.light = light;
 
       // 4) 反推
@@ -399,6 +401,29 @@
     state.useHue2 = hueCheckbox2.checked;
     rebuildHueCanvas();
   });
+
+  // 容差滑块
+  const tolSlider = document.getElementById('tolerance-slider');
+  const tolValue = document.getElementById('tolerance-value');
+  if (tolSlider) {
+    const min = parseFloat(tolSlider.min) || 0;
+    const max = parseFloat(tolSlider.max) || 1;
+    const setFill = () => {
+      const pct = ((parseFloat(tolSlider.value) - min) / (max - min)) * 100;
+      tolSlider.style.setProperty('--fill', pct + '%');
+    };
+    tolSlider.addEventListener('input', () => {
+      const val = parseFloat(tolSlider.value);
+      state.tolerance = val;
+      tolValue.textContent = val + '%';
+      setFill();
+    });
+    tolSlider.addEventListener('change', () => {
+      // 容差变化需重新处理（auto_xy + 映射 + 反推）
+      processPipeline();
+    });
+    setFill(); // 初始化已填充进度
+  }
 
   dlBtn.addEventListener('click', downloadReconstructed);
   swapBtn.addEventListener('click', swapAndReprocess);

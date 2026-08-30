@@ -28,10 +28,16 @@ def gen_test_cases():
     cases = []
 
     # 辅助：运行参考流程得到期望值
-    def run_ref(g1, g2):
-        x, y = auto_xy(g1, g2)
-        dark = np.round(g1.astype(np.float64) * x / 255.0).astype(np.uint8)
-        light = np.round(y + g2.astype(np.float64) * (255 - y) / 255.0).astype(np.uint8)
+    def run_ref(g1, g2, tolerance=0.0):
+        x, y, violating = auto_xy(g1, g2, tolerance=tolerance)
+        is_violating = np.zeros(g1.shape, dtype=bool)
+        if len(violating) > 0:
+            is_violating.ravel()[violating] = True
+        avg = np.round((g1.astype(np.float64) + g2.astype(np.float64)) / 2).astype(np.uint8)
+        dark = np.where(is_violating, avg,
+                        np.round(g1.astype(np.float64) * x / 255.0).astype(np.uint8))
+        light = np.where(is_violating, avg,
+                         np.round(y + g2.astype(np.float64) * (255 - y) / 255.0).astype(np.uint8))
         fg, ab, valid = derive(dark, light)
         b_sim, w_sim = simulate(fg, ab)
         errB = int(np.abs(b_sim.astype(int) - dark.astype(int)).max())
@@ -42,6 +48,7 @@ def gen_test_cases():
         invalid = int((~valid).sum())
         return {
             'x': int(x), 'y': int(y),
+            'violating': violating.tolist(),
             'dark': dark.tolist(),
             'light': light.tolist(),
             'fg': fg.tolist(),
@@ -72,6 +79,19 @@ def gen_test_cases():
             g1 = rng.integers(0, 256, size=(h,w), dtype=np.uint8)
             g2 = rng.integers(0, 256, size=(h,w), dtype=np.uint8)
             cases.append({'name': f'rand_{w}x{h}', 'g1': g1.tolist(), 'g2': g2.tolist(), 'ref': run_ref(g1, g2)})
+
+    # 2b) 大尺寸随机数组 + 容差（flat 索引可超过 255，回归 auto_xy 违规索引截断 bug）
+    for size in [(64,64), (100,100)]:
+        h, w = size
+        for _ in range(3):
+            g1 = rng.integers(0, 256, size=(h,w), dtype=np.uint8)
+            g2 = rng.integers(0, 256, size=(h,w), dtype=np.uint8)
+            for tol in [0.5, 2.0]:
+                cases.append({
+                    'name': f'rand_{w}x{h}_tol{tol}',
+                    'g1': g1.tolist(), 'g2': g2.tolist(),
+                    'tolerance': tol, 'ref': run_ref(g1, g2, tol)
+                })
 
     # 3) 内容一致的受限动态范围（测试 auto_xy x > 128）
     for _ in range(3):

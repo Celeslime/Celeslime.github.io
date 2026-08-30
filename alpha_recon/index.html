@@ -12,6 +12,7 @@
 	<link rel="stylesheet" type="text/css" href="../css/hero.css">
 	<link rel="stylesheet" type="text/css" href="../css/responsive.css">
 	<link rel="stylesheet" type="text/css" href="../css/footer.css">
+	<link rel="stylesheet" type="text/css" href="../css/controls.css">
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
 	<link rel="icon" href="../images/flower.p.min.svg" type="image/svg+xml">
 
@@ -72,13 +73,22 @@
 			<div class="hue-control" style="margin-top:10px;">
 				<label class="check-line" style="cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);">
 					<input type="checkbox" id="hue-checkbox-1" style="accent-color:var(--blue);width:16px;height:16px;">
-					<span>还原色相（推荐，从图1提取色相着色）</span>
+					<span>还原色相（从图1提取色相着色，推荐）</span>
 				</label>
 				<label class="check-line" style="cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);margin-top:6px;">
 					<input type="checkbox" id="hue-checkbox-2" style="accent-color:var(--blue);width:16px;height:16px;">
-					<span>还原色相（从图2提取色相着色）</span>
+					<span>艺术加工（从图2提取色相着色）</span>
 				</label>
-				<p id="hue-hint" class="hint" style="display:none;margin-top:6px;font-size:12px;">两者均选时取色相平均（圆均值）</p>
+				<p id="hue-hint" class="hint" style="display:none;margin-top:6px;font-size:12px;">取矢量平均</p>
+			</div>
+
+			<div class="tolerance-control" style="margin-top:10px;">
+				<label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);">
+					<span>映射容差</span>
+					<input type="range" id="tolerance-slider" min="0" max="10" step="0.5" value="0" style="flex:1;">
+					<span id="tolerance-value" style="min-width:32px;text-align:right;">0%</span>
+				</label>
+				<p class="hint" style="margin-top:4px;font-size:12px;color:var(--text-dim);">允许违规像素比例，值越大 x 越大（映射越宽松）</p>
 			</div>
 
 			<div class="export-box">

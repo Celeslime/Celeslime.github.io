@@ -92,20 +92,32 @@ for (const tc of data.pipeline) {
     const { name, g1, g2, ref } = tc;
     const g1Arr = flattenToUint8(g1);
     const g2Arr = flattenToUint8(g2);
+    const tolerance = tc.tolerance || 0;
 
     test(`${name}: autoXY`, () => {
-        const [x, y] = AR.autoXY(g1Arr, g2Arr);
+        const [x, y, violating] = AR.autoXY(g1Arr, g2Arr, tolerance);
         if (x !== ref.x || y !== ref.y) throw new Error(`x,y 不符: got ${x},${y} exp ${ref.x},${ref.y}`);
+        const expViol = ref.violating || [];
+        if (violating.length !== expViol.length) {
+            throw new Error(`violating 数量不符: got ${violating.length} exp ${expViol.length}`);
+        }
+        for (let k = 0; k < expViol.length; k++) {
+            if (violating[k] !== expViol[k]) {
+                throw new Error(`violating[${k}] 不符: got ${violating[k]} exp ${expViol[k]}`);
+            }
+        }
     });
 
     test(`${name}: applyMapping`, () => {
-        const { dark, light } = AR.applyMapping(g1Arr, g2Arr, ref.x, ref.y);
+        const [, , violating] = AR.autoXY(g1Arr, g2Arr, tolerance);
+        const { dark, light } = AR.applyMapping(g1Arr, g2Arr, ref.x, ref.y, violating);
         compareArrays('dark', dark, ref.dark);
         compareArrays('light', light, ref.light);
     });
 
     test(`${name}: derive`, () => {
-        const { dark, light } = AR.applyMapping(g1Arr, g2Arr, ref.x, ref.y);
+        const [, , violating] = AR.autoXY(g1Arr, g2Arr, tolerance);
+        const { dark, light } = AR.applyMapping(g1Arr, g2Arr, ref.x, ref.y, violating);
         const derived = AR.derive(dark, light);
         compareArrays('fg', derived.fg, ref.fg);
         compareArrays('ab', derived.ab, ref.ab);
@@ -115,7 +127,8 @@ for (const tc of data.pipeline) {
     });
 
     test(`${name}: computeErrors`, () => {
-        const { dark, light } = AR.applyMapping(g1Arr, g2Arr, ref.x, ref.y);
+        const [, , violating] = AR.autoXY(g1Arr, g2Arr, tolerance);
+        const { dark, light } = AR.applyMapping(g1Arr, g2Arr, ref.x, ref.y, violating);
         const derived = AR.derive(dark, light);
         const { errB, errW } = AR.computeErrors(dark, light, derived.fg, derived.ab);
         if (errB !== ref.errB || errW !== ref.errW) throw new Error(`err: got ${errB},${errW} exp ${ref.errB},${ref.errW}`);

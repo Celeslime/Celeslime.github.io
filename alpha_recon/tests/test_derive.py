@@ -264,7 +264,7 @@ def test_auto_xy():
         # 两张随机灰度图（任意内容，含内容一致与不一致）
         g1 = rng.integers(0, 256, size=(48, 48)).astype(np.uint8)
         g2 = rng.integers(0, 256, size=(48, 48)).astype(np.uint8)
-        x, y = auto_xy(g1, g2)
+        x, y, _ = auto_xy(g1, g2)
         assert x + y == 255, (x, y)
         assert 0 <= x <= 255 and 0 <= y <= 255
         # 映射后全像素自洽：c1>=c0；delta=255(c0=0,c1=255) 是合法透明像素(alpha=0)
@@ -286,7 +286,7 @@ def test_auto_xy_consistent():
     """内容一致时自动 x,y 应比固定 [0,128]/[128,255] 压缩更少（x 更大）。"""
     rng = np.random.default_rng(22)
     v = rng.integers(30, 226, size=(64, 64)).astype(np.uint8)  # 动态范围受限 -> 少压缩
-    x, y = auto_xy(v, v)
+    x, y, _ = auto_xy(v, v)
     assert x + y == 255
     assert x > 128, f"内容一致受限动态范围时应 x>128，实际 {x}"
     c0 = np.round(v.astype(float) * x / 255.0).astype(np.int64)
