@@ -1,5 +1,5 @@
 .error_box{
-	min-height: 70vh;
+	/* min-height: 70vh; */
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -8,7 +8,6 @@
 	gap: 4px;
 }
 
-/* 全页遮罩：与主页 .container 相同的半透明背景，铺满视口，把 footer 及下方空白一起盖住 */
 .page-wrap{
 	min-height: 100vh;
 	display: flex;
@@ -23,6 +22,8 @@
 	font-size: 2.4rem;
 	margin: 0;
 	color: var(--text-strong);
+	/* box-shadow: var(--shadow-out); */
+	text-shadow: 0 0 12px #00000040;
 }
 
 .error_box p{
