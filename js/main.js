@@ -135,7 +135,8 @@
 		tip.style.cssText =
 			"position:fixed;top:64px;left:50%;transform:translateX(-50%);" +
 			"background:var(--blue-light);color:var(--blue-deep);" +
-			"padding:8px 18px;border-radius:999px;font-size:0.9rem;" +
+			"padding:8px 18px;border-radius:16px;font-size:0.9rem;" +
+			"border:1px solid var(--border);" +
 			"text-align:center;max-width:88vw;" +
 			"box-shadow:var(--shadow-out);z-index:99;transition:opacity 0.6s ease;";
 		/* 文案可正常折行；颜文字用 nowrap span 包住，保证永远完整不被打断 */

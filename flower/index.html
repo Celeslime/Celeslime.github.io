@@ -85,13 +85,17 @@
 					<button type="button" class="btn ghost" id="copy-svg-btn">复制 SVG 代码</button>
 					<button type="button" class="btn ghost" id="copy-png-btn">复制 PNG 数据</button>
 				</div>
-				<p class="section-title">站外头像链接</p>
-				<div class="row">
-					<div style="flex:1; min-width:0;">
-						<label for="avatar-url">接口地址 avatar.svg?name=昵称</label>
-						<input type="text" id="avatar-url" readonly placeholder="填昵称后点复制，或直接复制右侧链接">
+				<p class="section-title">接入方式</p>
+				<div class="embed-box">
+					<div class="row">
+						<div class="grow">
+							<label for="avatar-url">方案 ① iframe 接入代码</label>
+							<textarea id="avatar-url" class="code-area" readonly placeholder="生成头像后自动生成接入代码，点右侧复制"></textarea>
+						</div>
+						<button type="button" class="btn" id="avatar-url-btn">复制代码</button>
 					</div>
-					<button type="button" class="btn" id="avatar-url-btn">复制链接</button>
+					<p class="embed-note">方案 ② JS 接入（进阶）：引入 <code>flower/js/flower.js</code> 后调用 <code>FlowerGen.generateAvatar('昵称')</code> 生成并注入 SVG。</p>
+					<p class="embed-note">注意：<code>avatar.svg?name=</code> 用 <code>&lt;img&gt;</code> 引用时内嵌脚本不执行、不会出图。</p>
 				</div>
 			</div>
 		</section>

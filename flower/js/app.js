@@ -195,7 +195,7 @@
 		setHue(state.hue);
 		syncDisabled();
 		render();
-		updateAvatarUrlDisplay();
+		updateEmbedCodeDisplay();
 	}
 
 	/* 按昵称生成：同一昵称永远同一朵花；"Cele"（不分大小写）固定为经典原图 */
@@ -232,7 +232,7 @@
 		setHue(state.hue);
 		syncDisabled();
 		render();
-		updateAvatarUrlDisplay();
+		updateEmbedCodeDisplay();
 	}
 
 	/* ---------- 导出 ---------- */
@@ -267,9 +267,10 @@
 		});
 	}
 
-	/* 站外头像链接：有昵称 → avatar.svg?name=昵称；无昵称 → 用当前参数编码，保证与预览一致 */
-	function avatarUrl() {
-		var base = new URL("avatar.svg", location.href).href;
+	/* 接入代码（简单 iframe）：avatar.svg?name= 用 <img> 引用时脚本不执行、不会出图；
+	 * 作为 iframe 加载时脚本执行，按昵称/参数动态出图。有昵称 → 只传 name；
+	 * 无昵称 → 用当前参数编码，保证与预览一致。JS 方式见注释/README（留言板同款）。 */
+	function iframeEmbedCode() {
 		var name = ($("seed-input").value || "").trim();
 		var q = [];
 		if (name) {
@@ -283,19 +284,22 @@
 			if (state.bg) q.push("bg=" + encodeURIComponent(state.bg));
 		}
 		q.push("size=128");
-		return base + "?" + q.join("&");
+		var url = new URL("avatar.svg", location.href).href + "?" + q.join("&");
+		return '<iframe src="' + url + '"\n' +
+			'        width="128" height="128" style="border:0"\n' +
+			'        scrolling="no" title="花头像"></iframe>';
 	}
 
-	/* 把当前站外链接写入输入框（生成头像后直接更新显示） */
-	function updateAvatarUrlDisplay() {
+	/* 把当前 iframe 接入代码写入输入框（生成头像后直接更新显示） */
+	function updateEmbedCodeDisplay() {
 		var input = $("avatar-url");
-		if (input) input.value = avatarUrl();
+		if (input) input.value = iframeEmbedCode();
 	}
 
-	function copyAvatarUrl(e) {
-		var url = avatarUrl();
-		updateAvatarUrlDisplay();
-		copyText(url, e.target);
+	function copyEmbedCode(e) {
+		var code = iframeEmbedCode();
+		updateEmbedCodeDisplay();
+		copyText(code, e.target);
 	}
 
 	function copyText(text, btn) {
@@ -352,7 +356,7 @@
 		$("seed-input").addEventListener("input", function () {
 			var el = $("seed-input");
 			if (el.value !== el.value.toLowerCase()) el.value = el.value.toLowerCase();
-			updateAvatarUrlDisplay();
+			updateEmbedCodeDisplay();
 		});
 
 		$("svg-btn").addEventListener("click", exportSvg);
@@ -368,9 +372,10 @@
 				btn.disabled = false;
 			}).catch(function () { btn.disabled = false; });
 		});
-		$("avatar-url-btn").addEventListener("click", copyAvatarUrl);
+		$("avatar-url-btn").addEventListener("click", copyEmbedCode);
 
 		readState();
+		updateEmbedCodeDisplay();
 	}
 
 	if (document.readyState === "loading") {

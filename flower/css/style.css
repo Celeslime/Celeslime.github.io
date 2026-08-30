@@ -208,6 +208,48 @@ input[type="color"]{ height: 38px; padding: 3px; cursor: pointer; }
 .export-box select{ flex: 0 0 150px; }
 .export-box .btn{ flex: 1; min-width: 120px; }
 
+/* ---------- 接入方式 ---------- */
+.embed-box{ margin-top: 12px; }
+.embed-box .row{
+	display: flex;
+	gap: 10px;
+	align-items: flex-end;
+}
+.embed-box .grow{ flex: 1; min-width: 0; }
+.embed-box label{ font-size: 12px; color: var(--text-dim); display: block; margin-bottom: 4px; }
+.embed-box .btn{ flex: 0 0 auto; width: auto; padding: 10px 16px; }
+.embed-note{
+	margin: 10px 0 0;
+	font-size: 12px;
+	line-height: 1.7;
+	color: var(--text-dim);
+}
+.embed-note:first-child{ margin-top: 0; }
+.embed-note code{
+	background: var(--blue-light);
+	color: var(--blue-dark);
+	padding: 1px 5px;
+	border-radius: 5px;
+	font-family: ui-monospace, Consolas, Menlo, monospace;
+	font-size: .92em;
+}
+.code-area{
+	width: 100%;
+	min-height: 96px;
+	box-sizing: border-box;
+	padding: 8px 10px;
+	border: 1px solid var(--border);
+	border-radius: 8px;
+	background: var(--blue-soft);
+	color: var(--text);
+	font-family: ui-monospace, Consolas, Menlo, monospace;
+	font-size: 12px;
+	line-height: 1.6;
+	resize: vertical;
+	outline: none;
+}
+.code-area:focus{ border-color: var(--blue); }
+
 @media (max-width: 820px){
 	.container{ grid-template-columns: 1fr; }
 	.nav-links a.home{ display: none; }

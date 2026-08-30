@@ -1,7 +1,13 @@
 /* avatar-run.js —— avatar.svg 的调用脚本。
  * SVG 作为文档（直接访问 / iframe / object）加载时执行：
  * 按 ?name= 等参数用 FlowerGen.generateAvatar 动态自绘并替换内容。
- * 作为 <img src> 引用时脚本不执行，avatar.svg 将显示内置默认花。 */
+ * 两种接入方式：
+ *   ① iframe（简单）：<iframe src=".../avatar.svg?name=Alice" width="128" height="128"></iframe>
+ *   ② JS（宿主页）：<script src="flower/js/flower.js"></script>
+ *      <script>document.querySelector('#avatar').innerHTML = FlowerGen.generateAvatar('Alice');</script>
+ *      生产实例：主页留言板 js/guestbook.js（转 data URL 给 <img>）。
+ * 作为 <img src> 引用时脚本不执行，且 avatar.svg 无内置图像（仅右下角水印），
+ * 不会渲染任何图形，因此不能当作 <img> 头像直接使用。 */
 (function () {
 	"use strict";
 	if (typeof FlowerGen === "undefined" || typeof document === "undefined") return;

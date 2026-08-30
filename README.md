@@ -17,7 +17,7 @@
 
 - [星球模拟 · universe](https://celeslime.github.io/universe/) — 万有引力下的星球运动模拟
 - [计时器 · timer](https://celeslime.github.io/timer/) — 极简时钟，环形倒计时原型
-- [花生成器 · flower](https://celeslime.github.io/flower/) — 极坐标曲线生成七瓣花朵，在线导出 SVG/PNG 头像
+- [花生成器 · flower](https://celeslime.github.io/flower/) — 极坐标曲线生成七瓣花朵，在线导出 SVG/PNG 头像；`flower/avatar.svg` 可接入自定义头像：`<iframe src="flower/avatar.svg?name=Alice" width="128" height="128"></iframe>`（简单）或引入 `flower/js/flower.js` 调 `FlowerGen.generateAvatar(name)`（JS，留言板同款）；用 `<img>` 引用时脚本不执行、不会出图
 - [Alpha 反推 · alpha_recon](https://celeslime.github.io/alpha_recon/) — 灰度叠色反推前景灰度与透明通道
 
 ### 💡 未上线
