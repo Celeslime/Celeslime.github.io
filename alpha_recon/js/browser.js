@@ -39,34 +39,17 @@
 
     const unifiedRgb = ctx.getImageData(0, 0, w, h).data;
 
-    let di = 0;
+let di = 0;
     for (let i = 0; i < len; i++) {
       const r = unifiedRgb[di];
       const g = unifiedRgb[di + 1];
       const b = unifiedRgb[di + 2];
       di += 4;
 
-const hsv = ARColor.rgbToHsv(r, g, b);
-      // 单源模式：根据背景类型调整策略
-      // 黑底(img1)：观察色相=真实色相(仅变暗)，低饱和度也可信
-      // 白底(img2)：观察色相受白底干扰，仅当 alpha 接近 1 时可信
-      let useHue;
-      if (source === 'img1') {
-        useHue = hsv.s >= 0.08; // 黑底：低阈值即可
-      } else {
-        // 白底：与黑底同策略，低饱和度阈值即可，效果差用户不选
-        useHue = hsv.s >= 0.08;
-      }
-
+      const hsv = ARColor.rgbToHsv(r, g, b);
       const v = fg[i] / 255;
-      let fr, fg_c, fb;
-      if (useHue) {
-        const [rr, gg, bb] = ARColor.hsvToRgb(hsv.h, hsv.s, v);
-        fr = rr; fg_c = gg; fb = bb;
-      } else {
-        const gv = roundHalfEven(v * 255);
-        fr = fg_c = fb = gv;
-      }
+      const [rr, gg, bb] = ARColor.hsvToRgb(hsv.h, hsv.s, v);
+      fr = rr; fg_c = gg; fb = bb;
 
       data[i * 4] = fr;
       data[i * 4 + 1] = fg_c;
@@ -109,9 +92,8 @@ const hsv = ARColor.rgbToHsv(r, g, b);
       const hsv1 = ARColor.rgbToHsv(r1, g1, b1);
       const hsv2 = ARColor.rgbToHsv(r2, g2, b2);
 
-      const useHue1 = hsv1.s >= 0.08;
-      // 白底观察：与黑底同策略，低饱和度阈值即可
-      const useHue2 = hsv2.s >= 0.08;
+      const useHue1 = true;
+      const useHue2 = true;
 
       const v = fg[i] / 255;
       let fr, fg_c, fb;
