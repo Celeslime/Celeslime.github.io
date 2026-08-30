@@ -1,0 +1,71 @@
+/* ============================================================
+ * 控件小组件库 —— 自定义滑块（全站通用）
+ *
+ * 无原生灰边框，蓝白主题随 --blue* / --card 变量自适应（浅/深色）；
+ * 已填充进度由 JS 更新 --fill 百分比变量控制（WebKit），
+ * Firefox 走原生 ::-moz-range-progress。
+ * 子页面按需引入即可（如 alpha_recon / flower）。
+ * ============================================================ */
+input[type="range"]{
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	height: 22px; /* 更大点击热区 */
+	margin: 2px 0;
+	background: transparent;
+	cursor: pointer;
+}
+input[type="range"]:focus{ outline: none; }
+
+/* —— WebKit（Chrome / Edge / Safari） —— */
+input[type="range"]::-webkit-slider-runnable-track{
+	height: 8px;
+	border-radius: 999px;
+	background:
+		linear-gradient(to right, var(--blue) var(--fill, 0%), var(--blue-light) var(--fill, 0%));
+}
+input[type="range"]::-webkit-slider-thumb{
+	-webkit-appearance: none;
+	appearance: none;
+	width: 18px;
+	height: 18px;
+	margin-top: -5px; /* (轨道 8px − thumb 18px) / 2，垂直居中 */
+	border-radius: 50%;
+	background: var(--blue);
+	border: 3px solid var(--card);
+	box-shadow: 0 1px 4px rgba(70, 150, 210, 0.4);
+	cursor: grab;
+	transition: transform .15s, box-shadow .15s;
+}
+input[type="range"]:hover::-webkit-slider-thumb{ transform: scale(1.1); }
+input[type="range"]:active::-webkit-slider-thumb{ cursor: grabbing; transform: scale(1.02); }
+input[type="range"]:focus-visible::-webkit-slider-thumb{
+	box-shadow: 0 0 0 4px var(--blue-light), 0 1px 4px rgba(70, 150, 210, 0.4);
+}
+
+/* —— Firefox —— */
+input[type="range"]::-moz-range-track{
+	height: 8px;
+	border-radius: 999px;
+	background: var(--blue-light);
+}
+input[type="range"]::-moz-range-progress{
+	height: 8px;
+	border-radius: 999px;
+	background: var(--blue);
+}
+input[type="range"]::-moz-range-thumb{
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: var(--blue);
+	border: 3px solid var(--card);
+	box-shadow: 0 1px 4px rgba(70, 150, 210, 0.4);
+	cursor: grab;
+	transition: transform .15s, box-shadow .15s;
+}
+input[type="range"]:hover::-moz-range-thumb{ transform: scale(1.1); }
+input[type="range"]:active::-moz-range-thumb{ cursor: grabbing; transform: scale(1.02); }
+input[type="range"]:focus-visible::-moz-range-thumb{
+	box-shadow: 0 0 0 4px var(--blue-light), 0 1px 4px rgba(70, 150, 210, 0.4);
+}

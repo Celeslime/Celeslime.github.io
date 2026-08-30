@@ -70,11 +70,6 @@ body{
 }
 .field .val.dim{ color: var(--text-dim); }
 
-input[type="range"]{
-	width: 100%;
-	accent-color: var(--blue);
-}
-
 .check-line{
 	display: flex;
 	align-items: center;

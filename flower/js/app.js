@@ -98,11 +98,24 @@
 
 	/* ---------- 控件绑定 ---------- */
 
+	/* 滑块已填充进度：按 value/min/max 更新 CSS 变量 --fill（配合小组件库 controls.css） */
+	function setRangeFill(el) {
+		var min = parseFloat(el.min) || 0;
+		var max = parseFloat(el.max) || 1;
+		var pct = max === min ? 0 : ((parseFloat(el.value) - min) / (max - min)) * 100;
+		el.style.setProperty("--fill", pct + "%");
+	}
+	function refreshRangeFills() {
+		var ranges = document.querySelectorAll('input[type="range"]');
+		Array.prototype.forEach.call(ranges, setRangeFill);
+	}
+
 	function bindRange(id, key, fmtVal) {
 		var el = $(id), out = $(id + "-val");
 		el.addEventListener("input", function () {
 			state[key] = parseFloat(el.value);
 			if (fmtVal && out) out.textContent = fmtVal(state[key]);
+			setRangeFill(el);
 			syncDisabled();
 			render();
 		});
@@ -142,6 +155,7 @@
 	function setHue(hue) {
 		state.hue = ((hue % 360) + 360) % 360;
 		$("hue").value = state.hue;
+		setRangeFill($("hue"));
 		updateHueUI();
 		render();
 	}
@@ -193,6 +207,7 @@
 		stopAnim();
 		spinAngle = state.rotation;
 		setHue(state.hue);
+		refreshRangeFills();
 		syncDisabled();
 		render();
 		updateEmbedCodeDisplay();
@@ -230,6 +245,7 @@
 		stopAnim();
 		spinAngle = state.rotation;
 		setHue(state.hue);
+		refreshRangeFills();
 		syncDisabled();
 		render();
 		updateEmbedCodeDisplay();
@@ -339,6 +355,7 @@
 		hueEl.addEventListener("input", function () {
 			state.hue = parseFloat(hueEl.value);
 			updateHueUI();
+			setRangeFill(hueEl);
 			render();
 		});
 
@@ -375,6 +392,7 @@
 		$("avatar-url-btn").addEventListener("click", copyEmbedCode);
 
 		readState();
+		refreshRangeFills();
 		updateEmbedCodeDisplay();
 	}
 

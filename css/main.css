@@ -13,6 +13,8 @@
  *   side-dots.css   右侧锚点目录（主页）
  *   footer.css      页脚
  *   responsive.css  响应式（媒体查询集中）
+ *   controls.css    控件小组件库：自定义滑块（无原生灰边框，随主题自适应，
+ *                   按需引入，如 alpha_recon / flower）
  *
  * 子页面按需引用示例：
  *   universe  -> base + nav + hero + cards + footer + responsive
