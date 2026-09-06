@@ -1,14 +1,8 @@
 /* ---------- 顶部欢迎区（浅蓝白清爽风） ---------- */
 .hero{
-	/* 半透明渐变，露出 body 的 flower 纹理（中心在页面左上角） */
-	background: linear-gradient(180deg, rgba(236, 247, 255, 0.7), rgba(247, 250, 252, 0.7));
-	/* border-bottom: 1px solid var(--border); */
+	/* 背景由 body 整页统一遮罩承担（见 page.css），此处只留间距与排版 */
 	padding: 135px 20px 84px;
 	text-align: center;
-}
-
-html.dark .hero{
-	background: linear-gradient(180deg, rgba(20, 34, 47, 0.7), rgba(14, 26, 38, 0.7));
 }
 
 .hero-inner{

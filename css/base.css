@@ -46,7 +46,7 @@ body{
 	font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
 	color: var(--text);
 	min-height: 100vh;
-	/* 纯色背景；flower 纹理与内容区遮罩为主页专属，见 page.css */
+	/* 纯色背景；flower 纹理与整页遮罩为主页专属，见 page.css */
 	background: var(--bg);
 }
 
@@ -63,6 +63,6 @@ a{
 .container{
 	width: 100%;
 	margin: 0 auto;
-	/* 左右 padding 撑出 900px 内容区（主页另有遮罩背景，见 page.css） */
+	/* 左右 padding 撑出 900px 内容区（主页遮罩在 body 上，见 page.css） */
 	padding: 40px max(20px, calc((100% - 900px) / 2)) 20px;
 }
