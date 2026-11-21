@@ -45,8 +45,8 @@
 .tile{
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
-	padding: 18px 15px 10px 15px;
+	gap: 8px;
+	padding: 15px 15px 10px 15px;
 	border-radius: 16px;
 	background: var(--card);
 	border: 1px solid var(--border);
@@ -60,23 +60,23 @@
 	border-color: var(--accent);
 }
 
+/* 图标 + 标题合成一个不可换行的整体（过长就省略号），右侧配徽章 */
 .tile-top{
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
 	gap: 8px;
-	margin-bottom: 4px;
 }
 
-.tile-icon{
-	font-size: 1.5rem;
-	line-height: 1;
-}
-
-.tile_name{
+.tile_title{
+	flex: 1 1 auto;
+	min-width: 0;
 	font-weight: 600;
 	color: var(--text-strong);
-	font-size: 1.02rem;
+	font-size: 0.95rem;
+	line-height: 1.5;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .badge{
@@ -85,6 +85,7 @@
 	padding: 2px 9px;
 	border-radius: 999px;
 	font-weight: 600;
+	margin-top: 1px;
 }
 
 .badge.ok{

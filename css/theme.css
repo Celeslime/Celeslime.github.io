@@ -58,13 +58,23 @@ html.dark .theme-moon{ display: block; }
 	transform: translateY(0);
 }
 
+/* 卡片面板：毛玻璃材质与顶部导航 / 右侧目录同款（--glass-* 一组变量） */
 .theme-menu-panel{
 	width: 276px;
 	padding: 12px;
-	background: var(--card);
-	border: 1px solid var(--border);
+	background: var(--glass-bg);
+	-webkit-backdrop-filter: var(--glass-blur);
+	backdrop-filter: var(--glass-blur);
+	border: 1px solid var(--glass-border);
 	border-radius: 14px;
 	box-shadow: var(--shadow-hover);
+}
+
+/* 不支持 backdrop-filter 时退回不透明卡片，避免文字压在背景上看不清 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+	.theme-menu-panel{
+		background: var(--card);
+	}
 }
 
 .theme-field + .theme-field{

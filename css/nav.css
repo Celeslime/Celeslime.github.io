@@ -8,10 +8,22 @@
 	justify-content: space-between;
 	height: 56px;
 	padding: 0 max(20px, calc((100vw - 900px) / 2));
-	background: var(--nav-bg);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
 	border-bottom: 1px solid var(--border);
+}
+
+/* 毛玻璃放在伪元素上：如果 .nav 自己带 backdrop-filter，
+   它会成为 backdrop root，里面的主题下拉面板就采样不到页面内容，
+   面板的 backdrop-filter 会失效（看起来像半透明色块而不是毛玻璃）。
+   放到 ::before 后，面板的祖先链上没有 backdrop root，能正常虚化背景。 */
+.nav::before{
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background: var(--glass-bg);
+	backdrop-filter: var(--glass-blur);
+	-webkit-backdrop-filter: var(--glass-blur);
 }
 
 .nav-logo{

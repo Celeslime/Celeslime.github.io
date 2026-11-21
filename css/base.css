@@ -29,6 +29,12 @@
 	--shadow-out: 0 3px 12px rgba(var(--accent-rgb), 0.12);
 	--shadow-hover: 0 10px 24px rgba(var(--accent-rgb), 0.2);
 	--nav-bg: rgba(var(--bg-rgb), 0.8);
+
+	/* 毛玻璃容器统一材质：顶部导航 / 主题下拉卡片 / 右侧锚点目录共用这一组，
+	   想调三处的透明度或模糊半径只改这里 */
+	--glass-bg: var(--nav-bg);
+	--glass-blur: blur(10px);
+	--glass-border: var(--border);
 }
 
 /* 青提绿（重做版）：从"草绿"换成"翡翠薄荷"——色相 137° → 160°，饱和度 56% → 84%，

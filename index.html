@@ -11,6 +11,13 @@
 	<link rel="canonical" href="https://celeslime.github.io/">
 	<link rel="stylesheet" type="text/css" href="./css/main.css">
 	<link rel="icon" href="./images/flower.p.min.svg" type="image/svg+xml">
+	<noscript>
+		<style>
+			/* 没有 JS 时无法展开：直接显示整条时间线并隐藏折叠开关 */
+			#story .timeline-list.is-collapsed > li + li{ display: flex; }
+			#story .story-toggle{ display: none; }
+		</style>
+	</noscript>
 
 	<!-- Open Graph（QQ、抖音、小红书等社交分享卡片） -->
 	<meta property="og:type" content="website">
@@ -148,19 +155,17 @@
 			<div class="grid">
 				<a class="tile" href="5500" target="_blank" rel="noopener">
 					<div class="tile-top">
-						<span class="tile-icon">📖</span>
+						<span class="tile_title">📖 考研英语词汇 · 5500</span>
 						<span class="badge ok">可用</span>
 					</div>
-					<span class="tile_name">考研英语词汇 · 5500</span>
 					<p class="tile_desc">考研 5500 词的查询、联想与朗读</p>
 					<p class="tile_story">3500词汇升级，给自己做的查询工具</p>
 				</a>
 				<a class="tile" href="3500" target="_blank" rel="noopener">
 					<div class="tile-top">
-						<span class="tile-icon">📖</span>
+						<span class="tile_title">📖 高考英语词汇 · 3500</span>
 						<span class="badge old">旧版</span>
 					</div>
-					<span class="tile_name">高考英语词汇 · 3500</span>
 					<p class="tile_desc">5500 的旧版 · 未同步更新</p>
 					<p class="tile_story">词表从它这里开始攒起来的</p>
 				</a>
@@ -176,19 +181,17 @@
 			<div class="grid">
 				<a class="tile" href="https://celeslime.github.io/simcity/" target="_blank" rel="noopener">
 					<div class="tile-top">
-						<span class="tile-icon">🏙️</span>
+						<span class="tile_title">🏙️ 模拟城市计算器 · simcity</span>
 						<span class="badge ok">可用</span>
 					</div>
-					<span class="tile_name">模拟城市计算器 · simcity</span>
 					<p class="tile_desc">单纯形算法 · 游戏模拟城市工具</p>
 					<p class="tile_story">想看看数学能不能帮我把城市经营得更好</p>
 				</a>
 				<a class="tile" href="syw" target="_blank" rel="noopener">
 					<div class="tile-top">
-						<span class="tile-icon">🎮</span>
+						<span class="tile_title">🎮 原神面板计算器 · syw</span>
 						<span class="badge ok">可用</span>
 					</div>
-					<span class="tile_name">原神面板计算器 · syw</span>
 					<p class="tile_desc">拉格朗日方程 · 早期算法探索</p>
 					<p class="tile_story">算法入门时的第一块试验田</p>
 				</a>
@@ -203,37 +206,33 @@
 			<div class="grid">
 				<a class="tile" href="flower" target="_blank" rel="noopener">
 					<div class="tile-top">
-						<span class="tile-icon">🌸</span>
+						<span class="tile_title">🌸 花生成器 · flower</span>
 						<span class="badge toy">玩具</span>
 					</div>
-					<span class="tile_name">花生成器 · flower</span>
 					<p class="tile_desc">极坐标曲线花朵头像 · 在线导出头像</p>
 					<p class="tile_story">主页的头像和蓝白配色，都是它画出来的</p>
 				</a>
 				<a class="tile" href="alpha_recon" target="_blank" rel="noopener">
 					<div class="tile-top">
-						<span class="tile-icon">🧪</span>
+						<span class="tile_title">🧪 Alpha 反推 · alpha_recon</span>
 						<span class="badge toy">玩具</span>
 					</div>
-					<span class="tile_name">Alpha 反推 · alpha_recon</span>
 					<p class="tile_desc">灰度叠色反推前景灰度与透明通道</p>
 					<p class="tile_story">从两张叠黑 / 叠白图里，把透明通道找回来</p>
 				</a>
 				<a class="tile" href="universe" target="_blank" rel="noopener">
 					<div class="tile-top">
-						<span class="tile-icon">🪐</span>
+						<span class="tile_title">🪐 星球模拟 · universe</span>
 						<span class="badge toy">玩具</span>
 					</div>
-					<span class="tile_name">星球模拟 · universe</span>
 					<p class="tile_desc">万有引力下的星球运动模拟</p>
 					<p class="tile_story">想看看万有引力会不会自己跑出秩序</p>
 				</a>
 				<a class="tile" href="timer" target="_blank" rel="noopener">
 					<div class="tile-top">
-						<span class="tile-icon">⏱️</span>
+						<span class="tile_title">⏱️ 时钟 · timer</span>
 						<span class="badge toy">玩具</span>
 					</div>
-					<span class="tile_name">时钟 · timer</span>
 					<p class="tile_desc">极简时钟 · 环形的时钟原型</p>
 					<p class="tile_story">想做一只不像钟表的钟</p>
 				</a>
@@ -248,19 +247,17 @@
 			<div class="grid">
 				<div class="tile">
 					<div class="tile-top">
-						<span class="tile-icon">🗨️</span>
+						<span class="tile_title">🗨️ 对话树</span>
 						<span class="badge old">未上线</span>
 					</div>
-					<span class="tile_name">对话树</span>
 					<p class="tile_desc">对话记录词云 · 对话任务分类树</p>
 					<p class="tile_story">想把聊过的天，整理成一棵会生长的树</p>
 				</div>
 				<div class="tile">
 					<div class="tile-top">
-						<span class="tile-icon">🧊</span>
+						<span class="tile_title">🧊 3D char Render</span>
 						<span class="badge old">未上线</span>
 					</div>
-					<span class="tile_name">3D char Render</span>
 					<p class="tile_desc">3D 字符渲染实验 · 整理旧 demo 中</p>
 					<p class="tile_story">从旧 demo 里捡回来的字符渲染</p>
 				</div>
@@ -292,11 +289,12 @@
 				<h2 class="section-title">📖 关于 · 来路</h2>
 				<p class="section-sub">为什么存在，又长成了什么样</p>
 			</div>
-			<ol class="timeline-list">
+			<ol class="timeline-list is-collapsed" id="story-timeline">
 							<li>
 								<div class="tl-body tl-about">
 									<p>这里的东西大多不是规划出来的——先是一行背单词时顺手写的代码，再是一个睡不着时冒出来的念头。它们不解决什么大事，只是把「我最近在想什么」如实放出来。</p>
 									<p>如果你只是路过，欢迎慢慢逛；留言板会认真听你说。</p>
+									<button class="story-toggle" id="story-toggle" type="button" aria-expanded="false" aria-controls="story-timeline"><span class="story-toggle-label">展开</span></button>
 								</div>
 							</li>
 							<li>
@@ -354,7 +352,7 @@
 								<div class="tl-title">主页翻新</div>
 								<p class="tl-text">有了留言板，也藏了一些只有点开才知道的小心思。</p>
 							</div></li>
-						</ol>
+			</ol>
 		</section>
 
 		<section class="card-section" id="guestbook" data-nav="guestbook">

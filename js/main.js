@@ -300,3 +300,24 @@
 	theme.onChange(sync);
 	sync();
 })();
+
+/* 关于 · 来路：默认收起时间线，开关放在第一段（前言）末尾 */
+(function () {
+	"use strict";
+
+	var toggle = document.getElementById("story-toggle");
+	var list = document.getElementById("story-timeline");
+	if (!toggle || !list) return;
+
+	var label = toggle.querySelector(".story-toggle-label");
+
+	function setOpen(open) {
+		list.classList.toggle("is-collapsed", !open);
+		toggle.setAttribute("aria-expanded", open ? "true" : "false");
+		if (label) label.textContent = open ? "收起" : "展开";
+	}
+
+	toggle.addEventListener("click", function () {
+		setOpen(list.classList.contains("is-collapsed"));
+	});
+})();
