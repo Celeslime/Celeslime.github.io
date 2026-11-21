@@ -17,7 +17,7 @@
 .section-title{
 	margin: 0 0 6px;
 	font-size: 1.2rem;
-	color: var(--blue-deep);
+	color: var(--accent-deep);
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -57,7 +57,7 @@
 .tile:hover{
 	transform: translateY(-4px);
 	box-shadow: var(--shadow-hover);
-	border-color: var(--blue);
+	border-color: var(--accent);
 }
 
 .tile-top{
@@ -88,31 +88,24 @@
 }
 
 .badge.ok{
-	background: var(--blue-light);
-	color: var(--blue-dark);
+	background: var(--accent-light);
+	color: var(--accent-dark);
 	border: 1px solid var(--border);
 }
 
-.badge.old{
-	background: #f1f5f9;
-	color: #94a3b8;
-	border: 1px solid var(--border);
-}
-
-html.dark .badge.old{
-	background: #243447;
-	color: #94b0c6;
-}
-
+/* 次要徽章（旧版 / 玩具 / 未上线）：中性灰、无色相，
+   避免写死的蓝调在绿/粉主题下串色；亮度与卡片层级保持原有观感 */
+.badge.old,
 .badge.toy{
-	background: #f1f5f9;
-	color: #94a3b8;
+	background: #f4f4f4;
+	color: #a2a2a2;
 	border: 1px solid var(--border);
 }
 
+html.dark .badge.old,
 html.dark .badge.toy{
-	background: #243447;
-	color: #94b0c6;
+	background: #333333;
+	color: #acacac;
 }
 
 .tile_desc{

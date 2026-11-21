@@ -24,11 +24,11 @@
 }
 
 /* 竖线：贯穿整列，画在圆点轨道中心。
-   圆点盒 12px（border-box）→ 中心在 6px；2px 竖线 left:5px → 中心同为 6px，严格同心。 */
+   圆点盒 10px（实心）→ 中心在 5px；2px 竖线 left:4px → 中心同为 5px，严格同心。 */
 .timeline-list::before{
 	content: "";
 	position: absolute;
-	left: 5px;
+	left: 4px;
 	top: 8px;
 	bottom: 8px;
 	width: 2px;
@@ -44,16 +44,17 @@
 }
 
 /* 圆点：flex 项（li 只有圆点 + .tl-body 两个子项，水平自然排开）。
-   描边用 var(--bg)：深浅模式下始终与页面背景同色，圆点像嵌在背景里。 */
+   实心 10px，不再用 var(--bg) 描边"抠"缝——那种做法依赖背景色精确一致，
+   深浅色 / 移动端背景一变就会露出一圈白边。
+   盒 10px → 中心 5px；margin-top 4px 让圆心停在 9px，与竖线（ol 的 ::before）对齐。 */
 .timeline-list li::before{
 	content: "";
 	flex: 0 0 auto;
-	width: 12px;
-	height: 12px;
-	margin-top: 3px;
+	width: 10px;
+	height: 10px;
+	margin-top: 4px;
 	border-radius: 50%;
-	background: var(--blue);
-	border: 2px solid var(--bg);
+	background: var(--accent);
 	box-sizing: border-box;
 }
 
@@ -69,8 +70,8 @@
 	border-radius: 999px;
 	font-size: 0.74rem;
 	font-weight: 600;
-	background: var(--blue-light);
-	color: var(--blue-dark);
+	background: var(--accent-light);
+	color: var(--accent-dark);
 }
 
 .tl-title{

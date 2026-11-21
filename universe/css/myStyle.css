@@ -15,7 +15,7 @@
 }
 
 html.dark .hero{
-	background: linear-gradient(180deg, var(--blue-soft), var(--bg));
+	background: linear-gradient(180deg, var(--accent-soft), var(--bg));
 }
 
 .hero-inner{
@@ -30,7 +30,7 @@ html.dark .hero{
 	margin: 0;
 	font-size: 1.4rem;
 	letter-spacing: 1px;
-	color: var(--blue-deep);
+	color: var(--accent-deep);
 }
 
 #slogan{

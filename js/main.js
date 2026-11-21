@@ -134,7 +134,7 @@
 		var tip = document.createElement("div");
 		tip.style.cssText =
 			"position:fixed;top:64px;left:50%;transform:translateX(-50%);" +
-			"background:var(--blue-light);color:var(--blue-deep);" +
+			"background:var(--accent-light);color:var(--accent-deep);" +
 			"padding:8px 18px;border-radius:16px;font-size:0.9rem;" +
 			"border:1px solid var(--border);" +
 			"text-align:center;max-width:88vw;" +
@@ -157,7 +157,7 @@
 
 	/* 彩蛋：只有"情感"标签可触发，随机弹一句告白 */
 	var loveTips = [
-		{ t: "loveTips内容优化中...过几天再试吧", f: "(♡˙︶˙♡)" },
+		{ t: "请你带着我的祝福，继续向前走吧！", f: "" },
 	];
 	var tags = Array.prototype.slice.call(document.querySelectorAll(".tag"));
 	tags.forEach(function (t) {
@@ -183,7 +183,7 @@
 	tip.textContent = "欢迎光临ヾ(≧▽≦*)o";
 	tip.style.cssText =
 		"position:fixed;top:64px;left:50%;transform:translateX(-50%);" +
-		"background:var(--blue-light,#efe);color:var(--blue-deep,#1f5b8a);" +
+		"background:var(--accent-light,#efe);color:var(--accent-deep,#1f5b8a);" +
 		"padding:8px 18px;border-radius:999px;font-size:0.9rem;" +
 		"box-shadow:var(--shadow-out);transition:opacity 0.6s ease;z-index:99;";
 	document.body.appendChild(tip);
@@ -194,79 +194,109 @@
 	}, 2600);
 })();
 
-/* 主题模式：浅色 / 深色 / 跟随系统（hover 下拉分段按钮选择），持久化到 localStorage */
+/* 主题菜单：下拉开关 + 选中态同步（状态与持久化在 js/theme.js） */
 (function () {
 	"use strict";
 
-	var root = document.documentElement;
-	var media = window.matchMedia("(prefers-color-scheme: dark)");
 	var menu = document.getElementById("theme-menu");
-	if (!menu) return;
+	var theme = window.CeleTheme;
+	if (!menu || !theme) return;
+
 	var trigger = document.getElementById("theme-trigger");
-	var segs = menu.querySelectorAll(".theme-seg");
+	var modeSegs = Array.prototype.slice.call(menu.querySelectorAll(".theme-seg[data-theme]"));
+	var colorSegs = Array.prototype.slice.call(menu.querySelectorAll(".theme-seg[data-color]"));
 
-	/* 当前模式："light" | "dark" | "system"（未存过默认 system） */
-	function getMode() {
-		try {
-			var m = localStorage.getItem("theme");
-			if (m === "light" || m === "dark" || m === "system") return m;
-		} catch (e) {}
-		return "system";
-	}
+	var MODE_TEXT = { light: "浅色", dark: "深色", system: "跟随系统" };
+	var COLOR_TEXT = { blue: "海盐蓝", green: "青提绿", pink: "玫瑰粉" };
 
-	function applyMode(mode) {
-		var dark = mode === "dark" || (mode === "system" && media.matches);
-		root.classList.toggle("dark", dark);
-		for (var i = 0; i < segs.length; i++) {
-			var on = segs[i].getAttribute("data-theme") === mode;
-			segs[i].classList.toggle("active", on);
-			segs[i].setAttribute("aria-checked", on ? "true" : "false");
-		}
-		try {
-			localStorage.setItem("theme", mode);
-		} catch (e) {}
+	/* 桌面端滑过即开、移开即关；触屏（无 hover）只走点击 */
+	var canHover = !!window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+	var openTimer = 0;
+	var closeTimer = 0;
+
+	function isOpen() {
+		return menu.classList.contains("open");
 	}
 
 	function openMenu() {
+		clearTimeout(openTimer);
+		clearTimeout(closeTimer);
 		menu.classList.add("open");
 		trigger.setAttribute("aria-expanded", "true");
 	}
 
 	function closeMenu() {
+		clearTimeout(openTimer);
+		clearTimeout(closeTimer);
 		menu.classList.remove("open");
 		trigger.setAttribute("aria-expanded", "false");
 	}
 
-	segs.forEach(function (seg) {
+	function markActive(segs, attr, current) {
+		segs.forEach(function (seg) {
+			var on = seg.getAttribute(attr) === current;
+			seg.classList.toggle("active", on);
+			seg.setAttribute("aria-checked", on ? "true" : "false");
+		});
+	}
+
+	function sync() {
+		markActive(modeSegs, "data-theme", theme.mode);
+		markActive(colorSegs, "data-color", theme.color);
+		trigger.setAttribute("title", "主题：" + MODE_TEXT[theme.mode] + " · " + COLOR_TEXT[theme.color]);
+	}
+
+	trigger.addEventListener("click", function (e) {
+		e.stopPropagation();
+		if (isOpen()) {
+			closeMenu();
+		} else {
+			openMenu();
+		}
+	});
+
+	modeSegs.forEach(function (seg) {
 		seg.addEventListener("click", function () {
-			applyMode(seg.getAttribute("data-theme"));
+			theme.setMode(seg.getAttribute("data-theme"));
 			closeMenu();
 		});
 	});
 
-	/* hover 之外，点击触发按钮用于触屏/键盘开关 */
-	trigger.addEventListener("click", function (e) {
-		e.stopPropagation();
-		menu.classList.contains("open") ? closeMenu() : openMenu();
+	colorSegs.forEach(function (seg) {
+		seg.addEventListener("click", function () {
+			theme.setColor(seg.getAttribute("data-color"));
+			closeMenu();
+		});
 	});
 
-	/* 点击其它处或按 Esc 关闭下拉 */
+	if (canHover) {
+		menu.addEventListener("mouseenter", function () {
+			clearTimeout(closeTimer);
+			openTimer = setTimeout(openMenu, 90);
+		});
+		menu.addEventListener("mouseleave", function () {
+			clearTimeout(openTimer);
+			closeTimer = setTimeout(closeMenu, 160);
+		});
+	}
+
+	/* 点空白处、按 Esc、Tab 出菜单时关闭 */
 	document.addEventListener("click", function (e) {
 		if (!menu.contains(e.target)) closeMenu();
 	});
+
 	document.addEventListener("keydown", function (e) {
-		if (e.key === "Escape") closeMenu();
+		if (e.key === "Escape" && isOpen()) {
+			closeMenu();
+			trigger.focus();
+		}
 	});
 
-	/* 跟随系统模式下，系统偏好变化实时生效 */
-	function onMediaChange() {
-		if (getMode() === "system") applyMode("system");
-	}
-	if (media.addEventListener) {
-		media.addEventListener("change", onMediaChange);
-	} else if (media.addListener) {
-		media.addListener(onMediaChange);
-	}
+	menu.addEventListener("focusout", function (e) {
+		if (!menu.contains(e.relatedTarget)) closeMenu();
+	});
 
-	applyMode(getMode());
+	/* 系统深浅色变化时只影响实际配色，不改变所选模式，但仍同步一次图标说明 */
+	theme.onChange(sync);
+	sync();
 })();

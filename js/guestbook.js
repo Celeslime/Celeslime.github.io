@@ -8,21 +8,22 @@
 	"use strict";
 
 	var API = "https://cele-api.pages.dev";
-	/* cele-api 的 CORS 只放行 https://celeslime.github.io。
-	   其它环境（本地 127.0.0.1 / localhost / file 等）一旦发请求必被拦截并在控制台刷 CORS / 网络错误，
-	   因此非正式域名一律静默跳过，不发起任何 cele-api 请求。 */
+	/* cele-api 的 CORS 只放行下面这几个来源；本地 Live Server（127.0.0.1:5500 / localhost:5500）
+	   也加进了白名单，所以本地预览同样能看留言、发留言。
+	   其它环境（file://、随机端口等）一律静默跳过，避免控制台刷一串 CORS 报错。 */
+	var ALLOWED_HOSTS = ["celeslime.github.io", "127.0.0.1", "localhost", "192.168.3.10"];
 	function apiEnabled() {
-		try { return location.hostname === "celeslime.github.io"; } catch (e) { return false; }
+		try { return ALLOWED_HOSTS.indexOf(location.hostname) !== -1; } catch (e) { return false; }
 	}
 
 	var listEl = document.getElementById("comment-list");
 	var emptyEl = document.getElementById("comment-empty");
 	var visitsEl = document.getElementById("visits");
-	var pageVisitsEl = document.getElementById("page-visits");
 	var formEl = document.getElementById("comment-form");
 	var nameEl = document.getElementById("gb-name");
 	var textEl = document.getElementById("gb-text");
 	var countEl = document.getElementById("gb-count");
+	var previewEl = document.getElementById("gb-avatar-preview");
 	var btnEl = formEl ? formEl.querySelector("button") : null;
 	var btnLabelEl = btnEl ? btnEl.querySelector(".gb-btn-label") : null;
 
@@ -84,15 +85,76 @@
 
 	/* 留言头像：按昵称复用 flower.js 的 generateAvatar 生成 SVG（无网格、透明、水印"鸿"）。
 	   渲染失败/无依赖时静默返回空，不影响留言内容。 */
-	function avatar(name) {
+	function avatar(name, extraClass) {
 		if (typeof FlowerGen === "undefined" || !FlowerGen.generateAvatar) return "";
 		try {
 			var svg = FlowerGen.generateAvatar(name || "", { size: 72, res: 90 });
-			return '<img class="gb-avatar" alt="" width="32" height="32" decoding="async" ' +
+			return '<img class="gb-avatar' + (extraClass ? " " + extraClass : "") +
+				'" alt="" width="32" height="32" decoding="async" ' +
 				'src="data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg) + '">';
 		} catch (e) {
 			return "";
 		}
+	}
+
+	/* 输入框左侧的头像预览：跟着昵称实时重绘。
+	   去抖 90ms，连续输入（尤其拼音）时不至于每敲一下都重算 SVG。 */
+	var previewTimer = null;
+
+	function updatePreview() {
+		previewTimer = null;
+		if (!previewEl) return;
+		var name = nameEl ? nameEl.value.trim() : "";
+		previewEl.classList.toggle("is-empty", !name);
+		previewEl.innerHTML = avatar(name, "gb-avatar-preview-img");
+	}
+
+	function schedulePreview() {
+		if (previewTimer) clearTimeout(previewTimer);
+		previewTimer = setTimeout(updatePreview, 90);
+	}
+
+	/* ---------- 瀑布流排版 ----------
+	   留言已按时间倒序，逐条放进"当前最短的一列"（同高取靠左），
+	   于是最新的一条总在左上角，阅读顺序变成从左到右、从上到下，
+	   而不是 CSS columns 那样先填满左列再跳到下一列。
+	   卡片宽度、高度仍由内容自然决定，视觉样式与多列瀑布一致。 */
+	var MASONRY = { minWidth: 230, maxCols: 3, gap: 14 };
+
+	function layoutMasonry() {
+		if (!listEl) return;
+		var items = listEl.getElementsByClassName("gb-item");
+		if (!items.length) {
+			listEl.style.height = "";
+			return;
+		}
+		var width = listEl.clientWidth;
+		if (!width) return;
+		var cols = Math.max(1, Math.min(
+			MASONRY.maxCols,
+			Math.floor((width + MASONRY.gap) / (MASONRY.minWidth + MASONRY.gap))
+		));
+		var colWidth = (width - MASONRY.gap * (cols - 1)) / cols;
+		var heights = [];
+		var i;
+		for (i = 0; i < cols; i++) heights.push(0);
+		for (i = 0; i < items.length; i++) {
+			var el = items[i];
+			el.style.width = colWidth + "px";
+			var h = el.offsetHeight;
+			var col = 0;
+			for (var c = 1; c < cols; c++) {
+				if (heights[c] < heights[col] - 0.5) col = c;
+			}
+			el.style.left = col * (colWidth + MASONRY.gap) + "px";
+			el.style.top = heights[col] + "px";
+			heights[col] += h + MASONRY.gap;
+		}
+		var tallest = 0;
+		for (i = 0; i < heights.length; i++) {
+			if (heights[i] > tallest) tallest = heights[i];
+		}
+		listEl.style.height = (tallest - MASONRY.gap) + "px";
 	}
 
 	function renderComments(comments, animate) {
@@ -101,6 +163,7 @@
 		listEl.classList.toggle("gb-settled", !animate);
 		if (!comments || !comments.length) {
 			if (emptyEl) emptyEl.style.display = "";
+			layoutMasonry();
 			return;
 		}
 		if (emptyEl) emptyEl.style.display = "none";
@@ -121,6 +184,7 @@
 				aiBlock(c);
 			listEl.appendChild(li);
 		});
+		layoutMasonry();
 	}
 
 	function clearThinking() {
@@ -155,14 +219,13 @@
 	}
 
 	function postStats() {
-		if (!apiEnabled() || (!visitsEl && !pageVisitsEl)) return;
-		/* 记录本次访问，顺带返回全站与当前页计数；credentials 让浏览器回传 cookie，10 分钟去重才生效 */
+		if (!apiEnabled() || !visitsEl) return;
+		/* 记录本次访问，顺带返回全站计数；credentials 让浏览器回传 cookie，10 分钟去重才生效 */
 		fetch(API + "/api/stats?path=" + encodeURIComponent(location.pathname), { method: "POST", credentials: "include" })
 			.then(function (r) { return r.json(); })
 			.then(function (d) {
 				if (!d || !d.ok) return;
-				if (visitsEl) visitsEl.textContent = d.total;
-				if (pageVisitsEl && d.page) pageVisitsEl.textContent = d.page.count;
+				visitsEl.textContent = d.total;
 			})
 			.catch(function () {});
 	}
@@ -172,7 +235,7 @@
 			e.preventDefault();
 			/* 本地环境发请求必被 CORS 拦截，直接提示而不是触发一串网络报错 */
 			if (!apiEnabled()) {
-				alert("留言功能仅在正式站点 celeslime.github.io 可用。");
+				alert("留言功能只在正式站点和本地预览（127.0.0.1 / localhost）可用。");
 				return;
 			}
 			var name = (nameEl ? nameEl.value : "").trim().slice(0, 20);
@@ -204,7 +267,7 @@
 				.catch(function () { alert("留言失败，请检查网络或稍后再试"); })
 				.finally(function () {
 					if (btn) { btn.disabled = false; }
-					if (btnLabelEl) { btnLabelEl.textContent = "发布留言"; }
+					if (btnLabelEl) { btnLabelEl.textContent = "发布"; }
 					if (textEl) updateCount();
 				});
 		});
@@ -216,12 +279,17 @@
 		loadComments();
 	}, POLL_MS);
 
-	/* 字符计数：随输入实时更新 "n / 500" */
+	/* 字符计数：随输入实时更新 "n / 500"；顺带让输入框随内容长高
+	   （无边框的输入区不该固定占一大块空白，写长留言时再自然变高） */
 	function updateCount() {
-		if (!textEl || !countEl) return;
-		var n = textEl.value.length;
-		countEl.textContent = n + " / " + MAX_LEN;
-		countEl.style.opacity = n > MAX_LEN * 0.9 ? "1" : "0.5";
+		if (!textEl) return;
+		if (countEl) {
+			var n = textEl.value.length;
+			countEl.textContent = n + " / " + MAX_LEN;
+			countEl.style.opacity = n > MAX_LEN * 0.9 ? "1" : "0.5";
+		}
+		textEl.style.height = "auto";
+		textEl.style.height = Math.min(textEl.scrollHeight, 260) + "px";
 	}
 
 	/* 空状态提示可点击：点击后聚焦输入框（帮助发现留言入口） */
@@ -235,6 +303,22 @@
 	if (textEl) {
 		textEl.addEventListener("input", updateCount);
 	}
+
+	/* 昵称变化 → 头像预览实时跟着换；无昵称时显示匿名花朵 */
+	if (nameEl) {
+		nameEl.addEventListener("input", schedulePreview);
+	}
+	updatePreview();
+	updateCount();
+
+	/* 窗口尺寸变化后重排瀑布流（去抖；列数或宽度变了才需要重算） */
+	var masonryTimer = null;
+	window.addEventListener("resize", function () {
+		if (masonryTimer) clearTimeout(masonryTimer);
+		masonryTimer = setTimeout(layoutMasonry, 120);
+	});
+	/* 字体/图片就绪后高度可能微调，再排一次 */
+	window.addEventListener("load", layoutMasonry);
 
 	postStats();
 	loadComments(true);

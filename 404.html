@@ -9,17 +9,7 @@
     <link rel="stylesheet" type="text/css" href="./css/footer.css">
     <link rel="stylesheet" type="text/css" href="./css/404.css">
     <link rel="icon" href="./images/flower.p.min.svg" type="image/svg+xml">
-    <script>
-        /* 暗色模式防闪烁 */
-        (function(){
-            try{
-                var t = localStorage.getItem("theme");
-                if(t === "dark" || (t !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)){
-                    document.documentElement.classList.add("dark");
-                }
-            }catch(e){}
-        })();
-    </script>
+    <script src="./js/theme.js"></script>
 </head>
 <body>
     <div class="container page-wrap">

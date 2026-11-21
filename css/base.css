@@ -1,36 +1,137 @@
+/* ============================================================
+ * 设计变量 —— 三层结构
+ *
+ *   强调色 --accent*      主题色。配色切换（海盐蓝 / 青提绿 / 玫瑰粉）只覆盖这一组
+ *   中性色 --bg --card --border --text --text-strong   页面底 / 卡片 / 描边 / 文字
+ *   派生   --shadow-* --nav-bg                          由上面两组算出，配色无需重写
+ *
+ * <html> 上的 class：dark = 深色，green / pink = 配色，两者正交，
+ * 因此共六块：:root / html.green / html.pink / html.dark / html.dark.green / html.dark.pink
+ * ============================================================ */
+
+/* 海盐蓝（默认）：主色取自头像花朵 #4696d2 */
 :root{
-	/* 主色取自头像 flower #4696d2，蓝白基调参考 zotero-chinese */
-	--blue: #4696d2;
-	--blue-dark: #2c6f9e;
-	--blue-deep: #1f5b8a;
-	--blue-light: #eaf4fb;
-	--blue-soft: #f4f9fd;
+	--accent: #4696d2;
+	--accent-dark: #2c6f9e;
+	--accent-deep: #1f5b8a;
+	--accent-light: #eaf4fb;
+	--accent-soft: #f4f9fd;
+	/* 主色 RGB 分量，供 rgba() 阴影随主题色自适应 */
+	--accent-rgb: 70, 150, 210;
 
 	--bg: #f7fafc;
+	--bg-rgb: 247, 250, 252;
 	--card: #ffffff;
 	--border: #d6e8f5;
 	--text: #3d5a73;
 	--text-strong: #1f3a52;
-	--shadow-out: 0 3px 12px rgba(70, 150, 210, 0.12);
-	--shadow-hover: 0 10px 24px rgba(70, 150, 210, 0.2);
-	--nav-bg: rgba(247, 250, 252, 0.8);
+
+	--shadow-out: 0 3px 12px rgba(var(--accent-rgb), 0.12);
+	--shadow-hover: 0 10px 24px rgba(var(--accent-rgb), 0.2);
+	--nav-bg: rgba(var(--bg-rgb), 0.8);
 }
 
-html.dark{
-	--blue: #63aadd;
-	--blue-dark: #7db9e4;
-	--blue-deep: #9cc7e8;
-	--blue-light: #1d3346;
-	--blue-soft: #16242f;
+/* 青提绿（重做版）：从"草绿"换成"翡翠薄荷"——色相 137° → 160°，饱和度 56% → 84%，
+   亮度仍与海盐蓝对齐（L* 59.8 / 59.7，白字对比同为 3.2:1），所以只是更鲜、更冷，
+   不会再显老气；浅色底下压到近白（只留一丝薄荷），深色底压到近黑的墨绿 */
+html.green{
+	--accent: #0ea472;
+	--accent-dark: #07764f;
+	--accent-deep: #055c40;
+	--accent-light: #e2f8ef;
+	--accent-soft: #effbf6;
+	--accent-rgb: 14, 164, 114;
 
-	--bg: #0e1a26;
-	--card: #16242f;
-	--border: #244055;
-	--text: #a8c1d6;
-	--text-strong: #d7e6f2;
+	--bg: #f7fdfa;
+	--bg-rgb: 247, 253, 250;
+	--card: #ffffff;
+	--border: #cdeee0;
+	--text: #375a4e;
+	--text-strong: #123528;
+}
+
+/* 玫瑰粉 */
+html.pink{
+	--accent: #d24673;
+	--accent-dark: #a83058;
+	--accent-deep: #8c2749;
+	--accent-light: #fbe6ed;
+	--accent-soft: #fdf2f6;
+	--accent-rgb: 210, 70, 115;
+
+	--bg: #fdf7f9;
+	--bg-rgb: 253, 247, 249;
+	--card: #ffffff;
+	--border: #f0d5de;
+	--text: #574250;
+	--text-strong: #38202b;
+}
+
+/* 深色（默认海盐蓝）：底色统一压到近黑，不再带明显的色调 */
+html.dark{
+	--accent: #63aadd;
+	--accent-dark: #7db9e4;
+	--accent-deep: #9cc7e8;
+	--accent-light: #1d3346;
+	--accent-soft: #16242f;
+	--accent-rgb: 99, 170, 221;
+
+	--bg: #0d151d;
+	--bg-rgb: 13, 21, 29;
+	--card: #131e27;
+	--border: #223444;
+	--text: #a3bacd;
+	--text-strong: #d3e2ee;
+
 	--shadow-out: 0 3px 14px rgba(0, 0, 0, 0.5);
 	--shadow-hover: 0 10px 26px rgba(0, 0, 0, 0.6);
-	--nav-bg: rgba(14, 26, 38, 0.8);
+}
+
+/* 深色 + 青提绿：底色是带一点青的墨绿近黑，主色用亮薄荷，对比度拉到 10:1 左右 */
+html.dark.green{
+	--accent: #34d399;
+	--accent-dark: #5ee0b0;
+	--accent-deep: #8cecc6;
+	--accent-light: #0f2b23;
+	--accent-soft: #0a1b16;
+	--accent-rgb: 52, 211, 153;
+
+	--bg: #06120e;
+	--bg-rgb: 6, 18, 14;
+	--card: #0e1d18;
+	--border: #1d322b;
+	--text: #9fc0b3;
+	--text-strong: #d4eae1;
+}
+
+/* 深色 + 玫瑰粉 */
+html.dark.pink{
+	--accent: #e2608a;
+	--accent-dark: #ea7f9f;
+	--accent-deep: #f19cb6;
+	--accent-light: #3a1c26;
+	--accent-soft: #26101a;
+	--accent-rgb: 226, 96, 138;
+
+	--bg: #150a0f;
+	--bg-rgb: 21, 10, 15;
+	--card: #1f1016;
+	--border: #3a1d28;
+	--text: #c0a2ac;
+	--text-strong: #e6d2d8;
+}
+
+/* 主题色花朵图案（导航 logo / 首页头像）。
+   用 SVG 的 alpha 通道作遮罩、填充当前主题色：换色精确（就是 --accent 本身，
+   深浅色各自取对应值），边框 / 白底 / 阴影都在外层容器上，不会被一起改色；
+   新增配色只要加一组变量，不需要额外图片或滤镜参数。 */
+.flower-mark{
+	display: block;
+	width: 100%;
+	height: 100%;
+	background-color: var(--accent);
+	-webkit-mask: url("../images/flower.p.min.svg") center / contain no-repeat;
+	mask: url("../images/flower.p.min.svg") center / contain no-repeat;
 }
 
 *{
@@ -56,7 +157,7 @@ a{
 }
 
 :focus{
-	outline: 2px solid var(--blue);
+	outline: 2px solid var(--accent);
 	outline-offset: 2px;
 }
 

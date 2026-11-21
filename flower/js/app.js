@@ -16,6 +16,15 @@
 		{ name: "石墨",   hue: 215 }
 	];
 
+	/* 背景色板（与色相色板同款按钮样式；透明值是 "" 表示不画背景） */
+	var BG_PRESETS = [
+		{ name: "透明（推荐导出）", value: "" },
+		{ name: "白色",             value: "#ffffff" },
+		{ name: "浅蓝白",           value: "#f7fafc" },
+		{ name: "深蓝黑",           value: "#0e1a26" },
+		{ name: "黑色",             value: "#000000" }
+	];
+
 	/* 色相与昵称种子逻辑统一复用 flower.js 的共享核心（FlowerGen.hueToColor / seedParams），
 	   与留言板头像、avatar.svg 接口保持一致，避免多处重复实现 */
 
@@ -28,7 +37,8 @@
 		grid: true,
 		bg: "",
 		rotation: 0,
-		animate: false
+		animate: false,
+		customColor: null   /* 花朵自定义 hex；null = 走色相模式（滑块/预设/昵称/随机） */
 	};
 
 	var spinAngle = 0;        /* 动画当前角度 */
@@ -44,7 +54,7 @@
 		return {
 			size: state.size,
 			petals: state.petals,
-			color: FlowerGen.hueToColor(state.hue),
+			color: state.customColor || FlowerGen.hueToColor(state.hue),
 			fillOpacity: state.fillOpacity,
 			scale: state.scale,
 			grid: state.grid,
@@ -122,7 +132,13 @@
 	}
 
 	function readState() {
-		state.size = parseInt($("size-select").value, 10);
+		/* 画布尺寸：预设直读，"自定义" 读边长输入框 */
+		var sizeVal = $("size-select").value;
+		if (sizeVal === "custom") {
+			state.size = clampSize($("size-custom").value);
+		} else {
+			state.size = parseInt(sizeVal, 10);
+		}
 		state.petals = parseInt($("petals").value, 10);
 		state.hue = parseFloat($("hue").value);
 		state.fillOpacity = parseFloat($("fillopacity").value);
@@ -130,9 +146,6 @@
 		state.grid = $("grid").checked;
 		state.rotation = parseFloat($("rotation").value);
 		state.animate = $("animate").checked;
-
-		var bg = $("bg").value;
-		state.bg = bg === "transparent" ? "" : bg;
 
 		if (state.animate) {
 			spinAngle = state.rotation;
@@ -142,6 +155,7 @@
 			spinAngle = state.rotation;
 		}
 		updateHueUI();
+		updateBgUI();
 		render();
 	}
 
@@ -153,6 +167,7 @@
 
 	/* 色相：更新滑块/hex/色板高亮 */
 	function setHue(hue) {
+		state.customColor = null;   /* 点预设/随机/按昵称 = 回到色相模式，自定义色让位 */
 		state.hue = ((hue % 360) + 360) % 360;
 		$("hue").value = state.hue;
 		setRangeFill($("hue"));
@@ -162,11 +177,15 @@
 
 	function updateHueUI() {
 		$("hue-val").textContent = Math.round(state.hue) + "°";
-		$("color-hex").textContent = FlowerGen.hueToColor(state.hue);
+		$("color-hex").textContent = state.customColor || FlowerGen.hueToColor(state.hue);
 		var wrap = $("swatches");
 		Array.prototype.forEach.call(wrap.children, function (c) {
+			if (c.classList.contains("swatch-custom")) {
+				c.classList.toggle("active", !!state.customColor);
+				return;
+			}
 			var h = parseInt(c.getAttribute("data-hue"), 10);
-			c.classList.toggle("active", Math.abs(h - state.hue) < 2);
+			c.classList.toggle("active", !state.customColor && Math.abs(h - state.hue) < 2);
 		});
 	}
 
@@ -183,6 +202,95 @@
 			b.addEventListener("click", function () { setHue(p.hue); });
 			wrap.appendChild(b);
 		});
+		/* 自定义取色：彩虹 "+" 按钮（label 内嵌原生 color input，点击即打开取色器） */
+		appendCustomPicker(wrap, "custom-color", setCustomColor);
+	}
+
+	/* 背景：swatches 同款样式。透明用棋盘格示意，其余直接填色 */
+	function buildBgSwatches() {
+		var wrap = $("bg-swatches");
+		BG_PRESETS.forEach(function (p) {
+			var b = document.createElement("button");
+			b.type = "button";
+			b.className = "swatch";
+			if (!p.value) b.classList.add("transparent");
+			b.setAttribute("data-bg", p.value);
+			if (p.value) b.style.background = p.value;
+			b.title = p.name;
+			b.setAttribute("aria-label", p.name);
+			b.addEventListener("click", function () { setBg(p.value); });
+			wrap.appendChild(b);
+		});
+		/* 自定义背景色：同上取色按钮。透明单独由「透明」色板控制 */
+		appendCustomPicker(wrap, "custom-bg", setBg);
+	}
+
+	/* 自定义取色器：彩虹 "+" 按钮（label 内嵌原生 color input，点击打开取色器，跨浏览器）。
+	   取色拖动中实时 input 事件 → 预览即时更新 */
+	function appendCustomPicker(wrap, inputId, onPick) {
+		var label = document.createElement("label");
+		label.className = "swatch swatch-custom";
+		label.title = "自定义颜色…";
+		label.setAttribute("aria-label", "自定义颜色");
+		var input = document.createElement("input");
+		input.type = "color";
+		input.id = inputId;
+		input.value = "#000000";
+		label.appendChild(input);
+		input.addEventListener("input", function () { onPick(input.value); });
+		wrap.appendChild(label);
+		return label;
+	}
+
+	/* 花朵自定义色：覆盖色相模式（滑块/预设/昵称/随机都会退出自定义） */
+	function setCustomColor(hex) {
+		state.customColor = hex;
+		updateHueUI();
+		render();
+		updateEmbedCodeDisplay();
+	}
+
+	function setBg(value) {
+		state.bg = value;
+		updateBgUI();
+		render();
+		updateEmbedCodeDisplay();
+	}
+
+	function updateBgUI() {
+		var wrap = $("bg-swatches");
+		var customBtn = null;
+		Array.prototype.forEach.call(wrap.children, function (c) {
+			if (c.classList.contains("swatch-custom")) { customBtn = c; return; }
+			c.classList.toggle("active", c.getAttribute("data-bg") === state.bg);
+		});
+		/* 自定义背景：state.bg 不在预设里 → 按钮显示该色并高亮 */
+		var isCustom = !!state.bg && BG_PRESETS.every(function (p) { return p.value !== state.bg; });
+		if (customBtn) {
+			customBtn.style.background = isCustom ? state.bg : "";
+			customBtn.classList.toggle("active", isCustom);
+		}
+	}
+
+	/* 自定义尺寸：限制在 [64, 4096]，非法输入回落到经典 1680 */
+	function clampSize(v) {
+		var n = parseInt(v, 10);
+		if (isNaN(n)) n = 1680;
+		return Math.min(4096, Math.max(64, n));
+	}
+
+	function onSizeSelectChange() {
+		var customWrap = $("custom-size-wrap");
+		if ($("size-select").value === "custom") {
+			customWrap.hidden = false;
+			state.size = clampSize($("size-custom").value);
+			$("size-custom").focus();
+			$("size-custom").select();
+		} else {
+			customWrap.hidden = true;
+			state.size = parseInt($("size-select").value, 10);
+		}
+		render();
 	}
 
 
@@ -268,7 +376,8 @@
 	}
 
 	function exportPng() {
-		var size = parseInt($("export-size").value, 10);
+		/* PNG 导出尺寸 = 画布尺寸（1:1 栅格化；export-size 旁路已删除） */
+		var size = state.size;
 		var btn = $("png-btn");
 		btn.disabled = true;
 		btn.textContent = "生成中…";
@@ -292,7 +401,7 @@
 		if (name) {
 			q.push("name=" + encodeURIComponent(name));
 		} else {
-			q.push("color=" + encodeURIComponent(FlowerGen.hueToColor(state.hue)));
+			q.push("color=" + encodeURIComponent(state.customColor || FlowerGen.hueToColor(state.hue)));
 			q.push("petals=" + state.petals);
 			q.push("fillopacity=" + state.fillOpacity);
 			q.push("rotation=" + Math.round(state.rotation));
@@ -344,6 +453,7 @@
 
 	function init() {
 		buildSwatches();
+		buildBgSwatches();
 
 		bindRange("petals", "petals", function (v) { return v; });
 		bindRange("fillopacity", "fillOpacity", function (v) { return Math.round(v * 100) + "%"; });
@@ -354,6 +464,7 @@
 		var hueEl = $("hue");
 		hueEl.addEventListener("input", function () {
 			state.hue = parseFloat(hueEl.value);
+			state.customColor = null;   /* 手动拖色相 = 回到色相模式 */
 			updateHueUI();
 			setRangeFill(hueEl);
 			render();
@@ -361,8 +472,22 @@
 
 		$("grid").addEventListener("change", readState);
 		$("animate").addEventListener("change", readState);
-		$("bg").addEventListener("change", readState);
-		$("size-select").addEventListener("change", readState);
+		/* 画布尺寸：预设切换（含"自定义"展开/收起）与自定义边长实时生效。
+		   自定义边长输入过程不重写文本框（避免 "1"→64 这类跳变把后续输入拼错），
+		   只做实时渲染；离开输入框（blur/回车，change 事件）时才收敛到 [64, 4096]。 */
+		$("size-select").addEventListener("change", onSizeSelectChange);
+		$("size-custom").addEventListener("input", function () {
+			var n = parseInt(this.value, 10);
+			if (!isNaN(n) && n > 0 && n <= 100000) {
+				state.size = n;
+				render();
+			}
+		});
+		$("size-custom").addEventListener("change", function () {
+			state.size = clampSize(this.value);
+			this.value = state.size;
+			render();
+		});
 
 		$("random-btn").addEventListener("click", randomize);
 		$("seed-btn").addEventListener("click", function () { applySeed($("seed-input").value); });

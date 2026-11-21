@@ -1,7 +1,9 @@
 ## Cele's Blog
 
 随心情写的代码，以 JS 为主的小应用，托管于 GitHub Pages。
-蓝白配色取自头像（`#4696d2`），结构参考 didilili / krislinzhao / zotero-chinese。
+蓝白配色取自头像（`#4696d2`），theme-menu 里可切换为青提绿（`#0ea472`）或玫瑰粉（`#d24673`），结构参考 didilili / krislinzhao / zotero-chinese。
+主题由 `js/theme.js` 统一处理：`localStorage` 存 `theme`（light/dark/system）与 `theme-color`（blue/green/pink），HTML 上用 `html.dark/green/pink` + `data-mode/data-color` 表达状态，颜色 token 统一为 `--accent*`（见 `css/base.css`）。
+留言板调用 `cele-api.pages.dev`，本地用 Live Server（`localhost:5500` / `127.0.0.1:5500`）预览时同样可以读取和发布留言——API 侧已放行 `http://localhost:*` 与 `http://127.0.0.1:*`。
 
 ### 🎓 词汇学习
 

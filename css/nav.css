@@ -20,10 +20,16 @@
 	gap: 8px;
 	font-weight: 700;
 	font-size: 1.05rem;
-	color: var(--blue-deep);
+	color: var(--accent-deep);
 }
 
-.nav-logo img{
+/* 花朵徽章：白底圆 + 描边在容器上，内部 .flower-mark 只负责花朵图案，
+   两者分开，换主题色时容器装饰不受影响 */
+.nav-logo .flower-badge{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
 	height: 26px;
 	width: 26px;
 	border-radius: 50%;
@@ -32,7 +38,7 @@
 	border: 1px solid var(--border);
 }
 
-html.dark .nav-logo img{
+html.dark .nav-logo .flower-badge{
 	background: var(--card);
 }
 
@@ -50,11 +56,11 @@ html.dark .nav-logo img{
 }
 
 .nav-links a:hover{
-	color: var(--blue);
+	color: var(--accent);
 }
 
 .nav-links a.active{
-	color: var(--blue);
+	color: var(--accent);
 	font-weight: 600;
 }
 

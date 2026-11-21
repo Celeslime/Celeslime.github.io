@@ -26,23 +26,13 @@
 	<meta property="og:locale" content="zh_CN">
 	<meta name="twitter:card" content="summary_large_image">
 
-	<script>
-		/* 暗色模式防闪烁 */
-		(function(){
-			try{
-				var t = localStorage.getItem("theme");
-				if(t === "dark" || (t !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)){
-					document.documentElement.classList.add("dark");
-				}
-			}catch(e){}
-		})();
-	</script>
+	<script src="../js/theme.js"></script>
 </head>
 <body id="top">
 
 	<nav class="nav">
 		<a class="nav-logo" href="#top">
-			<img src="../images/flower.p.min.svg" alt="Cele 的花">
+			<span class="flower-badge" role="img" aria-label="Cele 的花"><span class="flower-mark"></span></span>
 			<span>Cele 的花</span>
 		</a>
 		<div class="nav-links">
@@ -70,18 +60,10 @@
 			<div class="export-box">
 				<p class="section-title">导出</p>
 				<div class="row">
-					<div>
-						<label for="export-size">PNG 尺寸</label>
-						<select id="export-size">
-							<option value="1680" selected>1680（原尺寸）</option>
-							<option value="1024">1024</option>
-							<option value="512">512</option>
-							<option value="256">256（头像）</option>
-						</select>
-					</div>
 					<button type="button" class="btn" id="svg-btn">下载 SVG</button>
 					<button type="button" class="btn" id="png-btn">下载 PNG</button>
 				</div>
+				<p class="embed-note">PNG 按画布尺寸导出（由左侧面板「画布尺寸」决定像素大小）。</p>
 				<div class="btn-row">
 					<button type="button" class="btn ghost" id="copy-svg-btn">复制 SVG 代码</button>
 					<button type="button" class="btn ghost" id="copy-png-btn">复制 PNG 数据</button>
@@ -113,7 +95,12 @@
 					<option value="1024">1024 × 1024</option>
 					<option value="1680" selected>1680 × 1680（经典）</option>
 					<option value="2048">2048 × 2048</option>
+					<option value="custom">自定义…</option>
 				</select>
+				<div class="custom-size" id="custom-size-wrap" hidden>
+					<label for="size-custom">边长（正方形）</label>
+					<input type="number" id="size-custom" min="64" max="4096" step="16" value="1680" placeholder="64 ~ 4096">
+				</div>
 			</div>
 
 			<div class="field">
@@ -143,13 +130,8 @@
 			</div>
 
 			<div class="field">
-				<label for="bg">背景</label>
-				<select id="bg">
-					<option value="transparent" selected>透明（推荐导出）</option>
-					<option value="#ffffff">白色</option>
-					<option value="#f7fafc">浅蓝白</option>
-					<option value="#0e1a26">深蓝黑</option>
-				</select>
+				<label>背景</label>
+				<span class="swatches" id="bg-swatches"></span>
 			</div>
 
 			<div class="field">

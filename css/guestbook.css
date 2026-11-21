@@ -15,24 +15,27 @@
 }
 
 .gb-stats strong{
-	color: var(--blue-deep);
+	color: var(--accent-deep);
 	font-size: 1em;
 }
 
-/* 瀑布流：CSS columns 按内容高度自然铺列，卡片不跨列断开 */
+/* 瀑布流：由 JS 按"最短列优先"绝对定位（见 guestbook.js 的 layoutMasonry）。
+   这样最新的留言在左上角，整体按时间从左上到右下阅读，
+   而卡片宽度、高度仍由内容自然决定，观感与原来的多列瀑布一致。 */
 .gb-list{
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	columns: 3 230px;
-	column-gap: 14px;
+	position: relative;
 }
 
 /* 留言卡片：一条留言 + 其 AI 回复作为一个整体卡片 */
 .gb-item{
-	break-inside: avoid;
-	-webkit-column-break-inside: avoid;
-	margin: 0 0 14px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	margin: 0;
 	padding: 14px 16px;
 	border-radius: 16px;
 	background: var(--card);
@@ -45,7 +48,7 @@
 .gb-item:hover{
 	transform: translateY(-3px);
 	box-shadow: var(--shadow-hover);
-	border-color: var(--blue);
+	border-color: var(--accent);
 }
 
 /* 轮询刷新时静默更新，避免整屏重播动画（见 guestbook.js） */
@@ -87,7 +90,7 @@
 
 .gb-item-name{
 	font-weight: 600;
-	color: var(--blue-deep);
+	color: var(--accent-deep);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -116,16 +119,16 @@
 	font-size: 0.9rem;
 	color: var(--text);
 	opacity: 0.85;
-	background: var(--blue-soft);
-	border: 1.5px dashed var(--blue);
+	background: var(--accent-soft);
+	border: 1.5px dashed var(--accent);
 	border-radius: 14px;
 	cursor: pointer;
 	transition: background 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
 }
 
 .gb-empty:hover{
-	background: var(--blue-light);
-	border-color: var(--blue-deep);
+	background: var(--accent-light);
+	border-color: var(--accent-deep);
 	transform: translateY(-1px);
 }
 
@@ -136,44 +139,84 @@
 	margin-bottom: 7px;
 }
 
-/* 输入栏：聊天式，聚焦时整栏高亮 */
+/* 输入栏：与瀑布卡片同一套白卡材质，蓝色只作点缀，避免一块蓝底和下方卡片割裂 */
 .gb-form{
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
-	padding: 12px 14px 10px;
+	gap: 2px;
+	padding: 12px 16px;
 	border-radius: 16px;
-	background: var(--blue-soft);
+	background: var(--card);
 	border: 1px solid var(--border);
+	box-shadow: var(--shadow-out);
 	transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .gb-form:focus-within{
-	border-color: var(--blue);
-	box-shadow: 0 0 0 3px rgba(70, 150, 210, 0.14);
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12), var(--shadow-out);
 }
 
+/* 顶部一行：头像预览 + 昵称；底部虚线分隔，呼应卡片里的虚线细节 */
 .gb-input-head{
 	display: flex;
 	align-items: center;
 	gap: 10px;
+	padding-bottom: 8px;
+	border-bottom: 1px dashed var(--border);
 }
 
-.gb-form input#gb-name{
-	flex: 0 0 170px;
-	font: inherit;
-	font-size: 0.9rem;
-	color: var(--text);
+/* 头像预览：与瀑布卡片同源的昵称花朵头像，随昵称实时变化 */
+.gb-avatar-preview{
+	flex: 0 0 auto;
+	display: block;
+	width: 34px;
+	height: 34px;
+	border-radius: 50%;
+	overflow: hidden;
 	background: var(--card);
-	border: 1px solid var(--border);
-	border-radius: 12px;
-	padding: 8px 12px;
-	transition: border-color 0.18s ease;
+	box-shadow: 0 0 0 1px var(--border);
+	transition: opacity 0.18s ease;
 }
 
+/* 还没填昵称时显示匿名花朵，整体淡一点，提示填名字后会跟着变 */
+.gb-avatar-preview.is-empty{
+	opacity: 0.9;
+}
+
+.gb-avatar-preview-img{
+	display: block;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	box-shadow: none;
+}
+
+/* 昵称：无边框、直接融进卡片，只有 hover / focus 时浮出一层浅底提示可编辑。
+   padding 留在框内、不再用负 margin 外扩——负 margin 会让浅底贴着头像的描边圈。 */
+.gb-form input#gb-name{
+	flex: 1 1 auto;
+	min-width: 0;
+	font: inherit;
+	font-size: 0.92rem;
+	font-weight: 600;
+	color: var(--text-strong);
+	background: transparent;
+	border: none;
+	border-radius: 10px;
+	padding: 7px 9px;
+	margin-left: 0;
+	transition: background 0.18s ease;
+}
+
+.gb-form input#gb-name:hover,
 .gb-form input#gb-name:focus{
 	outline: none;
-	border-color: var(--blue);
+	background: var(--accent-soft);
+}
+
+.gb-form input#gb-name::placeholder{
+	font-weight: 400;
 }
 
 /* 占位符统一弱化，避免深浅模式下提示文字看不清或带浏览器默认灰 */
@@ -181,18 +224,6 @@
 .gb-form textarea::placeholder{
 	color: var(--text);
 	opacity: 0.45;
-}
-
-/* 深色模式下表单背景与 --card 同色，输入框填充会"消失"，改用更亮的 --blue-light 作底色 */
-html.dark .gb-form input#gb-name{
-	background: var(--blue-light);
-}
-
-.gb-count{
-	margin-left: auto;
-	font-size: 0.74rem;
-	opacity: 0.5;
-	flex-shrink: 0;
 }
 
 .gb-form textarea{
@@ -203,54 +234,75 @@ html.dark .gb-form input#gb-name{
 	background: transparent;
 	border: none;
 	border-radius: 0;
-	padding: 6px 2px;
+	padding: 10px 2px 6px;
 	width: 100%;
-	min-height: 84px;
-	resize: vertical;
+	min-height: 42px;
+	max-height: 260px;
+	overflow-y: auto;
+	resize: none;
 }
 
 .gb-form textarea:focus{
 	outline: none;
 }
 
+/* 底部操作行：字数靠左、发布按钮靠右 */
 .gb-btn-wrap{
 	display: flex;
-	justify-content: flex-end;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
 }
 
+.gb-count{
+	font-size: 0.74rem;
+	opacity: 0.5;
+	flex-shrink: 0;
+	transition: opacity 0.18s ease;
+}
+
+/* 发布按钮：白底 + 描边 + 主色文字，和卡片同一套材质；hover 才填色。
+   实心色块在这里太抢，反而把留言区压住了；也不要图标，一个字最干净。 */
 .gb-btn{
 	display: inline-flex;
 	align-items: center;
-	gap: 7px;
+	justify-content: center;
 	font: inherit;
 	font-weight: 600;
-	font-size: 0.9rem;
-	padding: 9px 18px;
+	font-size: 0.86rem;
+	letter-spacing: 0.04em;
+	padding: 7px 20px;
 	border-radius: 999px;
-	border: 1px solid var(--blue);
-	background: var(--blue);
-	color: #fff;
+	border: 1px solid rgba(var(--accent-rgb), 0.38);
+	background: var(--card);
+	color: var(--accent-deep);
 	cursor: pointer;
-	box-shadow: 0 3px 9px rgba(70, 150, 210, 0.35);
-	transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
-}
-
-.gb-btn-icon{
-	width: 15px;
-	height: 15px;
-	flex-shrink: 0;
+	transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .gb-btn:hover{
-	background: var(--blue-dark);
-	transform: translateY(-2px);
-	box-shadow: 0 6px 14px rgba(70, 150, 210, 0.45);
+	background: var(--accent);
+	border-color: var(--accent);
+	color: #fff;
+	box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.24);
+}
+
+/* 深色下主色是亮色，hover 填色后白字发虚，改用页面底色当字色 */
+html.dark .gb-btn:hover{
+	color: var(--bg);
+}
+
+.gb-btn:focus-visible{
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
 }
 
 .gb-btn:disabled{
-	opacity: 0.6;
+	opacity: 0.55;
 	cursor: default;
-	transform: none;
+	background: var(--card);
+	border-color: rgba(var(--accent-rgb), 0.38);
+	color: var(--accent-deep);
 	box-shadow: none;
 }
 
@@ -259,8 +311,8 @@ html.dark .gb-form input#gb-name{
 	margin-top: 10px;
 	padding: 9px 12px;
 	border-radius: 12px;
-	background: var(--blue-light);
-	border-left: 3px solid var(--blue);
+	background: var(--accent-light);
+	border-left: 3px solid var(--accent);
 }
 
 .gb-item-ai-head{
@@ -269,14 +321,14 @@ html.dark .gb-form input#gb-name{
 	gap: 5px;
 	font-size: 0.76rem;
 	font-weight: 700;
-	color: var(--blue-deep);
+	color: var(--accent-deep);
 	margin-bottom: 3px;
 	letter-spacing: 0.3px;
 }
 
 .gb-item-ai-head::before{
 	content: "✦";
-	color: var(--blue);
+	color: var(--accent);
 }
 
 .gb-item-ai-text{

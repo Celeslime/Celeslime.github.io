@@ -12,18 +12,23 @@
 	animation: rise-in 0.7s ease forwards;
 }
 
-#profile{
+/* 头像徽章：白底圆、描边、投影、浮动动画都在容器上，
+   内部 .flower-mark 只负责花朵图案本身 */
+.profile-badge{
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	height: 112px;
 	width: 112px;
 	border-radius: 50%;
 	background: #fff;
 	padding: 6px;
-	border: 2px solid var(--blue-light);
+	border: 2px solid var(--accent-light);
 	box-shadow: var(--shadow-out);
 	animation: float 4.5s ease-in-out infinite;
 }
 
-html.dark #profile{
+html.dark .profile-badge{
 	background: var(--card);
 	border-color: var(--border);
 }
@@ -35,7 +40,7 @@ html.dark #profile{
 
 #name{
 	margin: 22px 0 8px;
-	color: var(--blue-deep);
+	color: var(--accent-deep);
 	font-size: 1.75rem;
 	letter-spacing: 1px;
 }
@@ -62,13 +67,13 @@ html.dark #profile{
 	background: var(--card);
 	border: 1px solid var(--border);
 	box-shadow: var(--shadow-out);
-	color: var(--blue-dark);
+	color: var(--accent-dark);
 	transition: background 0.18s ease, transform 0.18s ease, color 0.18s ease;
 }
 
 #social a:hover{
-	background: var(--blue-light);
-	color: var(--blue-deep);
+	background: var(--accent-light);
+	color: var(--accent-deep);
 	transform: translateY(-3px);
 }
 

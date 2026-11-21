@@ -5,17 +5,7 @@
 	<meta name="description" content="原神角色面板与伤害计算器：输入基础攻击力、攻击力加成、暴击率、暴击伤害、元素精通与伤害加成，一键算出期望面板与伤害数值。">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width" initial-scale="1"/>
-	<script>
-		/* 暗色模式跟随系统/已存主题（与主页一致） */
-		(function(){
-			try{
-				var t = localStorage.getItem("theme");
-				if(t === "dark" || (t !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)){
-					document.documentElement.classList.add("dark");
-				}
-			}catch(e){}
-		})();
-	</script>
+	<script src="../js/theme.js"></script>
 	<link rel="stylesheet" type="text/css" href="../css/base.css">
 	<link rel="stylesheet" type="text/css" href="../css/nav.css">
 	<link rel="stylesheet" type="text/css" href="../css/hero.css">

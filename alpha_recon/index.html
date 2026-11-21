@@ -25,22 +25,13 @@
 	<meta property="og:locale" content="zh_CN">
 	<meta name="twitter:card" content="summary_large_image">
 
-	<script>
-		(function(){
-			try{
-				var t = localStorage.getItem("theme");
-				if(t === "dark" || (t !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)){
-					document.documentElement.classList.add("dark");
-				}
-			}catch(e){}
-		})();
-	</script>
+	<script src="../js/theme.js"></script>
 </head>
 <body id="top">
 
 	<nav class="nav">
 		<a class="nav-logo" href="#top">
-			<img src="../images/flower.p.min.svg" alt="Alpha 反推">
+			<span class="flower-badge" role="img" aria-label="Alpha 反推"><span class="flower-mark"></span></span>
 			<span>Alpha 反推</span>
 		</a>
 		<div class="nav-links">
@@ -72,11 +63,11 @@
 
 			<div class="hue-control" style="margin-top:10px;">
 				<label class="check-line" style="cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);">
-					<input type="checkbox" id="hue-checkbox-1" style="accent-color:var(--blue);width:16px;height:16px;">
+					<input type="checkbox" id="hue-checkbox-1" style="accent-color:var(--accent);width:16px;height:16px;">
 					<span>还原色相（从图1提取色相着色，推荐）</span>
 				</label>
 				<label class="check-line" style="cursor:pointer;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);margin-top:6px;">
-					<input type="checkbox" id="hue-checkbox-2" style="accent-color:var(--blue);width:16px;height:16px;">
+					<input type="checkbox" id="hue-checkbox-2" style="accent-color:var(--accent);width:16px;height:16px;">
 					<span>艺术加工（从图2提取色相着色）</span>
 				</label>
 				<p id="hue-hint" class="hint" style="display:none;margin-top:6px;font-size:12px;">取矢量平均</p>

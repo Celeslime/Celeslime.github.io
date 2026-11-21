@@ -35,7 +35,7 @@
 	<meta name="twitter:image" content="https://celeslime.github.io/images/og-cover.png">
 
 	<script>
-		/* 暗色模式防闪烁 + js 可用标记 + 清除残留 hash（避免刷新自动滚到锚点） */
+		/* 交互标记 + 清除残留 hash（避免刷新自动滚到锚点） */
 		(function(){
 			document.documentElement.classList.add("js");
 			try{
@@ -46,20 +46,16 @@
 					history.scrollRestoration = "manual";
 				}
 			}catch(e){}
-			try{
-				var t = localStorage.getItem("theme");
-				if(t === "dark" || (t !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)){
-					document.documentElement.classList.add("dark");
-				}
-			}catch(e){}
 		})();
 	</script>
+	<!-- 主题（深浅色 / 配色）在首次绘制前套用，避免刷新闪一下浅色 -->
+	<script src="../js/theme.js"></script>
 </head>
 <body id="top">
 
 	<nav class="nav">
 		<a class="nav-logo" href="../" title="主页">
-			<img src="../images/flower.p.min.svg" alt="Cele 的小站">
+			<span class="flower-badge" role="img" aria-label="Cele 的小站"><span class="flower-mark"></span></span>
 			<span>Universe</span>
 		</a>
 		<div class="nav-links">

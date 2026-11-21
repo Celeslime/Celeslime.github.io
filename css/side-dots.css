@@ -54,8 +54,8 @@
 	box-sizing: border-box;   /* 10px 含边框 → 外径严格 10px，不再溢出 10px 框 */
 	border-radius: 50%;
 	background: var(--card);
-	border: 2px solid var(--blue);
-	box-shadow: 0 2px 6px rgba(70, 150, 210, 0.18);   /* 轻阴影，避免光晕让圆点显大 */
+	border: 2px solid var(--accent);
+	box-shadow: 0 2px 6px rgba(var(--accent-rgb), 0.18);   /* 轻阴影，避免光晕让圆点显大 */
 	transition: background 0.2s ease, transform 0.2s ease;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .side-dots-rail a.active::before{
-	background: var(--blue);
+	background: var(--accent);
 	transform: scale(1.35);
 }
 
@@ -89,14 +89,14 @@
 /* 悬停整行：圆点放大 + 文本不透明度增加（变清晰），不加粗 */
 .side-dots-rail a:hover::after{
 	opacity: 1;
-	color: var(--blue-deep);
+	color: var(--accent-deep);
 }
 
 /* 当前分区：仅展开态下保持清晰（折叠态与其他条目一起隐藏） */
 .side-dots-rail:hover a.active::after,
 .side-dots-rail:focus-within a.active::after{
 	opacity: 1;
-	color: var(--blue-deep);
+	color: var(--accent-deep);
 	font-weight: 600;
 }
 
