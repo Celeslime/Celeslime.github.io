@@ -4,29 +4,33 @@
  * 遮罩直接作为 body 背景的一个图层（渐变层压在纹理上、底色下），
  * 整页（含 hero / container / 两侧）透明度一致，无需在内容区各自叠加。
  *
- * 纹理由 --flower-img 决定（配色切换只换图，不动其它图层），
- * 遮罩颜色取自 --bg-rgb，所以深浅色 / 三种配色都不需要单独写一遍。
+ * 纹理由 --flower-img 决定，遮罩颜色取自 --bg-rgb，所以深浅色 /
+ * 三种配色都不需要单独写一遍。
+ *
+ * 这张图不存文件：js/theme.js 用 flower/js/flower.js（留言板头像用的
+ * 同一个生成器）在运行时按当前 accent 画一张 2048px 的 SVG，做成 blob
+ * URL 写进 --flower-img。所以 CSS 里默认是 none，等 JS 来填。
  * ============================================================ */
-body{
-	--flower-img: url("../images/flower.min.svg");
+:root{
+	/* 标记主页启用了花朵纹理：js/theme.js 据此决定要不要去生成 */
+	--flower-enabled: 1;
+	--flower-img: none;
 	--flower-size: 1680px;
 	/* 中心对齐右上角：水平右移半张图、垂直上移半张图 */
 	--flower-shift: 800px;
 	--flower-offset: -840px;
+}
 
+body{
 	background:
 		linear-gradient(rgba(var(--bg-rgb), 0.7), rgba(var(--bg-rgb), 0.7)),
 		var(--flower-img) no-repeat calc(100% + var(--flower-shift)) var(--flower-offset) / var(--flower-size) var(--flower-size),
 		var(--bg);
 }
 
-/* 配色只换纹理图（同色系花朵），遮罩跟着 --bg-rgb 走 */
-html.green body{ --flower-img: url("../images/flower.green.min.svg"); }
-html.pink body{ --flower-img: url("../images/flower.pink.min.svg"); }
-
 /* 移动端缩小纹理，中心仍对齐右上角 */
 @media (max-width: 480px){
-	body{
+	:root{
 		--flower-size: 700px;
 		--flower-shift: 350px;
 		--flower-offset: -350px;

@@ -26,6 +26,12 @@
 		pink: { light: "#fdf7f9", dark: "#150a0f" }
 	};
 
+	/* 主页背景的大花：不再单独存图，直接用 flower/js/flower.js（留言板头像
+	 * 用的同一个生成器）在运行时按当前 accent 画出来。主站本来就加载了那个文件。 */
+	var FLOWER_SIZE = 2048;
+	var FLOWER_ACCENT = { blue: "#4696d2", green: "#0ea472", pink: "#d24673" };
+	var flowerUrls = Object.create(null);
+
 	var root = document.documentElement;
 	var media = global.matchMedia ? global.matchMedia("(prefers-color-scheme: dark)") : null;
 	var listeners = [];
@@ -89,9 +95,44 @@
 			meta.setAttribute("content", THEME_COLOR[api.color][dark ? "dark" : "light"]);
 		}
 
+		paintFlower(api.color);
+
 		for (var i = 0; i < listeners.length; i++) {
 			listeners[i](api.mode, api.color);
 		}
+	}
+
+	/* 主页才有花朵纹理；css/page.css 用 --flower-enabled 打标记，
+	 * 子页面没有这个变量，就完全跳过（也就不会多发一次请求） */
+	function flowerEnabled() {
+		if (!global.getComputedStyle) return false;
+		return global.getComputedStyle(root).getPropertyValue("--flower-enabled").trim() === "1";
+	}
+
+	/* 写在内联样式上：一定压过 css/page.css 里的 html.green / html.pink 规则 */
+	function setFlowerUrl(url) {
+		if (url) root.style.setProperty("--flower-img", 'url("' + url + '")');
+		else root.style.removeProperty("--flower-img");
+	}
+
+	/* 蓝 / 绿 / 粉各画一张，缓存在内存里；FlowerGen 由 flower/js/flower.js 提供 */
+	function paintFlower(color) {
+		if (!flowerEnabled() || !global.FlowerGen) return;
+		if (flowerUrls[color]) {
+			setFlowerUrl(flowerUrls[color]);
+			return;
+		}
+		var svg = global.FlowerGen.generate({
+			size: FLOWER_SIZE,
+			petals: 7,
+			color: FLOWER_ACCENT[color],
+			fillOpacity: 0.25,
+			scale: 0.4,
+			grid: true,
+			labels: true
+		});
+		flowerUrls[color] = global.URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+		if (api.color === color) setFlowerUrl(flowerUrls[color]);
 	}
 
 	/* 跟随系统：系统切换深浅时直接重套，不用重载页面 */
@@ -109,4 +150,15 @@
 	api.apply = apply;
 	api.apply();
 	global.CeleTheme = api;
+
+	/* 本脚本在 <head> 里执行，个别浏览器此时还没解析完样式表，
+	 * 读不到 --flower-enabled；等 DOM / 资源就绪再补一次（幂等） */
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", function () {
+			paintFlower(api.color);
+		});
+	}
+	global.addEventListener("load", function () {
+		paintFlower(api.color);
+	});
 })(window);

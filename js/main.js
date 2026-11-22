@@ -314,7 +314,7 @@
 	function setOpen(open) {
 		list.classList.toggle("is-collapsed", !open);
 		toggle.setAttribute("aria-expanded", open ? "true" : "false");
-		if (label) label.textContent = open ? "收起" : "展开";
+		if (label) label.textContent = open ? "收起时间线" : "展开时间线";
 	}
 
 	toggle.addEventListener("click", function () {

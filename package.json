@@ -1,0 +1,16 @@
+{
+	"name": "celeslime-site",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Cele 的小站：纯静态站点与它的自检脚本",
+	"scripts": {
+		"test": "node tests/run.mjs",
+		"test:guestbook": "node tests/run.mjs --only guestbook",
+		"test:theme": "node tests/run.mjs --only theme",
+		"test:interaction": "node tests/run.mjs --only interaction"
+	},
+	"devDependencies": {},
+	"engines": {
+		"node": ">=20"
+	}
+}

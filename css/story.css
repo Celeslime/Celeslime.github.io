@@ -104,7 +104,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 5px;
-	margin-top: 12px;
+	/* margin-top: 12px; */
 	padding: 3px 11px;
 	border: 1px solid var(--border);
 	border-radius: 999px;
@@ -116,6 +116,10 @@
 	line-height: 1.4;
 	cursor: pointer;
 	transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+	/* 浮动到右侧 */
+	float: right;
+
+
 }
 
 .story-toggle:hover{

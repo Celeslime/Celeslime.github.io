@@ -1,0 +1,24 @@
+name: 站点自检
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 自带浏览器的安装到 ~/.cache/ms-playwright，tests/lib/chrome.mjs 会自动找到它
+      - name: 安装 headless Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: 跑检查
+        run: node tests/run.mjs
