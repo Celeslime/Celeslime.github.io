@@ -30,12 +30,13 @@ npx playwright install --with-deps chromium
 | 文件 | 作用 |
 | --- | --- |
 | `run.mjs` | 入口：起环境、按顺序跑 `checks/` 下所有模块、汇总结果 |
-| `lib/server.mjs` | 以仓库根为根的静态文件服务（随机端口） |
+| `lib/server.mjs` | 以仓库根为根的静态文件服务（随机端口）；页面导航落空时和 GitHub Pages 一样返回 `404.html` |
 | `lib/chrome.mjs` | 找 Chrome 并以 headless + CDP 端口启动 |
 | `lib/harness.mjs` | 页面封装：`load()` / `evaluate()` / `setViewport()` / `send()`，并 mock 留言与访问量接口 |
 | `checks/guestbook.mjs` | 7 个宽度下的瀑布流不变量、时间倒序、昵称→头像预览、表单高度 |
 | `checks/theme.mjs` | 默认值、6 套配色、meta theme-color、三处毛玻璃同款、花朵背景跟着配色生成、子页面 |
 | `checks/interaction.mjs` | 主题面板开合（点击 / 空白 / Esc / Tab 移出）、`#story` 折叠、日期胶囊与圆点对齐 |
+| `checks/notfound.mjs` | 404 页在子路径下的资源加载、按 sitemap 猜目标（拼写错误 / 路径前缀 / 目录）、只提示不跳转 |
 | `fixtures/*.json` | 留言接口的假数据 |
 
 ## 写新检查

@@ -5,18 +5,26 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<meta name="robots" content="noindex,follow">
     <title>404 Not Found</title>
-    <link rel="stylesheet" type="text/css" href="./css/base.css">
-    <link rel="stylesheet" type="text/css" href="./css/footer.css">
-    <link rel="stylesheet" type="text/css" href="./css/404.css">
-    <link rel="icon" href="./images/flower.p.min.svg" type="image/svg+xml">
-    <script src="./js/theme.js"></script>
+    <!-- 404 会出现在任意子路径下，静态资源必须用根路径，不能写 ./ -->
+    <link rel="stylesheet" type="text/css" href="/css/base.css">
+    <link rel="stylesheet" type="text/css" href="/css/footer.css">
+    <link rel="stylesheet" type="text/css" href="/css/404.css">
+    <link rel="icon" href="/images/flower.p.min.svg" type="image/svg+xml">
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+    <script src="/js/theme.js"></script>
 </head>
 <body>
     <div class="container page-wrap">
     <main class="error_box">
         <h1 id="error_h1">404</h1>
-        <p id="error_p"><a id="error_a"></a></p>
-        <p>仔细检查一下链接，注意中文截断、链接是否有效等问题</p>
+        <div class="error_info">
+            <p class="error_row">
+                <span class="error_label">你访问的地址</span>
+                <span id="error_a"></span>
+            </p>
+            <p id="error_suggest" class="error_row" hidden aria-live="polite"></p>
+            <p class="error_tip">地址可能拼错了，也可能页面已经搬走了。</p>
+        </div>
         <p><a class="back" href="/">主页</a></p>
     </main>
     <footer class="footer">
@@ -28,8 +36,6 @@
 		</div>
     </footer>
     </div>
-    <script>
-        document.querySelector("#error_a").textContent = decodeURI(window.location.href).split("?")[0];
-    </script>
+    <script src="/js/404.js"></script>
 </body>
 </html>

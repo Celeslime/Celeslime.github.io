@@ -38,6 +38,19 @@ export async function startServer(root) {
 				info = await stat(file).catch(() => null);
 			}
 			if (!info || !info.isFile()) {
+				/* 和 GitHub Pages 一样：页面导航落到 404.html，其它资源仍是纯文本 404 */
+				const wantsHtml = (req.headers.accept || "").includes("text/html");
+				const fallback = path.join(root, "404.html");
+				const fallbackInfo = wantsHtml ? await stat(fallback).catch(() => null) : null;
+				if (fallbackInfo && fallbackInfo.isFile()) {
+					res.writeHead(404, {
+						"Content-Type": "text/html; charset=utf-8",
+						"Content-Length": fallbackInfo.size,
+						"Cache-Control": "no-store"
+					});
+					createReadStream(fallback).pipe(res);
+					return;
+				}
 				res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" }).end("not found");
 				return;
 			}
