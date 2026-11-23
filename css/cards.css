@@ -80,6 +80,9 @@
 	text-overflow: ellipsis;
 }
 
+/* 徽章：分类标签（学习 / 游戏 / 玩具）。
+   不再有 ok / old / toy 一类修饰符 —— 分类只靠文字，颜色永远是主题色，
+   换配色或切深色都由 --accent* 自动跟随，不需要再补任何一套值 */
 .badge{
 	flex-shrink: 0;
 	font-size: 0.72rem;
@@ -87,27 +90,9 @@
 	border-radius: 999px;
 	font-weight: 600;
 	margin-top: 1px;
-}
-
-.badge.ok{
 	background: var(--accent-light);
 	color: var(--accent-dark);
 	border: 1px solid var(--border);
-}
-
-/* 次要徽章（旧版 / 玩具 / 未上线）：中性灰、无色相，
-   避免写死的蓝调在绿/粉主题下串色；亮度与卡片层级保持原有观感 */
-.badge.old,
-.badge.toy{
-	background: #f4f4f4;
-	color: #a2a2a2;
-	border: 1px solid var(--border);
-}
-
-html.dark .badge.old,
-html.dark .badge.toy{
-	background: #333333;
-	color: #acacac;
 }
 
 .tile_desc{
