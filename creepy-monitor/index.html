@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<title>隔墙有耳 · Creepy Monitor | CeleSlime</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<meta name="description" content="网易云的听歌排行只画条形图、不写次数。这个油猴脚本把次数补在条形后面，记住每天新听了多少，并在别人的主页上标一句「我听了 N 次」。"/>
+	<meta name="robots" content="index,follow">
+	<meta name="theme-color" content="#0e1a26">
+	<link rel="canonical" href="https://celeslime.github.io/creepy-monitor/">
+	<link rel="stylesheet" type="text/css" href="../css/base.css">
+	<link rel="stylesheet" type="text/css" href="../css/nav.css">
+	<link rel="stylesheet" type="text/css" href="../css/hero.css">
+	<link rel="stylesheet" type="text/css" href="../css/cards.css">
+	<link rel="stylesheet" type="text/css" href="../css/footer.css">
+	<link rel="stylesheet" type="text/css" href="../css/responsive.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="icon" href="../images/flower.p.min.svg" type="image/svg+xml">
+
+	<!-- Open Graph（QQ、抖音、小红书等社交分享卡片） -->
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content="Cele 的小站">
+	<meta property="og:title" content="隔墙有耳 · Creepy Monitor">
+	<meta property="og:description" content="给网易云听歌排行补上真实播放次数、今日增量与「我听了 N 次」。">
+	<meta property="og:url" content="https://celeslime.github.io/creepy-monitor/">
+	<meta property="og:image" content="https://celeslime.github.io/images/og-cover.png">
+	<meta property="og:locale" content="zh_CN">
+
+	<!-- Twitter / X Card -->
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="隔墙有耳 · Creepy Monitor">
+	<meta name="twitter:description" content="给网易云听歌排行补上真实播放次数、今日增量与「我听了 N 次」。">
+	<meta name="twitter:image" content="https://celeslime.github.io/images/og-cover.png">
+
+	<script src="../js/theme.js"></script>
+</head>
+<body id="top">
+
+	<nav class="nav">
+		<a class="nav-logo" href="../" title="主页">
+			<span class="flower-badge" role="img" aria-label="Cele 的小站"><span class="flower-mark"></span></span>
+			<span>Creepy Monitor</span>
+		</a>
+		<div class="nav-links">
+			<a class="home" href="../">主页</a>
+		</div>
+	</nav>
+
+	<header class="hero">
+		<div class="hero-inner">
+			<h1 id="name">隔墙有耳 · Creepy Monitor</h1>
+			<p id="slogan">给网易云的听歌排行，补上它记着、却没显示的数字</p>
+		</div>
+	</header>
+
+	<main class="container">
+
+		<section class="card-section">
+			<div class="section-head">
+				<h2 class="section-title">安装</h2>
+				<p class="section-sub">安装 <a href="https://www.tampermonkey.net/" target="_blank" rel="noopener">Tampermonkey</a>，选择下方版本，然后打开任意用户主页的「听歌排行」</p>
+			</div>
+			<div class="grid">
+				<a class="tile" href="https://raw.githubusercontent.com/Celeslime/creepy-monitor/master/creepy-monitor.user.js" target="_blank" rel="noopener">
+					<div class="tile-top">
+						<span class="tile_title">完整版</span>
+						<span class="badge">推荐</span>
+					</div>
+					<p class="tile_desc">次数、今日增量、我听了 N 次、页头新听、标尺锚定，全都要</p>
+					<p class="tile_story">一直在维护的那份，装这一个就够了</p>
+				</a>
+				<a class="tile" href="https://raw.githubusercontent.com/Celeslime/creepy-monitor/master/creepy-monitor-lite.user.js" target="_blank" rel="noopener">
+					<div class="tile-top">
+						<span class="tile_title">Lite</span>
+						<span class="badge">轻量</span>
+					</div>
+					<p class="tile_desc">只填次数，不做增量也不预取，标尺饱和时直接给百分比</p>
+					<p class="tile_story">代码量小得多，想要简洁可靠选这个</p>
+				</a>
+				<a class="tile" href="https://github.com/Celeslime/creepy-monitor" target="_blank" rel="noopener">
+					<div class="tile-top">
+						<span class="tile_title">项目地址</span>
+						<span class="badge">源码</span>
+					</div>
+					<p class="tile_desc">GitHub 仓库：两份脚本、README、更新记录都在这里</p>
+					<p class="tile_story">想读源码或自己改一版，从这里进</p>
+				</a>
+			</div>
+			<p class="page-note">
+				一键安装走 GitHub raw 链接；打不开就打开
+				<a href="https://github.com/Celeslime/creepy-monitor" target="_blank" rel="noopener">源码页</a>
+				复制全文，粘进 Tampermonkey 新建的脚本里保存。
+			</p>
+		</section>
+
+		<section class="card-section">
+			<div class="section-head">
+				<h2 class="section-title">会多出什么</h2>
+				<p class="section-sub">站点原有的文字一个字不动，新加的数字都能悬停看依据</p>
+			</div>
+			<div class="grid">
+				<div class="tile">
+					<div class="tile-top">
+						<span class="tile_title">46次</span>
+					</div>
+					<p class="tile_desc">真实播放次数：接口给的真值，或由条形宽度精确反解</p>
+				</div>
+				<div class="tile">
+					<div class="tile-top">
+						<span class="tile_title">46次 +3</span>
+					</div>
+					<p class="tile_desc">今天比昨天多听了 3 次，两个榜单标签页都会挂上</p>
+				</div>
+				<div class="tile">
+					<div class="tile-top">
+						<span class="tile_title">~138次</span>
+					</div>
+					<p class="tile_desc">快照把标尺锁进了窄区间，跨度超过 2 就压成区间，悬停给出依据</p>
+				</div>
+				<div class="tile">
+					<div class="tile-top">
+						<span class="tile_title">91%</span>
+					</div>
+					<p class="tile_desc">标尺太粗、附近凑不出唯一解时的诚实退化：只报占榜首的比例</p>
+				</div>
+				<div class="tile">
+					<div class="tile-top">
+						<span class="tile_title">我听了 N 次</span>
+					</div>
+					<p class="tile_desc">别人的主页上行尾的小字：这首歌你最近一周听过几次</p>
+				</div>
+				<div class="tile">
+					<div class="tile-top">
+						<span class="tile_title">页头 +2</span>
+					</div>
+					<p class="tile_desc">「累积听歌 3751 首」后面挂一个 +2：今天第一次听到的歌有几首</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="card-section">
+			<div class="section-head">
+				<h2 class="section-title">怎么算的</h2>
+				<p class="section-sub">三段逻辑各自独立，任何一段失效都会退到更保守的答案</p>
+			</div>
+			<div class="grid">
+				<div class="tile">
+					<div class="tile-top">
+						<span class="tile_title">走 <code>type=-1</code> 取真值</span>
+					</div>
+					<p class="tile_desc">网页自己用 <code>type=0</code> 和 <code>type=1</code>，这两条路径的 <code>playCount</code> 被服务端清成 0，页面上只剩一根光秃秃的条。<code>-1</code> 一次返回两份榜单，其中「所有时间」那份的次数是真的。</p>
+				</div>
+				<div class="tile">
+					<div class="tile-top">
+						<span class="tile_title">反解标尺 M</span>
+					</div>
+					<p class="tile_desc">周榜只给 <code>score</code>（条形宽度）。找最小的 <code>M</code>，让每个 <code>score</code> 都能被 <code>floor(100i/M)</code> 表达，每首歌几次就解出来了。</p>
+				</div>
+				<div class="tile">
+					<div class="tile-top">
+						<span class="tile_title">每日快照相减</span>
+					</div>
+					<p class="tile_desc">每天存一份榜单，两份相减就是今天又听了几次。7 天前的数据滑出窗口、算不清时，宁可空着，也不给假数。</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="card-section">
+			<div class="section-head">
+				<h2 class="section-title">边界</h2>
+				<p class="section-sub">写清楚它不管什么，省得你以为是它坏了</p>
+			</div>
+			<ul class="notes">
+				<li>只在经典版页面生效（存在 <code>#m-record</code> 的那种）；新版 Web 播放器结构不同，不工作。</li>
+				<li>每个 uid 一条排行请求，缓存几分钟；数据只写 localStorage，不发往任何外部地址。</li>
+				<li>次数可能比你记得的大：单曲循环放一夜，一首歌就能攒下几十上百次。数字是接口真值，脚本只做搬运，不做修正。</li>
+				<li>算不准就是算不准：「能解出来」不等于「解出来的是真的」，标尺饱和时它只肯给百分比。</li>
+			</ul>
+		</section>
+
+	</main>
+
+	<footer class="footer">
+		<div class="footer-line">
+		<svg class="footicon" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+		<span class="footname">@CeleSlime</span>
+		<svg class="footicon" fill="currentColor" viewBox="0 0 24 24"><path d="M21.395 15.035a40 40 0 0 0-.803-2.264l-1.079-2.695c.001-.032.014-.562.014-.836C19.526 4.632 17.351 0 12 0S4.474 4.632 4.474 9.241c0 .274.013.804.014.836l-1.08 2.695a39 39 0 0 0-.802 2.264c-1.021 3.283-.69 4.643-.438 4.673.54.065 2.103-2.472 2.103-2.472 0 1.469.756 3.387 2.394 4.771-.612.188-1.363.479-1.845.835-.434.32-.379.646-.301.778.343.578 5.883.369 7.482.189 1.6.18 7.14.389 7.483-.189.078-.132.132-.458-.301-.778-.483-.356-1.233-.646-1.846-.836 1.637-1.384 2.393-3.302 2.393-4.771 0 0 1.563 2.537 2.103 2.472.251-.03.581-1.39-.438-4.673"/></svg>
+		<span class="footname">@1575989756</span>
+		</div>
+	</footer>
+
+</body>
+</html>

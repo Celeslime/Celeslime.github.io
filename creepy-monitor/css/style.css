@@ -1,0 +1,51 @@
+/* ============================================================
+ * 隔墙有耳 · 子页专属样式
+ *
+ * 外壳（nav / hero / 卡片网格 / 页脚）全部复用 css/ 下的共享组件，
+ * 这里只补三样共享层没有的东西：卡片下的小字提示、边界清单、行内代码。
+ * 颜色一律走变量，深浅色与三种配色都不用单独再写一遍。
+ * ============================================================ */
+
+/* 卡片下的小字提示（安装说明）：比 .tile_desc 再弱一档 */
+.page-note{
+	margin: 14px 2px 0;
+	font-size: 0.84rem;
+	line-height: 1.75;
+	color: var(--text);
+	opacity: 0.62;
+}
+
+.page-note a,.section-sub a{
+	color: var(--accent-dark);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+/* 只有标题 + 说明的卡片：补回底部留白，和顶部内边距对齐
+   （cards.css 里的 10px 是给带 .tile_story 的卡片留的） */
+.tile > .tile_desc:last-child{
+	margin-bottom: 5px;
+}
+
+/* 边界清单：与正文同字号，靠行距和项目符号拉开层次 */
+.notes{
+	margin: 0 2px;
+	padding-left: 1.05em;
+	font-size: 0.86rem;
+	line-height: 1.75;
+	opacity: 0.8;
+}
+
+.notes li + li{
+	margin-top: 7px;
+}
+
+/* 行内代码：接口参数、类名这类东西用主色的极浅底压一层 */
+code{
+	padding: 1px 5px;
+	border-radius: 5px;
+	background: rgba(var(--accent-rgb), 0.1);
+	color: var(--accent-deep);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 0.88em;
+}

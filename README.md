@@ -24,6 +24,7 @@
 │   └── guestbook.js        留言板、访问统计、AI 回复展示
 ├── flower/               花朵生成器（独立页面 + FlowerGen 库 + avatar.svg iframe）
 ├── syw/ universe/ alpha_recon/ timer/    各小应用的静态产物
+├── creepy-monitor/       油猴脚本「隔墙有耳」的介绍页（脚本本身在另一个仓库）
 ├── images/               favicon 与 logo 用的单色 mask 花
 ├── tests/                零依赖的自检脚本（见下）
 └── .github/workflows/    推送到 master 后自动跑自检
@@ -32,7 +33,7 @@
 ## 设计上的几条约束
 
 1. **无构建**：所有文件都是最终产物，浏览器直接读；改动即上线。
-2. **样式按组件拆**：`css/main.css` 只是一串 `@import`，每个文件负责一块 UI；子页（flower / syw / universe / alpha_recon）复用同一套外壳。
+2. **样式按组件拆**：`css/main.css` 只是一串 `@import`，每个文件负责一块 UI；子页（flower / syw / universe / alpha_recon / creepy-monitor）复用同一套外壳。
 3. **颜色只走 token**：任何颜色都不写死在组件里，全部来自 `css/base.css` 的 `--accent*` / `--bg` / `--card` / `--border` / `--text*`，所以加一套配色只需要加一个 `html.<color>` 变量块。
 4. **JS 不设框架**：三个 IIFE 模块，按 `<script>` 顺序加载，`window.CeleTheme` 是唯一的跨模块接口。
 
