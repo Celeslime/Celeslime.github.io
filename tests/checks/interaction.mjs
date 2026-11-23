@@ -48,7 +48,7 @@ export default async function run({ env, check, wait }) {
 		}
 		check("Tab 移出菜单后收起", leftAt > 1 && !(await isOpen()), `第 ${leftAt} 次 Tab 离开`);
 
-		/* “关于 · 来路”折叠 */
+		/* “关于”折叠 */
 		const story = () =>
 			page.evaluate(`
 				const list = document.getElementById("story-timeline");

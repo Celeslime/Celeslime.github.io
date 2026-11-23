@@ -106,7 +106,7 @@
 
 		if (e.key === "ArrowDown") {
 			if (i < 0) {
-				/* 顶部 hero 区 -> 滚到第一个分区，不跳过 learning */
+				/* 顶部 hero 区 -> 滚到第一个分区，不跳过小应用 */
 				e.preventDefault();
 				sections[0].scrollIntoView({ behavior: "smooth", block: "start" });
 			} else if (i >= sections.length - 1) {
@@ -301,7 +301,7 @@
 	sync();
 })();
 
-/* 关于 · 来路：默认收起时间线，开关放在第一段（前言）末尾 */
+/* 关于：默认收起时间线，开关放在第一段（前言）末尾 */
 (function () {
 	"use strict";
 

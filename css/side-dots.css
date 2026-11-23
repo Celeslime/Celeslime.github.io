@@ -15,8 +15,8 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;      /* a 行靠右 → 圆点贴面板右内缘 */
-	gap: 18px;                  /* dot 上下间距 */
-	padding: 20px 10px 20px 0;  /* 右 10px 内边距；左侧文字区由 a 提供 */
+	/* gap: 18px;                  dot 上下间距 */
+	padding: 16px 10px 16px 0;  /* 右 10px 内边距；左侧文字区由 a 提供 */
 	width: 32px;                /* 收起态：只包住圆点列 */
 	overflow: hidden;           /* 收起时把左侧文字区裁掉 */
 	border: 1px solid transparent;
@@ -43,9 +43,8 @@
 	display: flex;
 	align-items: center;
 	flex-direction: row-reverse;    /* 圆点(::before)在右，文本(::after)在左 */
-	gap: 12px;
 	width: 162px;                   /* = rail content 宽（174 - 边框2 - padding右10），圆点落回 padding 内 */
-	height: 10px;                   /* = 圆点盒 */
+	height: 28px;                   /* = 圆点盒 */
 	padding-left: 14px;             /* 文本左缘留白 */
 	box-sizing: border-box;
 	outline: none;                  /* 禁止焦点 */

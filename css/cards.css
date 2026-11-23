@@ -5,29 +5,30 @@
 	scroll-margin-top: 72px;
 }
 
-.anchor{
-	display: block;
-	scroll-margin-top: 72px;
-}
-
+/* 分区头：标题和说明排在同一行、紧挨着，把右侧留白还给底纹。
+   不画横线——整页底纹是花线 + 刻度字，横线穿过去会和它打架 */
 .section-head{
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 6px 16px;
 	margin-bottom: 20px;
 }
 
 .section-title{
-	margin: 0 0 6px;
-	font-size: 1.2rem;
+	margin: 0;
+	font-size: 1.22rem;
+	font-weight: 600;
 	color: var(--accent-deep);
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	letter-spacing: 1px;
+	letter-spacing: 0.06em;
 }
 
 .section-sub{
 	margin: 0;
-	font-size: 0.86rem;
+	font-size: 0.84rem;
+	color: var(--text);
 	opacity: 0.7;
+	letter-spacing: 0.02em;
 }
 
 /* ---------- 卡片网格 ---------- */
@@ -126,6 +127,19 @@ html.dark .badge.toy{
 }
 
 .tile_story::before{
+	content: "✦ ";
+	opacity: 0.8;
+}
+
+/* 没上线的两个项目：只留一行名字，不做卡片，也不抢卡片的注意力 */
+.apps-wip{
+	margin: 16px 2px 0;
+	font-size: 0.82rem;
+	color: var(--text);
+	opacity: 0.55;
+}
+
+.apps-wip::before{
 	content: "✦ ";
 	opacity: 0.8;
 }
