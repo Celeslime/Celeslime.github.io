@@ -144,8 +144,18 @@ html.dark.pink{
 	box-sizing: border-box;
 }
 
+/* 声明页面的配色方案。不写的话浏览器一律按浅色方案处理 UA 部件：
+   深色模式下原生滚动条、表单控件，以及"自动填充"输入框的底色都会沿用
+   浅色那一套（#E8F0FE），在近黑卡片上非常刺眼，而且切到深色时那块颜色
+   不会跟着变。声明之后浏览器改用深色变体（rgba(70,90,126,.4)），
+   两者随 html.dark 一起切换。 */
 html{
 	background: var(--bg);
+	color-scheme: light;
+}
+
+html.dark{
+	color-scheme: dark;
 }
 
 body{

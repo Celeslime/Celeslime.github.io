@@ -246,6 +246,19 @@
 	outline: none;
 }
 
+/* 浏览器自动填充（Chrome / Edge / Safari）：底色由 UA 用 !important 写死，
+   作者样式盖不掉，硬盖（内阴影）还会在圆角抗锯齿处漏出 1px 白边。
+   底色的深浅交给 base.css 里的 color-scheme —— 声明它之后浏览器会自己
+   按浅色 / 深色挑对应的一套，切主题时也跟着换，不需要这里再插手。
+   这里只把文字和光标拉回站点自己的文字色（UA 默认给的是纯白 / 纯黑，
+   跟 --text-strong 差一档，看着比正文更亮）。注意 color 对自动填充无效，
+   真正生效的是 -webkit-text-fill-color。 */
+.gb-form input#gb-name:-webkit-autofill,
+.gb-form textarea:-webkit-autofill{
+	-webkit-text-fill-color: var(--text-strong);
+	caret-color: var(--text-strong);
+}
+
 /* 底部操作行：字数靠左、发布按钮靠右 */
 .gb-btn-wrap{
 	display: flex;
