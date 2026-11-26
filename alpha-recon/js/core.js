@@ -1,5 +1,5 @@
 /**
- * alpha_recon core — 统一入口，聚合 math/color/browser
+ * alpha-recon core — 统一入口，聚合 math/color/browser
  * 浏览器环境：依次加载 math.js -> color.js -> browser.js -> core.js
  * Node 环境：require('./math') 等自动加载
  */

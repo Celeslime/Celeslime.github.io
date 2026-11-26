@@ -5,16 +5,28 @@
  * 整页（含 hero / container / 两侧）透明度一致，无需在内容区各自叠加。
  *
  * 纹理由 --flower-img 决定，遮罩颜色取自 --bg-rgb，所以深浅色 /
- * 三种配色都不需要单独写一遍。
+ * 四套配色都不需要单独写一遍。
  *
  * 这张图不存文件：js/theme.js 用 flower/js/flower.js（留言板头像用的
  * 同一个生成器）在运行时按当前 accent 画一张 2048px 的 SVG，做成 blob
  * URL 写进 --flower-img。所以 CSS 里默认是 none，等 JS 来填。
+ *
+ * 层次感：JS 还会把同一张图再做一份"烘焙了高斯模糊"的版本写进
+ * --flower-shadow-img，作为紧挨在花下面的一层。因为两张图共用同一套
+ * 位置 / 尺寸变量，投影和花严丝合缝地重叠，不需要额外的定位参数。
  * ============================================================ */
 :root{
 	/* 标记主页启用了花朵纹理：js/theme.js 据此决定要不要去生成 */
 	--flower-enabled: 1;
+	/* 压在花上的底色遮罩浓度：默认 0.7，花只透出 30%。黑色配色深色模式
+	   要白线稿，配色里会把这条降到 0.55（见 css/base.css html.dark.black）。 */
+	--flower-veil: 0.7;
 	--flower-img: none;
+	/* 同一张花再画一份、烘焙了高斯模糊的"投影"，压在花下面做层次 */
+	--flower-shadow-img: none;
+	/* 投影相对花的偏移：0 就是完全重合；想更接近真实投影可以挪 20~40px */
+	--flower-shadow-dx: 0px;
+	--flower-shadow-dy: 0px;
 	--flower-size: 1680px;
 	/* 中心对齐右上角：水平右移半张图、垂直上移半张图 */
 	--flower-shift: 800px;
@@ -23,8 +35,9 @@
 
 body{
 	background:
-		linear-gradient(rgba(var(--bg-rgb), 0.7), rgba(var(--bg-rgb), 0.7)),
+		linear-gradient(rgba(var(--bg-rgb), var(--flower-veil)), rgba(var(--bg-rgb), var(--flower-veil))),
 		var(--flower-img) no-repeat calc(100% + var(--flower-shift)) var(--flower-offset) / var(--flower-size) var(--flower-size),
+		var(--flower-shadow-img) no-repeat calc(100% + var(--flower-shift) + var(--flower-shadow-dx)) calc(var(--flower-offset) + var(--flower-shadow-dy)) / var(--flower-size) var(--flower-size),
 		var(--bg);
 }
 

@@ -1,4 +1,4 @@
-# alpha_recon — 灰度叠色反推（前景色 + Alpha）
+# alpha-recon — 灰度叠色反推（前景色 + Alpha）
 
 根据两张图片，按以下流程逐像素反推原始前景灰度与 Alpha，并输出合成图：
 
@@ -37,7 +37,7 @@ python tests/test_derive.py
 ```
 
 ### 网页版（纯前端，无依赖）
-直接打开 `index.html`（或部署到 GitHub Pages 访问 `https://celeslime.github.io/alpha_recon/`）：
+直接打开 `index.html`（或部署到 GitHub Pages 访问 `https://celeslime.github.io/alpha-recon/`）：
 - 拖入/点击选择两张图（图1=叠黑观察、图2=叠白观察）
 - 自动统一尺寸、计算映射、反推前景+Alpha
 - 右侧预览可在 **棋盘格 / 黑底 / 白底** 间切换

@@ -1,5 +1,5 @@
 /**
- * alpha_recon browser — 浏览器专用（Canvas/ImageData）
+ * alpha-recon browser — 浏览器专用（Canvas/ImageData）
  * 依赖 ARMath 和 ARColor
  */
 

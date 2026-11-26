@@ -1,5 +1,5 @@
 /**
- * alpha_recon color — 色相/色彩空间转换（Node/浏览器通用）
+ * alpha-recon color — 色相/色彩空间转换（Node/浏览器通用）
  * 无任何 DOM/Canvas 依赖
  */
 

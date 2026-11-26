@@ -1,5 +1,5 @@
 /**
- * alpha_recon app.js — UI 控制器
+ * alpha-recon app.js — UI 控制器
  * 依赖全局 ARCore（core.js）
  */
 

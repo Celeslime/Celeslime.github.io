@@ -26,3 +26,10 @@
 	border-color: var(--accent);
 }
 
+/* 曜石黑：hover 直接黑白对调，比浅灰底更符合这套配色的性格 */
+html.black .tag:hover{
+	background: var(--accent);
+	border-color: var(--accent);
+	color: var(--bg);
+}
+

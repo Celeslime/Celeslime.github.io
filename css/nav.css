@@ -33,6 +33,8 @@
 	font-weight: 700;
 	font-size: 1.05rem;
 	color: var(--accent-deep);
+	border-radius: 99px;
+    padding-right: 8px;
 }
 
 /* 花朵徽章：白底圆 + 描边在容器上，内部 .flower-mark 只负责花朵图案，

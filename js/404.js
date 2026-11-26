@@ -4,7 +4,7 @@
  *
  *   - 只提示，不自动跳转（是否离开当前页交给用户决定）
  *   - 大小写 / 末尾斜杠不同 → 视为几乎确定
- *   - 拼写接近、只输了路径前半截（如 /alpha → /alpha_recon）→ 给出建议
+ *   - 拼写接近、只输了路径前半截（如 /alpha → /alpha-recon）→ 给出建议
  *   - 只是"在某个已知目录里打错子路径" → 提示回目录
  *   - 差太远 → 什么都不猜，保留原来的 404 提示
  *
@@ -75,10 +75,10 @@
 		/* 请求的是已知目录下面的子路径：提示回目录 */
 		if (candidate !== "/" && a.indexOf(b + "/") === 0) return 0.75;
 
-		/* 只输了路径的前半截，例如 /alpha → /alpha_recon */
+		/* 只输了路径的前半截，例如 /alpha → /alpha-recon */
 		if (a.length >= 3 && b.indexOf(a) === 0) return 0.8;
 
-		/* 路径整体拼不出来，但末端名字能对上：/recon → /alpha_recon */
+		/* 路径整体拼不出来，但末端名字能对上：/recon → /alpha-recon */
 		var segA = a.slice(a.lastIndexOf("/") + 1);
 		var segB = b.slice(b.lastIndexOf("/") + 1);
 		if (segA && segB) {

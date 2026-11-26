@@ -1,7 +1,7 @@
 # 站点自检脚本
 
 纯 Node 写的一组检查，零 npm 依赖，直接对着真实页面跑（自己起静态服务 + headless Chrome + CDP）。
-目的是把「改完得手动点一遍」的东西固化下来：瀑布流布局、主题六套配色、毛玻璃一致性、菜单与折叠交互。
+目的是把「改完得手动点一遍」的东西固化下来：瀑布流布局、主题八套配色、毛玻璃一致性、菜单与折叠交互。
 
 ```bash
 node tests/run.mjs                    # 全部
@@ -34,7 +34,7 @@ npx playwright install --with-deps chromium
 | `lib/chrome.mjs` | 找 Chrome 并以 headless + CDP 端口启动 |
 | `lib/harness.mjs` | 页面封装：`load()` / `evaluate()` / `setViewport()` / `send()`，并 mock 留言与访问量接口 |
 | `checks/guestbook.mjs` | 7 个宽度下的瀑布流不变量、时间倒序、昵称→头像预览、表单高度 |
-| `checks/theme.mjs` | 默认值、6 套配色、meta theme-color、三处毛玻璃同款、花朵背景跟着配色生成、子页面 |
+| `checks/theme.mjs` | 默认值、8 套配色、meta theme-color、三处毛玻璃同款、花朵背景跟着配色生成、子页面 |
 | `checks/interaction.mjs` | 主题面板开合（点击 / 空白 / Esc / Tab 移出）、`#story` 折叠、日期胶囊与圆点对齐 |
 | `checks/notfound.mjs` | 404 页在子路径下的资源加载、按 sitemap 猜目标（拼写错误 / 路径前缀 / 目录）、只提示不跳转 |
 | `fixtures/*.json` | 留言接口的假数据 |

@@ -1,5 +1,5 @@
 /**
- * alpha_recon math — 纯数学函数（Node/浏览器通用）
+ * alpha-recon math — 纯数学函数（Node/浏览器通用）
  * 无任何 DOM/Canvas 依赖
  */
 

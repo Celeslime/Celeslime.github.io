@@ -1,12 +1,13 @@
 /* ============================================================
  * 设计变量 —— 三层结构
  *
- *   强调色 --accent*      主题色。配色切换（海盐蓝 / 青提绿 / 玫瑰粉）只覆盖这一组
+ *   强调色 --accent*      主题色。配色切换（海盐蓝 / 青提绿 / 玫瑰粉 / 曜石黑）只覆盖这一组
  *   中性色 --bg --card --border --text --text-strong   页面底 / 卡片 / 描边 / 文字
  *   派生   --shadow-* --nav-bg                          由上面两组算出，配色无需重写
  *
- * <html> 上的 class：dark = 深色，green / pink = 配色，两者正交，
- * 因此共六块：:root / html.green / html.pink / html.dark / html.dark.green / html.dark.pink
+ * <html> 上的 class：dark = 深色，green / pink / black = 配色，两者正交，
+ * 因此共八块：:root / html.green / html.pink / html.black /
+ *            html.dark / html.dark.green / html.dark.pink / html.dark.black
  * ============================================================ */
 
 /* 海盐蓝（默认）：主色取自头像花朵 #4696d2 */
@@ -73,6 +74,26 @@ html.pink{
 	--text-strong: #38202b;
 }
 
+/* 曜石黑：不是把整站拉灰，而是用黑白两级做对比——
+   主色压到接近纯黑，背景留白，浅色模式下读起来像纸上的墨线；
+   深色模式再把主色翻成接近纯白，形成黑纸白线的反转。
+   中间灰只留给正文和次要信息，不再让徽章、花朵也一起灰掉。 */
+html.black{
+	--accent: #17181c;
+	--accent-dark: #0d0e11;
+	--accent-deep: #050506;
+	--accent-light: #e7e8ea;
+	--accent-soft: #f3f3f4;
+	--accent-rgb: 23, 24, 28;
+
+	--bg: #f3f3f4;
+	--bg-rgb: 243, 243, 244;
+	--card: #ffffff;
+	--border: #d9dade;
+	--text: #46484e;
+	--text-strong: #141518;
+}
+
 /* 深色（默认海盐蓝）：底色统一压到近黑，不再带明显的色调 */
 html.dark{
 	--accent: #63aadd;
@@ -127,6 +148,26 @@ html.dark.pink{
 	--text-strong: #e6d2d8;
 }
 
+/* 深色 + 曜石黑：底色几乎纯黑，主色反过来用近白，保证实心按钮上压深色字 */
+html.dark.black{
+	--accent: #e8e9ec;
+	--accent-dark: #f5f6f7;
+	--accent-deep: #ffffff;
+	--accent-light: #242529;
+	--accent-soft: #191a1d;
+	--accent-rgb: 232, 233, 236;
+
+	--bg: #070708;
+	--bg-rgb: 7, 7, 8;
+	--card: #111113;
+	--border: #28282c;
+	--text: #b0b1b6;
+	--text-strong: #f0f0f2;
+
+	/* 白花要真的像白线，就得把底色遮罩让开一点；其它配色仍是 0.7 */
+	--flower-veil: 0.55;
+}
+
 /* 主题色花朵图案（导航 logo / 首页头像）。
    用 SVG 的 alpha 通道作遮罩、填充当前主题色：换色精确（就是 --accent 本身，
    深浅色各自取对应值），边框 / 白底 / 阴影都在外层容器上，不会被一起改色；
@@ -138,6 +179,15 @@ html.dark.pink{
 	background-color: var(--accent);
 	-webkit-mask: url("../images/flower.p.min.svg") center / contain no-repeat;
 	mask: url("../images/flower.p.min.svg") center / contain no-repeat;
+}
+
+/* 黑配色头像：回到原来的七瓣填充花瓣，只把颜色压到 #000 / #FFF 两端 */
+html.black .profile-badge .flower-mark{
+	background-color: #000;
+}
+
+html.dark.black .profile-badge .flower-mark{
+	background-color: #fff;
 }
 
 *{

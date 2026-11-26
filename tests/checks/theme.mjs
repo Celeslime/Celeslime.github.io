@@ -1,4 +1,4 @@
-/* 主题：默认值 / 持久化 / 六套配色 / 三处毛玻璃一致 / 花朵背景跟着配色走 / 子页面。
+/* 主题：默认值 / 持久化 / 八套配色 / 三处毛玻璃一致 / 花朵背景跟着配色走 / 子页面。
  * 断言值就是 css/base.css 里的设计 token，改配色时记得同步这里。 */
 export const title = "主题与毛玻璃";
 
@@ -6,22 +6,35 @@ const ACCENT = {
 	"light-blue": "#4696d2",
 	"light-green": "#0ea472",
 	"light-pink": "#d24673",
+	"light-black": "#17181c",
 	"dark-blue": "#63aadd",
 	"dark-green": "#34d399",
-	"dark-pink": "#e2608a"
+	"dark-pink": "#e2608a",
+	"dark-black": "#e8e9ec"
 };
 
 const THEME_COLOR = {
 	"light-blue": "#f7fafc",
 	"light-green": "#f7fdfa",
 	"light-pink": "#fdf7f9",
+	"light-black": "#f3f3f4",
 	"dark-blue": "#0d151d",
 	"dark-green": "#06120e",
-	"dark-pink": "#150a0f"
+	"dark-pink": "#150a0f",
+	"dark-black": "#070708"
 };
 
-/* 背景花朵只按"配色"生成一张（浅色版 accent），深浅模式共用同一张 */
-const FLOWER_ACCENT = { green: "#0ea472", pink: "#d24673" };
+/* 背景花朵：蓝 / 绿 / 粉深浅共用一张，黑配色浅色墨线、深色白线稿各一张 */
+const FLOWER_ACCENT = {
+	green: "#0ea472",
+	pink: "#d24673",
+	black: { light: "#17181c", dark: "#f5f6f7" }
+};
+
+const flowerAccent = (color, mode) => {
+	const accent = FLOWER_ACCENT[color];
+	return accent && typeof accent === "object" ? accent[mode] : accent;
+};
 
 const state = (page) =>
 	page.evaluate(`
@@ -37,6 +50,7 @@ const state = (page) =>
 			dark: html.classList.contains("dark"),
 			green: html.classList.contains("green"),
 			pink: html.classList.contains("pink"),
+			black: html.classList.contains("black"),
 			mode: html.getAttribute("data-mode"),
 			color: html.getAttribute("data-color"),
 			accent: getComputedStyle(html).getPropertyValue("--accent").trim(),
@@ -69,6 +83,27 @@ const flowerText = (page) =>
 		return { href, text };
 	`);
 
+/* 花的投影：同一张 SVG 被包进带 feGaussianBlur 的 <g>，压在花下面 */
+const flowerShadowText = (page) =>
+	page.evaluate(`
+		const raw = getComputedStyle(document.body).getPropertyValue("--flower-shadow-img").trim();
+		const m = /url\\("?([^")]+)"?\\)/.exec(raw);
+		const href = m ? m[1] : "";
+		const text = href.startsWith("blob:") ? await (await fetch(href)).text() : "";
+		return { href, text };
+	`);
+
+/* 头像：黑配色换成线稿遮罩，颜色直接取纯黑 / 纯白 */
+const avatarStyle = (page) =>
+	page.evaluate(`
+		const el = document.querySelector("#profile .flower-mark");
+		const cs = el ? getComputedStyle(el) : null;
+		return {
+			bg: cs ? cs.backgroundColor : "no-avatar",
+			mask: cs ? (cs.maskImage || cs.webkitMaskImage || "") : ""
+		};
+	`);
+
 export default async function run({ env, check, wait }) {
 	const page = await env.openPage();
 	const load = (pathname, storage) => page.load(pathname, storage);
@@ -78,7 +113,7 @@ export default async function run({ env, check, wait }) {
 		await load("/index.html", {});
 		let s = await state(page);
 		check("默认 mode=system", s.mode === "system", s.mode);
-		check("默认 color=blue", !s.green && !s.pink, String(s.color));
+		check("默认 color=blue", !s.green && !s.pink && !s.black, String(s.color));
 		check("面板默认收起", !s.panelVisible && !s.open);
 		check(
 			"nav 毛玻璃在 ::before 上（否则会形成 backdrop root，面板采样不到页面）",
@@ -95,13 +130,19 @@ export default async function run({ env, check, wait }) {
 		check("右侧目录收起时无模糊", s.railFilter === "none", s.railFilter);
 		check("两组标签：模式 / 配色", s.legend.join("/") === "模式/配色", s.legend.join("/"));
 
-		/* 2. 六套组合：class / data 属性 / 选中态 / meta / accent / 花朵背景 */
+		/* 2. 八套组合：class / data 属性 / 选中态 / meta / accent / 花朵背景 */
 		for (const mode of ["light", "dark"]) {
-			for (const color of ["blue", "green", "pink"]) {
+			for (const color of ["blue", "green", "pink", "black"]) {
 				const key = `${mode}-${color}`;
 				await load("/index.html", { theme: mode, "theme-color": color });
 				s = await state(page);
-				check(`${key}: html 类`, s.dark === (mode === "dark") && s.green === (color === "green") && s.pink === (color === "pink"));
+				check(
+					`${key}: html 类`,
+					s.dark === (mode === "dark") &&
+						s.green === (color === "green") &&
+						s.pink === (color === "pink") &&
+						s.black === (color === "black")
+				);
 				check(`${key}: data-mode/data-color`, s.mode === mode && s.color === color, `${s.mode}/${s.color}`);
 				check(`${key}: 选中态`, s.active.join(",") === `${mode},${color}`, s.active.join(","));
 				check(`${key}: aria-checked=2`, s.checked === 2, String(s.checked));
@@ -111,8 +152,9 @@ export default async function run({ env, check, wait }) {
 
 				const flower = await flowerText(page);
 				check(`${key}: 花朵背景是运行时生成的 blob`, flower.href.startsWith("blob:"), flower.href.slice(0, 24));
-				const hits = (flower.text.match(new RegExp(FLOWER_ACCENT[color], "gi")) || []).length;
-				check(`${key}: 花朵用该配色上色`, hits > 300, hits + " 处 " + FLOWER_ACCENT[color]);
+				const accent = flowerAccent(color, mode);
+				const hits = (flower.text.match(new RegExp(accent, "gi")) || []).length;
+				check(`${key}: 花朵用该配色上色`, hits > 300, hits + " 处 " + accent);
 				check(
 					`${key}: 花瓣路径数与 flower.min.svg 一致（301）`,
 					(flower.text.match(/<path/g) || []).length === 301,
@@ -120,6 +162,26 @@ export default async function run({ env, check, wait }) {
 				);
 				if (color !== "blue") check(`${key}: 没有残留海盐蓝`, !/#4696d2/i.test(flower.text));
 				if (color === "blue") check(`${key}: 不再请求 images/flower.min.svg`, !/flower\.min\.svg/.test(flower.href));
+
+				const shadow = await flowerShadowText(page);
+				check(`${key}: 花朵投影是运行时生成的 blob`, shadow.href.startsWith("blob:"), shadow.href.slice(0, 24));
+				check(`${key}: 投影带高斯模糊`, /<feGaussianBlur\b/.test(shadow.text), shadow.text.slice(0, 40));
+				check(
+					`${key}: 投影与花共用同一朵花（301 条花瓣路径）`,
+					(shadow.text.match(/<path/g) || []).length === 301,
+					String((shadow.text.match(/<path/g) || []).length)
+				);
+				check(`${key}: 投影只留线（填充 0）`, /fill-opacity="0"/i.test(shadow.text), shadow.text.slice(0, 80));
+				check(`${key}: 投影不带文字标签`, !/<text/i.test(shadow.text));
+				if (color === "black") {
+					/* 深色下是白花，投影也跟着变白；只保留 20% alpha，避免发光 */
+					const shadowAccent = mode === "dark" ? "#f5f6f7" : "#17181c";
+					check(
+						`${key}: 投影跟花同色`,
+						new RegExp(shadowAccent, "i").test(shadow.text),
+						shadow.text.slice(0, 60)
+					);
+				}
 			}
 		}
 
@@ -152,8 +214,35 @@ export default async function run({ env, check, wait }) {
 		await page.evaluate(`document.querySelector('.theme-seg[data-color="pink"]').click(); return 1;`);
 		await wait(250);
 		s = await state(page);
-		check("切粉色后只剩 pink 类", s.pink && !s.green);
+		check("切粉色后只剩 pink 类", s.pink && !s.green && !s.black);
 		check("切粉色后持久化", s.stored.join(",") === "dark,pink", s.stored.join(","));
+
+		/* 黑配色的花按深浅分两张：切模式后必须换成另一张，不能继续挂缓存 */
+		await load("/index.html", { theme: "light", "theme-color": "black" });
+		const blackLightFlower = await flowerText(page);
+		check("黑配色浅色花朵是墨线", /#17181c/i.test(blackLightFlower.text), blackLightFlower.text.slice(0, 60));
+		const lightAvatar = await avatarStyle(page);
+		check(
+			"黑配色浅色头像用纯黑",
+			lightAvatar.bg === "rgb(0, 0, 0)" && /flower\.p\.min\.svg/.test(lightAvatar.mask),
+			`${lightAvatar.bg} ${lightAvatar.mask}`
+		);
+		await page.evaluate(`document.getElementById("theme-trigger").click(); return 1;`);
+		await wait(200);
+		await page.evaluate(`document.querySelector('.theme-seg[data-theme="dark"]').click(); return 1;`);
+		await wait(300);
+		const blackDarkFlower = await flowerText(page);
+		check(
+			"黑配色切深色后花朵换成白线稿",
+			/#f5f6f7/i.test(blackDarkFlower.text) && !/#17181c/i.test(blackDarkFlower.text),
+			blackDarkFlower.text.slice(0, 60)
+		);
+		const darkAvatar = await avatarStyle(page);
+		check(
+			"黑配色深色头像用纯白",
+			darkAvatar.bg === "rgb(255, 255, 255)" && /flower\.p\.min\.svg/.test(darkAvatar.mask),
+			`${darkAvatar.bg} ${darkAvatar.mask}`
+		);
 
 		await page.evaluate(`document.getElementById("theme-trigger").click(); document.body.click(); return 1;`);
 		await wait(250);

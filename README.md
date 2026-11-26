@@ -23,7 +23,7 @@
 │   ├── main.js             导航、滚动、侧边目录、主题菜单 UI、时间线折叠
 │   └── guestbook.js        留言板、访问统计、AI 回复展示
 ├── flower/               花朵生成器（独立页面 + FlowerGen 库 + avatar.svg iframe）
-├── syw/ universe/ alpha_recon/ timer/    各小应用的静态产物
+├── syw/ universe/ alpha-recon/ timer/    各小应用的静态产物
 ├── creepy-monitor/       油猴脚本「隔墙有耳」的介绍页（脚本本身在另一个仓库）
 ├── images/               favicon 与 logo 用的单色 mask 花
 ├── tests/                零依赖的自检脚本（见下）
@@ -33,7 +33,7 @@
 ## 设计上的几条约束
 
 1. **无构建**：所有文件都是最终产物，浏览器直接读；改动即上线。
-2. **样式按组件拆**：`css/main.css` 只是一串 `@import`，每个文件负责一块 UI；子页（flower / syw / universe / alpha_recon / creepy-monitor）复用同一套外壳。
+2. **样式按组件拆**：`css/main.css` 只是一串 `@import`，每个文件负责一块 UI；子页（flower / syw / universe / alpha-recon / creepy-monitor）复用同一套外壳。
 3. **颜色只走 token**：任何颜色都不写死在组件里，全部来自 `css/base.css` 的 `--accent*` / `--bg` / `--card` / `--border` / `--text*`，所以加一套配色只需要加一个 `html.<color>` 变量块。
 4. **JS 不设框架**：三个 IIFE 模块，按 `<script>` 顺序加载，`window.CeleTheme` 是唯一的跨模块接口。
 
@@ -46,9 +46,9 @@
 | key | 取值 | 说明 |
 | --- | --- | --- |
 | `theme` | `light` / `dark` / `system` | 模式，`system` 跟随 `prefers-color-scheme` |
-| `theme-color` | `blue` / `green` / `pink` | 配色 |
+| `theme-color` | `blue` / `green` / `pink` / `black` | 配色 |
 
-它把状态同时写到 DOM 上：`html.dark` / `html.green` / `html.pink` 三个类负责样式，
+它把状态同时写到 DOM 上：`html.dark` / `html.green` / `html.pink` / `html.black` 四个类负责样式，
 `data-mode` / `data-color` 供脚本和测试读取，并顺手更新 `<meta name="theme-color">`（移动端状态栏颜色）。
 
 对外接口是 `window.CeleTheme`：
@@ -69,14 +69,18 @@ CeleTheme.onChange(fn);    // 返回取消订阅的函数
 
 ### 变量分层
 
-`css/base.css` 里每套配色只有六块（`:root` 蓝浅、`html.green`、`html.pink`、`html.dark`、`html.dark.green`、`html.dark.pink`）：
+`css/base.css` 里每套配色只有八块（`:root` 蓝浅、`html.green`、`html.pink`、`html.black`、`html.dark`、`html.dark.green`、`html.dark.pink`、`html.dark.black`）：
 
 - **强调色**：`--accent` / `--accent-dark` / `--accent-deep` / `--accent-light` / `--accent-soft` / `--accent-rgb`
 - **中性色**：`--bg` / `--bg-rgb` / `--card` / `--border` / `--text` / `--text-strong`
 - **派生值**：`--shadow-out` / `--shadow-hover` / `--nav-bg` / `--glass-*`
 
 `--accent-light`、`--accent-dark` 这类"浅底 + 同级深字"的组合是按对比度挑的（徽章、日期胶囊等），
-三套配色的 L\* 与对比度都刻意对齐过，换配色不会出现某套看不清的情况。
+四套配色的 L\* 与对比度都刻意对齐过，换配色不会出现某套看不清的情况。
+其中「曜石黑」是无彩色，但做的不是"把整站去色"，而是黑白两级对比：浅色模式主色压到近黑
+（`#17181c`），深色模式翻成近白（`#e8e9ec`），中间灰只留给正文和次要信息；徽章改成实心小牌，
+标签 hover 直接黑白对调。背景花也跟着模式换：浅色下是墨线，深色下是白色线稿
+（见 `js/theme.js` 的 `FLOWER_ACCENT.black`），投影固定压黑，避免深色下白花下面又发一圈光。
 
 ### 毛玻璃
 
@@ -94,6 +98,13 @@ CeleTheme.onChange(fn);    // 返回取消订阅的函数
 背景花朵不存图片：`js/theme.js` 调用 `flower/js/flower.js`（留言板头像用的同一个生成器）在运行时
 按当前 accent 画一张 2048px 的 SVG，做成 Blob URL 写进 `--flower-img`。
 主页本来就加载了那个文件，所以这部分**零额外字节**——早先三份各 62KB 的换色 SVG 已经删掉。
+
+同一张花还会再画一份**黑色的**、把内容包进带 `feGaussianBlur` 的 `<g>` 里烘焙成 SVG，写进
+`--flower-shadow-img`，作为紧挨在花下面的一层背景（`blur` 约 32px，位置 / 尺寸和花共用变量）。
+用黑色而不是配色本身：同色重影只会让花更「实」，黑色才会在花下面压出暗部。
+CSS 无法只模糊背景中的某一层，所以模糊必须烘进图里；这样投影和花始终像素级对齐，
+换配色、深浅色、移动端缩放都不用额外处理。想让它更像真实投影，
+把 `css/page.css` 里的 `--flower-shadow-dx` / `--flower-shadow-dy` 挪个 20~40px 即可。
 
 ## 留言板
 
@@ -142,7 +153,7 @@ CHROME_PATH=/path/to/chrome node tests/run.mjs   # 指定浏览器
 | 模块 | 内容 |
 | --- | --- |
 | `guestbook` | 7 个宽度下的列数、卡片不重叠、最新在左上、DOM 顺序、昵称→头像预览 |
-| `theme` | 六套配色的类 / 属性 / 选中态 / meta / 持久化、毛玻璃一致性、右键目录展开、菜单交互、子页继承、花朵生成 |
+| `theme` | 八套配色的类 / 属性 / 选中态 / meta / 持久化、毛玻璃一致性、右键目录展开、菜单交互、子页继承、花朵生成 |
 | `interaction` | 菜单开合与 Esc / Tab 移出、时间线折叠、日期与圆点对齐 |
 
 推送 master 后 `.github/workflows/checks.yml` 会在 CI 里再跑一遍。

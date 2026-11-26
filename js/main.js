@@ -207,7 +207,7 @@
 	var colorSegs = Array.prototype.slice.call(menu.querySelectorAll(".theme-seg[data-color]"));
 
 	var MODE_TEXT = { light: "浅色", dark: "深色", system: "跟随系统" };
-	var COLOR_TEXT = { blue: "海盐蓝", green: "青提绿", pink: "玫瑰粉" };
+	var COLOR_TEXT = { blue: "海盐蓝", green: "青提绿", pink: "玫瑰粉", black: "曜石黑" };
 
 	/* 桌面端滑过即开、移开即关；触屏（无 hover）只走点击 */
 	var canHover = !!window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;

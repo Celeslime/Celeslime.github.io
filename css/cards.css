@@ -95,6 +95,14 @@
 	border: 1px solid var(--border);
 }
 
+/* 曜石黑：徽章直接做成实心黑白小牌。浅色下黑底白字、深色下白底黑字，
+   不再用浅灰底浅灰字——那种搭配整页看过去就像被统一降了饱和度。 */
+html.black .badge{
+	background: var(--accent);
+	border-color: var(--accent);
+	color: var(--bg);
+}
+
 .tile_desc{
 	margin: 0;
 	font-size: 0.88rem;

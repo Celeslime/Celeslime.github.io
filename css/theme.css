@@ -91,7 +91,7 @@ html.dark .theme-moon{ display: block; }
 }
 
 /* 分段控件：浅色轨道 + 选中项实心主色。
-   轨道用主色 10% 透明叠加，深浅色 / 三种配色都自动跟随，不用单独写 */
+   轨道用主色 10% 透明叠加，深浅色 / 四套配色都自动跟随，不用单独写 */
 .theme-segmented{
 	display: flex;
 	gap: 4px;
@@ -99,6 +99,13 @@ html.dark .theme-moon{ display: block; }
 	border-radius: 10px;
 	background: rgba(var(--accent-rgb), 0.1);
 	box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.1);
+}
+
+/* 四套配色两列排：276px 的面板一行塞不下四个三段式按钮，
+   拆成 2×2 后每格更宽松，长一点的「曜石黑」也不会挤在一起 */
+.theme-segmented--colors{
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .theme-seg{
@@ -160,6 +167,7 @@ html.dark .theme-seg.active:hover{
 .theme-color-dot.blue{ background: #4696d2; }
 .theme-color-dot.green{ background: #0ea472; }
 .theme-color-dot.pink{ background: #d24673; }
+.theme-color-dot.black{ background: #17181c; }
 
 .theme-seg.active .theme-color-dot{
 	background: currentColor;

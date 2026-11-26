@@ -38,18 +38,18 @@ export default async function run({ env, check, wait }) {
 		s = await state();
 		check("差太远时不乱猜", !s.suggest, s.suggest);
 
-		/* 只输了路径前半截：/alpha 应该提示 /alpha_recon/ */
+		/* 只输了路径前半截：/alpha 应该提示 /alpha-recon/ */
 		await go("/alpha");
 		s = await state();
-		check("路径前缀能匹配到完整页面", s.href === "/alpha_recon/", String(s.href));
-		check("前缀提示文案自然", s.suggest.includes("你要找的可能是") && s.suggest.includes("/alpha_recon/"), s.suggest);
+		check("路径前缀能匹配到完整页面", s.href === "/alpha-recon/", String(s.href));
+		check("前缀提示文案自然", s.suggest.includes("你要找的可能是") && s.suggest.includes("/alpha-recon/"), s.suggest);
 		check("前缀提示不自动跳转", s.path === "/alpha", s.path);
 
-		/* 路径整体不对，但末端名字能对上：/recon → /alpha_recon/ */
+		/* 路径整体不对，但末端名字能对上：/recon → /alpha-recon/ */
 		await go("/recon");
 		s = await state();
-		check("只写末端名字也能匹配", s.href === "/alpha_recon/", String(s.href));
-		check("末端匹配提示文案自然", s.suggest.includes("/alpha_recon/"), s.suggest);
+		check("只写末端名字也能匹配", s.href === "/alpha-recon/", String(s.href));
+		check("末端匹配提示文案自然", s.suggest.includes("/alpha-recon/"), s.suggest);
 
 		/* 拼写错误：只给建议，等用户自己点 */
 		await go("/univeres/");
@@ -78,9 +78,9 @@ export default async function run({ env, check, wait }) {
 		}
 
 		/* 已知目录里的错误子路径：提示回目录 */
-		await go("/alpha_recon/guide");
+		await go("/alpha-recon/guide");
 		s = await state();
-		check("目录下的错误子路径提示回目录", s.href === "/alpha_recon/", String(s.href));
+		check("目录下的错误子路径提示回目录", s.href === "/alpha-recon/", String(s.href));
 
 		const realErrors = page.errors.filter((e) => !/status of 404|ERR_ABORTED|favicon\.ico/.test(e));
 		check("404 页无 JS 报错", realErrors.length === 0, realErrors.join(" | "));

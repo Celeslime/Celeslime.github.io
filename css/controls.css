@@ -4,7 +4,7 @@
  * 无原生灰边框，蓝白主题随 --accent* / --card 变量自适应（浅/深色）；
  * 已填充进度由 JS 更新 --fill 百分比变量控制（WebKit），
  * Firefox 走原生 ::-moz-range-progress。
- * 子页面按需引入即可（如 alpha_recon / flower）。
+ * 子页面按需引入即可（如 alpha-recon / flower）。
  * ============================================================ */
 input[type="range"]{
 	-webkit-appearance: none;
