@@ -157,6 +157,26 @@
 		listEl.style.height = (tallest - MASONRY.gap) + "px";
 	}
 
+	/* ---------- 结构化标签 ----------
+	   后端异步打标（类型：观测/判断/决议/提问；议题：T1-T8；依据：A1-A3），
+	   刚提交的留言可能还没有 tags，没有就整块不渲染。
+	   想临时隐藏标签只改 SHOW_TAGS 一处（不动后端数据）。 */
+	var SHOW_TAGS = true;
+	var TAG_TOPIC = {
+		T1: "判断与决策", T2: "自我审查", T3: "能量与耗竭", T4: "价值与意义",
+		T5: "关系与他者", T6: "时间与计划", T7: "建模与工具", T8: "站点与记录"
+	};
+
+	function tagBlock(c) {
+		if (!SHOW_TAGS || !c.tags || !c.tags.type) return "";
+		var topic = TAG_TOPIC[c.tags.topic] || "";
+		var html = '<div class="gb-item-tags">' +
+			'<span class="gb-tag gb-tag-type" data-type="' + esc(c.tags.type) + '">' + esc(c.tags.type) + "</span>";
+		if (topic) html += '<span class="gb-tag">' + esc(topic) + "</span>";
+		if (c.tags.basis) html += '<span class="gb-tag gb-tag-basis">' + esc(c.tags.basis) + "</span>";
+		return html + "</div>";
+	}
+
 	function renderComments(comments, animate) {
 		if (!listEl) return;
 		listEl.innerHTML = "";
@@ -181,6 +201,7 @@
 				'<span class="gb-item-time">' + esc(fmtTime(c.time)) + "</span>" +
 				"</div>" +
 				'<p class="gb-item-text">' + esc(c.text) + "</p>" +
+				tagBlock(c) +
 				aiBlock(c);
 			listEl.appendChild(li);
 		});

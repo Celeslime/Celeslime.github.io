@@ -111,6 +111,44 @@
 	word-break: break-word;
 }
 
+/* 结构化标签（类型 + 议题 + 依据）：极小、低对比，不抢正文。
+   「决议」单独给强调色——它是这块板上最稀缺的类型，其余几乎全是判断与观测。 */
+.gb-item-tags{
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 5px;
+	margin-top: 9px;
+}
+
+.gb-tag{
+	font-size: 0.68rem;
+	line-height: 1.7;
+	padding: 0 7px;
+	border-radius: 5px;
+	border: 1px solid var(--border);
+	color: var(--text);
+	opacity: 0.55;
+	white-space: nowrap;
+}
+
+.gb-tag-type[data-type="判断"]{
+	color: var(--accent-deep);
+	border-color: var(--accent);
+	opacity: 0.8;
+}
+
+.gb-tag-type[data-type="决议"]{
+	color: var(--accent-deep);
+	border-color: var(--accent-deep);
+	background: var(--accent-soft);
+	opacity: 1;
+}
+
+.gb-tag-basis{
+	font-family: ui-monospace, Menlo, Consolas, monospace;
+}
+
 /* 空状态：可点击跳转输入框 */
 .gb-empty{
 	margin: 4px 0 2px;
